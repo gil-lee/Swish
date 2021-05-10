@@ -41,8 +41,8 @@ export default function CardItem(props) {
   }
   function goToOtherProfile() {
     var user= props.user
-    var LGUser= props.logInUser
-    var users= {user, LGUser}
+    var logInUser= props.logInUser
+    var users= {user, logInUser}
     console.log("users from feed: ", users)
     navigation.navigate('OtherUserProfile', { users: users })
     //navigation.navigate('OtherUserProfile', { user: props.user, LGUser: props.logInUser })

@@ -26,7 +26,7 @@ export default function OtherUserProfile(props) {
   }, [])
 
   function fetchHeartIcon() {
-    fetch(urlGetFavorite + "/" + users.LGUser.email + "/", {
+    fetch(urlGetFavorite + "/" + users.logInUser.email + "/", {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
@@ -76,9 +76,10 @@ export default function OtherUserProfile(props) {
   }
 
   function addFavorite() {
+
     setFavoriteUser(!favoriteUser)
     let favRow = {
-      emailLGUser: users.LGUser.email,
+      emailLGUser: users.logInUser.email,
       emailFavUser: users.user.email
     }
     fetch(urlPostFavorite, {
@@ -91,8 +92,9 @@ export default function OtherUserProfile(props) {
     })
       .then(res => {
         console.log('res.ok postFavUsers= ', res.ok);
-        if(res.ok){
-          navigation.navigate('Favorite', {user: users.LGUser})
+        if (res.ok) {
+          navigation.push('Navigator', { screen: 'FeedPage', params: { user: users.logInUser } })
+          navigation.navigate('Navigator', { screen: 'Favorite', params: { user: users.logInUser } })
         }
         return res.json()
       })
@@ -102,12 +104,13 @@ export default function OtherUserProfile(props) {
         (error) => {
           console.log('Error', error);
         })
+
   }
 
   function removeFavorite() {
     setFavoriteUser(!favoriteUser)
     let favRow = {
-      emailLGUser: users.LGUser.email,
+      emailLGUser: users.logInUser.email,
       emailFavUser: users.user.email
     }
     fetch(urlDeleteFavorite, {
@@ -131,42 +134,39 @@ export default function OtherUserProfile(props) {
   }
   return (
     <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
-      <ScrollView>
-        <View>
-          <View>
-            <View style={styles.backAndHeart}>
-              <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
-                <Icon name="chevron-left" size={20} color="#101010" />
-              </TouchableOpacity>
-              {favoriteUser ?
-                <TouchableOpacity onPress={removeFavorite} style={styles.heartBtn}>
-                  <MaterialCommunityIcons name="heart" color={"#9d76a5"} size={25} />
-                </TouchableOpacity> :
-                <TouchableOpacity onPress={addFavorite} style={styles.heartBtn}>
-                  <MaterialCommunityIcons name="heart-outline" color={"#a7a7a7"} size={25} />
-                </TouchableOpacity>}
-            </View>
-            <View style={styles.container}>
-              <View></View>
-              <View style={{ flexDirection: 'row' }}>
-                <Image source={{ uri: users.user.profilePicture }} style={styles.userImage}></Image>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.userHeader}>{users.user.firstName} {users.user.lastName}</Text>
-                  <View style={styles.itemCloset}>
-                    <MaterialCommunityIcons name="wardrobe-outline" color={"#a7a7a7"} size={25} />
-                    <Text style={{ fontWeight: "bold" }}>{users.user.numOfItems}  </Text>
-                  </View>
-                </View>
+      <View>
+        <View style={styles.container}>
+          <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
+            <Icon name="chevron-left" size={20} color="#101010" />
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'row' }}>
+            <Image source={{ uri: users.user.profilePicture }} style={styles.userImage}></Image>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={styles.userHeader}>{users.user.firstName} {users.user.lastName}</Text>
+              <View style={styles.itemCloset}>
+                <MaterialCommunityIcons name="wardrobe-outline" color={"#a7a7a7"} size={25} />
+                <Text style={{ fontWeight: "bold" }}>{users.user.numOfItems}  </Text>
               </View>
             </View>
+            {favoriteUser ?
+              <TouchableOpacity onPress={removeFavorite} style={styles.heartBtn}>
+                <MaterialCommunityIcons name="heart" color={"#9d76a5"} size={25} />
+              </TouchableOpacity> :
+              <TouchableOpacity onPress={addFavorite} style={styles.heartBtn}>
+                <MaterialCommunityIcons name="heart-outline" color={"#a7a7a7"} size={25} />
+                <View></View>
+              </TouchableOpacity>}
           </View>
-
+        </View>
+        <View style={styles.line} />
+        <ScrollView>
           {userItemsList ?
             userItemsList.map(x =>
               <CardItem key={x.itemsListDTO[0].itemId} data={x.itemsListDTO[0]} navigation={props.navigation} user={props.user} />)
             : null}
-        </View>
-      </ScrollView>
+          <Text style={{ paddingBottom: 160 }}></Text>
+        </ScrollView>
+      </View>
     </ImageBackground>
   )
 
@@ -184,12 +184,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   backBtn: {
-    paddingTop: 50,
     paddingLeft: 25,
     //alignItems: 'flex-start'
   },
   heartBtn: {
-    paddingTop: 50,
     paddingLeft: 25,
     //alignItems: 'flex-start',
     marginRight: 20
@@ -229,10 +227,11 @@ const styles = StyleSheet.create({
   userImage: {
     height: 60,
     width: 60,
-    borderRadius: 50
+    borderRadius: 50,
   },
   userHeader: {
-    marginLeft: 6,
+    marginLeft: 6
+    ,
     fontSize: 14,
     fontWeight: 'bold'
   },

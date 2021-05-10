@@ -66,6 +66,7 @@ export default class LogInPage extends Component {
               placeholder="אימייל"
               placeholderTextColor="#A7A7A7"
               textAlign={'center'}
+              autoCapitalize= "none"
               onChangeText={text => this.setState({ email: text })} />
           </View>
           <View style={styles.inputView} >

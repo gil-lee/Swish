@@ -9,13 +9,12 @@ export default function CardItem(props) {
   
   return (
     <ScrollView>
-      <View style={styles.line}/>
       <View style={styles.layout}>
         <View style={styles.header}>
           <Text style={{ fontWeight: "bold" }}>{props.data.name}  |  </Text>
-          <Text>{props.data.priceList[0].name}  |  </Text>
+          <Text>  {props.data.priceList[0].name}  |  </Text>
 
-          <Text>{props.data.numberOfPoints}</Text>
+          <Text>{props.data.numberOfPoints}  </Text>
           <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
         </View>
         {props.data.description ?
@@ -39,8 +38,9 @@ export default function CardItem(props) {
 
       <View style={styles.footer}>
         <Text style={{ fontWeight: "bold" }}>{props.data.conditionList[0].condition}  |  </Text>
-        <Text style={{ fontWeight: "bold" }}>{props.data.sizeList[0].size}</Text>
+        <Text style={{ fontWeight: "bold" }}>{props.data.sizeList[0].size}  </Text>
       </View>
+      <View style={styles.line}/>
     </ScrollView>
   )
 }
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginTop: 20,
-    marginBottom: -20,
+    marginBottom: 5,
     borderBottomColor: '#a7a7a7',
     borderBottomWidth: 1
   }

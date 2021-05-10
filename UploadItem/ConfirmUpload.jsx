@@ -102,7 +102,6 @@ export default class ConfirmUpload extends Component {
       conditionId: this.state.conditionId
     }
 
-
     fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
       method: 'POST',
       body: JSON.stringify(item),

@@ -18,60 +18,60 @@ export default class FavoritePage extends Component {
       }
   }
   componentDidMount() {
-    //this.fetchFavList()
+    this.fetchFavList()
   }
 
-  // fetchFavList = () => {
-  //   let tempArr = []
-  //   fetch(urlGetFavorite + "/" + this.state.user.email + "/", {
-  //     method: 'GET',
-  //     headers: new Headers({
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //       'Accept': 'application/json; charset=UTF-8',
-  //     })
-  //   })
-  //     .then(res => {
-  //       console.log('res.ok getUsersList= ', res.ok);
-  //       return res.json()
-  //     })
-  //     .then(favRows => {
-  //       favRows.map(user =>
-  //         tempArr.push(user.emailFavUser))
-  //       //console.log(tempArr)
-  //       this.setState({ favList: tempArr })
-  //       this.fetchUsersFromList(tempArr)
-  //     },
-  //       (error) => {
-  //         console.log('Error', error);
-  //       })
-  // }
+  fetchFavList = () => {
+    let tempArr = []
+    fetch(urlGetFavorite + "/" + this.state.user.email + "/", {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok getUsersList= ', res.ok);
+        return res.json()
+      })
+      .then(favRows => {
+        favRows.map(user =>
+          tempArr.push(user.emailFavUser))
+        //console.log(tempArr)
+        this.setState({ favList: tempArr })
+        this.fetchUsersFromList(tempArr)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
 
-  // fetchUsersFromList = (tempArr) => {
-  //   let temp = []
-  //   //console.log(tempArr)
-  //   tempArr.map((user) =>
-  //     fetch(urlGetUser + '/' + user + '/', {
-  //       method: 'GET',
-  //       headers: new Headers({
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //         'Accept': 'application/json; charset=UTF-8',
-  //       })
-  //     })
-  //       .then(res => {
-  //         console.log('res.ok getUser= ', res.ok);
-  //         return res.json()
-  //       })
-  //       .then(user => {
-  //         temp.push(user[0])
-  //         this.setState({ favUsersList: temp }
-  //           // , () => console.log("favUsers details    ", this.state.favUsersList)
-  //         )
-  //       },
-  //         (error) => {
-  //           console.log('Error', error);
-  //         })
-  //   )
-  // }
+  fetchUsersFromList = (tempArr) => {
+    let temp = []
+    //console.log(tempArr)
+    tempArr.map((user) =>
+      fetch(urlGetUser + '/' + user + '/', {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
+        })
+      })
+        .then(res => {
+          console.log('res.ok getUser= ', res.ok);
+          return res.json()
+        })
+        .then(user => {
+          temp.push(user[0])
+          this.setState({ favUsersList: temp }
+            // , () => console.log("favUsers details    ", this.state.favUsersList)
+          )
+        },
+          (error) => {
+            console.log('Error', error);
+          })
+    )
+  }
 
   render() {
     return (
@@ -79,13 +79,14 @@ export default class FavoritePage extends Component {
         <View style={styles.container}>
           <Text style={styles.Text}> משתמשים שאהבתי </Text>
         </View>
-        <View>
-          {/* {this.state.favUsersList ?
+        <ScrollView>
+          {console.log('fav list to card: ', this.state.favUsersList)}
+          {this.state.favUsersList ?
             this.state.favUsersList.map((user) =>
-              <FavoriteListCard key={user.id} user={user} logInUser={this.state.user} />) : null} */}
-          <FavoriteListCard logInUser={this.state.user} navigation={this.props.navigation}/>
-
-        </View>
+              <FavoriteListCard user={user} logInUser={this.state.user} navigation={this.props.navigation} />
+            ) : null}
+          <Text style={{paddingBottom: 190}}></Text>
+        </ScrollView>
       </ImageBackground>
     )
   }
@@ -100,11 +101,20 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 50
+    paddingTop: 60,
+    paddingBottom: 20
     //flexDirection: 'column'
   },
   image: {
     flex: 1,
     resizeMode: 'cover',
-  }
+  },
+  line: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 20,
+    marginBottom: 20,
+    borderBottomColor: '#a7a7a7',
+    borderBottomWidth: 1
+  },
 })

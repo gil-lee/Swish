@@ -244,17 +244,17 @@ export default class FeedPage extends Component {
 
   updateSearch = () => {
     return <SearchBar
-        placeholder="Type Here..."
-        onChangeText={this.updateSearch}
-        value={search}
-      />
+      placeholder="Type Here..."
+      onChangeText={this.updateSearch}
+      value={search}
+    />
   }
 
   render() {
     const { search } = this.state;
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
-      <View>
+        <View>
           <View style={styles.container}>
             <TouchableOpacity onPress={this.updateSearch}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={32} />
@@ -278,61 +278,61 @@ export default class FeedPage extends Component {
             <Image source={{ uri: `${this.state.avatarLevelUser}` }} style={styles.avatar} ></Image>
 
           </View>
-        
+
           <View style={styles.line} />
           <Text></Text>
-       
 
-        <View style={{ flexDirection: 'row-reverse', justifyContent: "center", alignContent: "center" }}>
 
-          <Dropdown
-            label='מידה'
-            data={this.state.size.map((size, s) => ({ key: s, value: size }))}
-            style={styles.dropDwSmall}
-            onChangeText={(value) => this.setState({ selectedSize: value }), (value) => this.fetchFilter(value, "size")}
-            underlineColor={'transparent'}
-            ref={c => (this.sizeDD = c)}
-          />
-          <Dropdown
-            label='סוג'
-            data={this.state.itemType.map((type, t) => ({ key: t, value: type }))}
-            style={styles.dropDw}
-            onChangeText={(value) => this.setState({ selectedType: value }), (value) => this.fetchFilter(value, "type")}
-            underlineColor={'transparent'}
-            ref={c => (this.typeDD = c)}
-          />
-          <Dropdown
-            label='סגנון'
-            data={this.state.itemStyle.map((itemStyle, i) => ({ key: i, value: itemStyle }))}
-            style={styles.dropDwSmall}
-            onChangeText={(value) => this.setState({ selectedStyle: value }), (value) => this.fetchFilter(value, "style")}
-            underlineColor={'transparent'}
-            ref={c => (this.styleDD = c)}
-          />
-          <Dropdown
-            label='מצב'
-            data={this.state.condition.map((condition, c) => ({ key: c, value: condition }))}
-            style={styles.dropDwSmall}
-            onChangeText={(value) => this.setState({ selectedCondition: value }), (value) => this.fetchFilter(value, "condition")}
-            underlineColor={'transparent'}
-            ref={c => (this.conDD = c)}
-          />
-          <TouchableOpacity style={{ margin: 5 }} onPress={this.clearDropDown}>
-            <MaterialCommunityIcons name="close" color={"#a7a7a7"} size={20} />
-            {/* <Text style={styles.btnText}>ניקוי</Text> */}
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row-reverse', justifyContent: "center", alignContent: "center" }}>
+
+            <Dropdown
+              label='מידה'
+              data={this.state.size.map((size, s) => ({ key: s, value: size }))}
+              style={styles.dropDwSmall}
+              onChangeText={(value) => this.setState({ selectedSize: value }), (value) => this.fetchFilter(value, "size")}
+              underlineColor={'transparent'}
+              ref={c => (this.sizeDD = c)}
+            />
+            <Dropdown
+              label='סוג'
+              data={this.state.itemType.map((type, t) => ({ key: t, value: type }))}
+              style={styles.dropDw}
+              onChangeText={(value) => this.setState({ selectedType: value }), (value) => this.fetchFilter(value, "type")}
+              underlineColor={'transparent'}
+              ref={c => (this.typeDD = c)}
+            />
+            <Dropdown
+              label='סגנון'
+              data={this.state.itemStyle.map((itemStyle, i) => ({ key: i, value: itemStyle }))}
+              style={styles.dropDwSmall}
+              onChangeText={(value) => this.setState({ selectedStyle: value }), (value) => this.fetchFilter(value, "style")}
+              underlineColor={'transparent'}
+              ref={c => (this.styleDD = c)}
+            />
+            <Dropdown
+              label='מצב'
+              data={this.state.condition.map((condition, c) => ({ key: c, value: condition }))}
+              style={styles.dropDwSmall}
+              onChangeText={(value) => this.setState({ selectedCondition: value }), (value) => this.fetchFilter(value, "condition")}
+              underlineColor={'transparent'}
+              ref={c => (this.conDD = c)}
+            />
+            <TouchableOpacity style={{ margin: 5 }} onPress={this.clearDropDown}>
+              <MaterialCommunityIcons name="close" color={"#a7a7a7"} size={20} />
+              {/* <Text style={styles.btnText}>ניקוי</Text> */}
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.line} />
+          <ScrollView>
+
+            {this.state.itemsList ?
+              this.state.itemsList.map((item) =>
+                <CardItemFeed key={item.itemsListDTO[0].id} data={item.itemsListDTO[0]} user={item.userListDTO[0]} navigation={this.props.navigation} logInUser={this.state.userTemplate} />) : null}
+
+            <Text style={{ paddingBottom: 180 }}></Text>
+          </ScrollView>
         </View>
-
-        <View style={styles.line} />
-        <ScrollView>
-
-          {this.state.itemsList ?
-            this.state.itemsList.map((item) =>
-              <CardItemFeed key={item.itemsListDTO[0].id} data={item.itemsListDTO[0]} user={item.userListDTO[0]} navigation={this.props.navigation} logInUser={this.state.userTemplate} />) : null}
-
-          <Text></Text>
-        </ScrollView>
-      </View>
       </ImageBackground>
     )
   }

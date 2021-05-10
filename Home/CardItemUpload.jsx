@@ -8,14 +8,14 @@ export default function CardItemUpload(props) {
 
   
   return (
-    <ScrollView>
+    <View>
       <View style={styles.line}/>
       <View style={styles.layout}>
         <View style={styles.header}>
           <Text style={{ fontWeight: "bold" }}>{props.data.name}  |  </Text>
-          <Text>{props.data.name}  |  </Text>
+          <Text>  {props.data.name}  |</Text>
 
-          <Text>{props.data.numberOfPoints}</Text>
+          <Text>{props.data.numberOfPoints}  </Text>
           <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
         </View>
         {props.data.description ?
@@ -39,9 +39,9 @@ export default function CardItemUpload(props) {
 
       <View style={styles.footer}>
         <Text style={{ fontWeight: "bold" }}>{props.data.condition}  |  </Text>
-        <Text style={{ fontWeight: "bold" }}>{props.data.size}</Text>
+        <Text style={{ fontWeight: "bold" }}>{props.data.size}  </Text>
       </View>
-    </ScrollView>
+    </View>
   )
 }
 

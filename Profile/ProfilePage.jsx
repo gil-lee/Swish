@@ -109,30 +109,32 @@ export default class ProfilePage extends Component {
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View>
-            <View style={styles.container}>
-              <View style={{ flexDirection: 'row' }}>
-                <Image source={{ uri: this.state.user.profilePicture }} style={styles.userImage}></Image>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.userHeader}>{this.state.user.firstName} {this.state.user.lastName}</Text>
-                  <View style={{ flexDirection: 'row' }}>
-                    <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
-                    <Text style={styles.userHeader}>{this.state.user.numOfPoints}</Text>
+              <View style={styles.container}>
+                <View></View>
+                <View style={{ flexDirection: 'row' }}>
+                  <Image source={{ uri: this.state.user.profilePicture }} style={styles.userImage}></Image>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.userHeader}>{this.state.user.firstName} {this.state.user.lastName}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                      <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+                      <Text style={styles.userHeader}>{this.state.user.numOfPoints}</Text>
+                    </View>
                   </View>
                 </View>
+                <TouchableOpacity onPress={this.goToSettings} style={{}}>
+                  <MaterialCommunityIcons name="cog" color={"#a7a7a7"} size={27} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={this.goToSettings}>
-                <MaterialCommunityIcons name="cog" color={"#a7a7a7"} size={27} />
-              </TouchableOpacity>
+              
+              <View style={styles.itemCloset}>
+                {this.state.user.numOfItems ?
+                  <Text style={styles.Text, { marginBottom: 2 }}> <Text style={{ fontWeight: "bold", textDecorationLine: 'underline' }}>{this.state.user.numOfItems}</Text> פריטים בארונך האישי</Text> : null}
+              </View>
+              <View style={styles.line} ></View>
             </View>
-            <View style={styles.itemCloset}>
-              {this.state.user.numOfItems ?
-                <Text style={styles.Text, { marginBottom: 10 }}> <Text style={{ fontWeight: "bold", textDecorationLine: 'underline' }}>{this.state.user.numOfItems}</Text> פריטים בארונך האישי</Text> : null}
-            </View>
-            <View style={styles.line} ></View>
           </View>
 
           <ScrollView>
-
             {this.state.randomSentence ?
               <View style={styles.sentAvat}>
                 <Image source={{ uri: `${this.state.avatarLevelUser}` }} style={styles.avatar} ></Image>
@@ -146,9 +148,8 @@ export default class ProfilePage extends Component {
                 <CardItemShow key={x.itemsListDTO[0].id} data={x.itemsListDTO[0]} navigation={this.props.navigation} user={this.state.user} showAlert={false} />)
               : null}
             <View style={styles.line} ><Text></Text></View>
-            <View style={{margin: 100}}></View>
+            <View style={{ paddingBottom: 30 }}></View>
           </ScrollView>
-        </View>
       </ImageBackground>
     )
   }
@@ -203,12 +204,18 @@ const styles = StyleSheet.create({
   userImage: {
     height: 60,
     width: 60,
-    borderRadius: 50
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   },
   userHeader: {
     marginLeft: 6,
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   },
   image: {
     flex: 1,

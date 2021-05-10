@@ -7,6 +7,7 @@ import Modal from 'react-native-modal';
 import { Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { UIImagePickerControllerQualityType } from 'expo-image-picker/build/ImagePicker.types';
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
@@ -42,10 +43,10 @@ export default class UploadDetails extends Component {
       image3: '',
       image4: '',
       numberOfPoints: '',
-      uplodedPicUri:'',
-      
-      itemType2:[],
-      selectedType2:'',
+      uplodedPicUri: '',
+
+      itemType2: [],
+      selectedType2: '',
     }
   }
 
@@ -74,7 +75,7 @@ export default class UploadDetails extends Component {
       })
     })
       .then(res => {
-        console.log('res.ok=', res.ok);
+        console.log('res.ok dropDown=', res.ok);
         return res.json()
       })
       .then(dropDownArr => { //הבאת כל סוגי הפריטים
@@ -82,12 +83,14 @@ export default class UploadDetails extends Component {
           for (let i = 0; i < dropDownArr.length; i++) {
             typeTemp[i] = dropDownArr[i].name
             types[i] = dropDownArr[i]
+
           }
           this.setState({ itemType: typeTemp })
         }
         if (url == urlItemSize) { // הבאת המידות
           for (let i = 0; i < dropDownArr.length; i++) {
             sizeTemp[i] = dropDownArr[i].size
+
           }
           this.setState({ size: sizeTemp })
         }
@@ -102,12 +105,13 @@ export default class UploadDetails extends Component {
         if (url == urlItemStyle) { //הבאת סגנונות
           for (let i = 0; i < dropDownArr.length; i++) {
             styleTemp[i] = dropDownArr[i].style
+
           }
           this.setState({ itemStyle: styleTemp })
         }
       },
         (error) => {
-          console.log('Error', error);
+          console.log('dropDown error! ', error);
         })
   }
 
@@ -130,26 +134,26 @@ export default class UploadDetails extends Component {
     }
     if (num == 1) {
       this.setState({ image1: result.uri });
-      this.btnUpload(result.uri,num)
+      this.btnUpload(result.uri, num)
     }
     if (num == 2) {
       this.setState({ image2: result.uri });
-      this.btnUpload(result.uri,num)
+      this.btnUpload(result.uri, num)
     }
     if (num == 3) {
       this.setState({ image3: result.uri });
-      this.btnUpload(result.uri,num)
+      this.btnUpload(result.uri, num)
     }
     if (num == 4) {
       this.setState({ image4: result.uri });
-      this.btnUpload(result.uri,num)
+      this.btnUpload(result.uri, num)
     }
   }
 
-  btnUpload = (urim,num) => { //חלק 1 העלאת תמונה לשרת (לא גמור להמשיך)
+  btnUpload = (urim, num) => { //חלק 1 העלאת תמונה לשרת (לא גמור להמשיך)
     let img = urim;
-    let numOfItems= this.props.route.params.user.numOfItems+1
-    let imgName = this.props.route.params.user.email + '--IdItem' +numOfItems + '--Image' + num + '--' + '.jpg';
+    let numOfItems = this.props.route.params.user.numOfItems + 1
+    let imgName = this.props.route.params.user.email + '--IdItem' + numOfItems + '--Image' + num + '--' + '.jpg';
     console.log('imgName in func: ', imgName)
     //let imgName = 'userImg.jpg';
     this.imageUpload(img, imgName, num);
@@ -188,22 +192,22 @@ export default class UploadDetails extends Component {
           let picNameWOExt = picName.substring(0, picName.indexOf("."));
           let imageNameWithGUID = responseData.substring(responseData.indexOf(picNameWOExt), responseData.indexOf(".jpg") + 4);
           console.log('imageNameWithGUID: ', imageNameWithGUID)
-          let uriNewImage= uplodedPicPath + imageNameWithGUID;
+          let uriNewImage = uplodedPicPath + imageNameWithGUID;
           console.log('uriNewImage', uriNewImage)
-          if(num == 1){
-            this.setState({image1: uriNewImage})
+          if (num == 1) {
+            this.setState({ image1: uriNewImage })
           }
-          if(num == 2){
-            this.setState({image2: uriNewImage})
+          if (num == 2) {
+            this.setState({ image2: uriNewImage })
           }
-          if(num == 3){
-            this.setState({image3: uriNewImage})
+          if (num == 3) {
+            this.setState({ image3: uriNewImage })
           }
-          if(num == 4){
-            this.setState({image4: uriNewImage})
+          if (num == 4) {
+            this.setState({ image4: uriNewImage })
           }
-           //console.log('img uploaded successfully!', this.state.uplodedPicUri)
-          
+          //console.log('img uploaded successfully!', this.state.uplodedPicUri)
+
         }
         else {
           console.log('error uploding');
@@ -220,9 +224,15 @@ export default class UploadDetails extends Component {
     let finalPrice;
     let price;
     let reduction;
-    for (let i = 0; i < types.length; i++) {
-      if (types[i].name == this.state.selectedType) {
-        price = types[i].price
+    if (this.state.selectedType == "חצאית") {
+      price = 60
+    }
+    else {
+      for (let i = 0; i < types.length; i++) {
+        if (types[i].name == this.state.selectedType) {
+          price = types[i].price
+          console.log('price: ', price)
+        }
       }
     }
     for (let i = 0; i < conditions.length; i++) {
@@ -245,34 +255,15 @@ export default class UploadDetails extends Component {
       image4: this.state.image4,
       numberOfPoints: finalPrice
     }
-    
-     if (item.name != '' && item.size != '' && item.style != '' && item.type != '' && item.condition != '' && this.state.image1 != '') {
-      this.props.navigation.push('ConfirmUpload', { confirmItem: item , user: this.props.route.params.user}) //מעבר לעמוד הבא להעלאת הפריט
-     }
+
+    if (item.name != '' && item.size != '' && item.style != '' && item.type != '' && item.condition != '' && this.state.image1 != '') {
+      this.props.navigation.push('ConfirmUpload', { confirmItem: item, user: this.props.route.params.user }) //מעבר לעמוד הבא להעלאת הפריט
+    }
     else {
-      Alert.alert("אופס...",'חסרים פרטים על הפריט, ייתכן שהשארת שדות חובה ריקים')
+      Alert.alert("אופס...", 'חסרים פרטים על הפריט, ייתכן שהשארת שדות חובה ריקים')
     }
 
   }
-
-  makePriceForItem = () => { //להוריד מלמעלה להעלאת פריט: פונקציית תמחור פריט
-    let finalPrice;
-    let price;
-    let reduction;
-    for (let i = 0; i < types.length; i++) {
-      if (types[i].name == this.state.selectedType) {
-        price = types[i].price
-      }
-    }
-    for (let i = 0; i < conditions.length; i++) {
-      if (conditions[i].condition == this.state.selectedCondition) {
-        reduction = conditions[i].reduction
-      }
-    }
-    finalPrice = price - reduction
-    this.setState({ numberOfPoints: finalPrice }, () => console.log('points: ', this.state.numberOfPoints), this.confirmUpload())
-  }
-
   render() {
 
     return (
@@ -327,14 +318,14 @@ export default class UploadDetails extends Component {
                 label='סוג'
                 data={this.state.itemType.map((itemtype) => ({ value: itemtype }))}
                 style={styles.dropDw}
-                onChangeText={(value) => this.setState({ selectedType: value})}
+                onChangeText={(value) => this.setState({ selectedType: value })}
                 underlineColor={'transparent'}
               />
               <Dropdown
                 label='מידה'
                 data={this.state.size.map((size) => ({ value: size }))}
                 style={styles.dropDw}
-                onChangeText={(value) => this.setState({ selectedSize: value})}
+                onChangeText={(value) => this.setState({ selectedSize: value })}
                 underlineColor={'transparent'}
               />
             </View>

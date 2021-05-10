@@ -46,7 +46,7 @@ export default class SignUpPage extends Component {
     { label: "עיר ורדיוס", value: 1 }
   ];
 
-
+  
   onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
     this.setState({ [key]: val })
 
@@ -183,6 +183,7 @@ export default class SignUpPage extends Component {
 
               //כאן אנחנו מעבירות את המשתמש לעמודים אחרים
               this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
+              this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: newUser }, initial: false })
               this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: newUser }, initial: false })
               //this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: newUser }, initial: false }) //פה זה לא מעביר עמוד רק את המידע
               this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser } })//מעביר עמוד ומידע ביחד
@@ -288,7 +289,6 @@ export default class SignUpPage extends Component {
     this.setState({ bdate: timest.timestamp })
   }
 
-
   render() {
 
     return (
@@ -374,6 +374,7 @@ export default class SignUpPage extends Component {
                 placeholder='example@email.com'
                 autoCapitalize="none"
                 placeholderTextColor='#A7A7A7'
+                autoCapitalize= "none"
                 onChangeText={val => this.onChangeText('email', val)}
               />
 
@@ -383,6 +384,7 @@ export default class SignUpPage extends Component {
                 placeholder='example@email.com'
                 autoCapitalize="none"
                 placeholderTextColor='#A7A7A7'
+                autoCapitalize= "none"
                 onChangeText={val => this.onChangeText('email_confirm', val)}
               />
             </View>
@@ -393,6 +395,7 @@ export default class SignUpPage extends Component {
                   style={styles.input1}
                   secureTextEntry={this.state.enableSecure}
                   placeholderTextColor='#A7A7A7'
+                  autoCapitalize= "none"
                   onChangeText={val => this.onChangeText('password', val)}
                 />
               </View>
@@ -402,6 +405,7 @@ export default class SignUpPage extends Component {
                   style={styles.input1}
                   secureTextEntry={this.state.enableSecure}
                   placeholderTextColor='#A7A7A7'
+                  autoCapitalize= "none"
                   onChangeText={val => this.onChangeText('password_confirm', val)}
                 />
               </View>
