@@ -8,6 +8,7 @@ import { Dropdown } from 'react-native-material-dropdown-v2';
 import CardItemFeed from './CardItemFeed';
 import { ImageBackground } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import currentLocation from '../Location/currentLocation';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
@@ -249,7 +250,10 @@ export default class FeedPage extends Component {
       value={search}
     />
   }
-
+  goToLocation=()=>{
+    this.props.navigation.navigate('currentLocation')
+  }
+  
   render() {
     const { search } = this.state;
     return (
@@ -325,6 +329,10 @@ export default class FeedPage extends Component {
 
           <View style={styles.line} />
           <ScrollView>
+
+          <TouchableOpacity onPress={this.goToLocation}>
+            <Text>location</Text>
+          </TouchableOpacity>
 
             {this.state.itemsList ?
               this.state.itemsList.map((item) =>

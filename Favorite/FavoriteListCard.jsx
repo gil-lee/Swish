@@ -18,6 +18,7 @@ export default function FavoriteListCard(props) {
   const [favUsersList, setFavUsersList] = useState(null)
   const { user } = props
   const {logInUser} = props
+
   //var users= {user,logInUser}
 
   function goToOtherProfile() {

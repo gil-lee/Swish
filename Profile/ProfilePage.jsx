@@ -87,7 +87,7 @@ export default class ProfilePage extends Component {
         return res.json()
       })
       .then(userItems => {
-        this.setState({ userItemsList: userItems[0].UserItemsListDTO }
+        this.setState({ userItemsList: userItems[0].UserItemsListDTO }, ()=>console.log('location from sql: ',userItems[0].location)
           // , () =>
           // console.log('useritems from get: ', this.state.userItemsList)
         )
