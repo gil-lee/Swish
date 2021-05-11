@@ -7,6 +7,7 @@ import { Slider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CitiesList from './CitiesList';
+import CurrentLocFun from '../Location/CurrentLocFun';
 
 
 const urlSignUp = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew";
@@ -30,6 +31,8 @@ export default class SignUpPage extends Component {
       valueSlider: '',
       itemViewingMethod: 'R',
       cities: '',
+      latitude: 0,
+      longitude: 0,
       //כל הסטייטים למעלה קשורים להכנסת משתמש חדש לDB
 
       uri: '',
@@ -46,7 +49,7 @@ export default class SignUpPage extends Component {
     { label: "עיר ורדיוס", value: 1 }
   ];
 
-  
+
   onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
     this.setState({ [key]: val })
 
@@ -91,8 +94,8 @@ export default class SignUpPage extends Component {
           Alert.alert('אופס...', 'אימות הסיסמה לא צלח, נסה שנית');
           return;
         }
-        if(password.length < 4){
-          Alert.alert("אופס..","הסיסמה צריכה להכיל לפחות 4 תוים ומספרים");
+        if (password.length < 4) {
+          Alert.alert("אופס..", "הסיסמה צריכה להכיל לפחות 4 תוים ומספרים");
           return;
         }
         else {
@@ -122,23 +125,25 @@ export default class SignUpPage extends Component {
     this.setState({ value_radio: value })
     if (value == 0) {
       this.setState({ itemViewingMethod: 'R' })
+
     }
     else {
       this.setState({ itemViewingMethod: 'L' })
+      //return <CurrentLocFun/>
     }
   }
 
   signUpBtn = () => { //פונקציית ההרשמה, הכנסת משתמש חדש לDB   
 
     if (this.state.phone_number.length < 10) {
-      Alert.alert("אופס..","חסרים מפרים במספר טלפון");
+      Alert.alert("אופס..", "חסרים מפרים במספר טלפון");
       return;
     }
-    if(this.state.phone_number.length > 10){
-      Alert.alert("אופס..","יש יותר מידי מספרים במספר הטלפון");
+    if (this.state.phone_number.length > 10) {
+      Alert.alert("אופס..", "יש יותר מידי מספרים במספר הטלפון");
       return;
     }
-    
+
     else {
       let newUser = { //יצירת משתמש חדש
         firstName: this.state.firstName,
@@ -152,13 +157,16 @@ export default class SignUpPage extends Component {
         birthDate: this.state.bdate,
         itemViewingMethod: this.state.itemViewingMethod,
         avatarlevel: 1,
-        daliySentencld: 1
+        daliySentencld: 1,
+        latitude: this.state.latitude,
+        longitude: this.state.longitude
       }
 
 
       if (newUser.firstName != '' && newUser.lastName != '' && newUser.phoneNumber != '' && newUser.email != '' && newUser.password != '' && newUser.residence != '') {
         //בדיקה שכל השדות מולאו
         let checkE = '';
+    console.log('user: ',newUser )
         fetch(urlSignUp, {
           method: 'POST',
           body: JSON.stringify(newUser),
@@ -374,7 +382,7 @@ export default class SignUpPage extends Component {
                 placeholder='example@email.com'
                 autoCapitalize="none"
                 placeholderTextColor='#A7A7A7'
-                autoCapitalize= "none"
+                autoCapitalize="none"
                 onChangeText={val => this.onChangeText('email', val)}
               />
 
@@ -384,7 +392,7 @@ export default class SignUpPage extends Component {
                 placeholder='example@email.com'
                 autoCapitalize="none"
                 placeholderTextColor='#A7A7A7'
-                autoCapitalize= "none"
+                autoCapitalize="none"
                 onChangeText={val => this.onChangeText('email_confirm', val)}
               />
             </View>
@@ -395,7 +403,7 @@ export default class SignUpPage extends Component {
                   style={styles.input1}
                   secureTextEntry={this.state.enableSecure}
                   placeholderTextColor='#A7A7A7'
-                  autoCapitalize= "none"
+                  autoCapitalize="none"
                   onChangeText={val => this.onChangeText('password', val)}
                 />
               </View>
@@ -405,7 +413,7 @@ export default class SignUpPage extends Component {
                   style={styles.input1}
                   secureTextEntry={this.state.enableSecure}
                   placeholderTextColor='#A7A7A7'
-                  autoCapitalize= "none"
+                  autoCapitalize="none"
                   onChangeText={val => this.onChangeText('password_confirm', val)}
                 />
               </View>

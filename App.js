@@ -19,6 +19,7 @@ import SettingsPage from './Profile/SettingsPage';
 import Chat from './Chat/Chat'
 import OtherUserProfile from './Profile/OtherUserProfile'
 import currentLocation from './Location/currentLocation';
+import CurrentLocFun from './Location/CurrentLocFun';
 
 const Stack = createStackNavigator();
 //const Tab = createBottomTabNavigator();
@@ -40,6 +41,7 @@ export default function App() {
         <Stack.Screen name="Profile Page" component={ProfilePage}/> 
         <Stack.Screen name="SettingsPage" component={SettingsPage}/>  
         <Stack.Screen name="currentLocation" component={currentLocation}/>
+        <Stack.Screen name="CurrentLocFun" component={CurrentLocFun}/>
         <Stack.Screen name="Chat" component={Chat}/>  
         <Stack.Screen name="OtherUserProfile" component={OtherUserProfile}/>  
       </Stack.Navigator>

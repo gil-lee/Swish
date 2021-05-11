@@ -27,14 +27,15 @@ export default class currentLocation extends Component {
     console.log('location..: ',location)
     let lati= location.coords.latitude
     let longi= location.coords.longitude
-    let locationForRevers= {'latitude':lati,'longitude':longi}
+    let locationForRevers= [lati,longi]
     this.setState(
       { 
         location: locationForRevers, 
         latitudeSt: location.coords.latitude, 
         longitudeSt: location.coords.longitude,
-        address: JSON.stringify(locationForRevers) 
-      }, ()=>console.log('adrress: ', this.state.address)
+        address: JSON.stringify(locationForRevers),
+        newAddress: JSON.stringify(locationForRevers).substring(1,22) //goes to SQL
+      }, ()=>console.log('adrress: ', this.state.address.substring(1,22))
       // , async ()=>{
       //   let reverseLoc= await Location.reverseGeocodeAsync(this.state.location)
       //   console.log('my addres: ',reverseLoc)
