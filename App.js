@@ -17,6 +17,7 @@ import DeleteItem from './Home/DeleteItem';
 import ProfilePage from './Profile/ProfilePage';
 import SettingsPage from './Profile/SettingsPage';
 import Chat from './Chat/Chat'
+import MainChatPage from './Chat/MainChatPage'
 import OtherUserProfile from './Profile/OtherUserProfile'
 import currentLocation from './Location/currentLocation';
 import CurrentLocFun from './Location/CurrentLocFun';
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Screen name="Profile Page" component={ProfilePage}/> 
         <Stack.Screen name="SettingsPage" component={SettingsPage}/>  
         <Stack.Screen name="currentLocation" component={currentLocation}/>
+        <Stack.Screen name="Main Chat Page" component={MainChatPage}/>
         <Stack.Screen name="CurrentLocFun" component={CurrentLocFun}/>
         <Stack.Screen name="Chat" component={Chat}/>  
         <Stack.Screen name="OtherUserProfile" component={OtherUserProfile}/>  

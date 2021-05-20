@@ -13,6 +13,8 @@ const convertToArray = (data) => {
   })
   return res
 }
+
+const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat"
 export default function Chat(props) {
 
   const { userChat } = props.route.params;
@@ -21,12 +23,13 @@ export default function Chat(props) {
   const [usersChat, setUsersChat] = useState([])
 
   useEffect(() => {
+    postUserToChatDB()
+
     let tempArr = [];
-    userChat[0].UsersList.forEach(u => {
-      let user = userChat[0].UsersList.find(x => x.email === u.email)
-      if (user !== null)
-        tempArr.push(user);
-    });
+
+    let user = userChat[0].UsersList[1]
+      tempArr.push(user);
+    
     console.log("temp arrrrr: ", tempArr)
     setUsersChat(tempArr)
     fetchMessages().catch(e => console.log(e))
@@ -36,12 +39,13 @@ export default function Chat(props) {
         _id: 1,
         text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
         createdAt: new Date(),
-        user:{
-          _id: userChat[0].UsersList[1].id,
-          name: userChat[0].UsersList[1].firstName,
-          avatar: userChat[0].UsersList[1].profilePicture,
+        user: {
+          _id: userChat[0].UsersList[0].id,
+          name: userChat[0].UsersList[0].firstName,
+          avatar: userChat[0].UsersList[0].profilePicture,
         },
-        image: "",
+        //image: userChat[1].image1,
+
         // quickReplies: {
         //   type: 'radio',
         //   keepIt: true,
@@ -56,7 +60,6 @@ export default function Chat(props) {
         //     },
         //   ],
         // },
-        image: "",
         //sent: true,
         //received: true,
       },
@@ -68,8 +71,51 @@ export default function Chat(props) {
     updateMessages()
   }, [messages])
 
+  // useEffect(()=>{
+  //   firebase.refOn(message => 
+  //     setMessages(previousState => ({
+  //       messages: GiftedChat.append(previousState.messages, message),
+  //       })
+  //     )
+  //   );
+  // })
+  const postUserToChatDB = () => {
+    var date = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    var fullDate = date + "-" + month + "-" + year
+    fullDate = JSON.stringify(fullDate)
+    console.log('item id: ', fullDate)
+
+    let chatRow = {
+      requestUser: userChat[0].UsersList[0].id,
+      uploadUser: userChat[0].UsersList[1].id,
+      itemId: props.route.params.item.itemId,
+      lastMessageDate: fullDate
+    }
+
+    fetch(urlPostChat, {
+      method: 'POST',
+      body: JSON.stringify(chatRow),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok postChat=', res.ok);
+        return res.json()
+      })
+      .then(i => {
+        console.log(i)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
 
   const fetchMessages = async () => {
+
     try {
       let data = await firebase.database().ref(`${userChat[0].itemRequestId}`).get()
       console.log("data: ", data)
@@ -123,14 +169,14 @@ export default function Chat(props) {
   return (
     <View style={styles.container_extra}>
       <View style={styles.TeamInformation}>
-      <Image source={{uri: userChat[0].UsersList[1].profilePicture}} style={{width:40, height: 40}}/>
+        <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
         <View style={styles.TeamInformation_Up}>
           <View style={styles.TeamInformation_Up_Title}>
-            <Text style={styles.txtTeam}> {userChat[0].UsersList[1].firstName + ' '+ userChat[0].UsersList[1].lastName}</Text>
-            
+            <Text style={styles.txtTeam}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
+            {console.log('usersChat in  chat', usersChat)}
           </View>
           <View style={styles.TeamInformation_Up_imgView}>
-          
+
           </View>
         </View>
       </View>
@@ -138,16 +184,17 @@ export default function Chat(props) {
       <View style={styles.chatContainer}>
         <GiftedChat
           messages={messages}
+          //onSend={firebase.send}
           onSend={messages => onSend(messages)}
           //quickReply={messages.quickReplies}
           //onQuickReply={quickReply => onQuickReply(quickReply)}
           //forceGetKeyboardHeight={true}
           user={{
-            _id: userChat[0].UsersList[1].id,
-            avatar: userChat[0].UsersList[1].profilePicture,
-            name: userChat[0].UsersList[1].firstName + " " + userChat[0].UsersList[0].lastName
+            _id: userChat[0].UsersList[0].id,
+            avatar: userChat[0].UsersList[0].profilePicture,
+            name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
           }}
-          inverted={false}
+        //inverted={false}
         />
       </View>
     </View>

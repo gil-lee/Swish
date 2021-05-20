@@ -43,6 +43,7 @@ export default class LogInPage extends Component {
           this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: tempUser[0] }, initial: false })
+          this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: tempUser[0] } }) //מעביר עמוד ומידע ביחד
 
         }

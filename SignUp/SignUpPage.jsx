@@ -193,7 +193,7 @@ export default class SignUpPage extends Component {
               this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
               this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: newUser }, initial: false })
               this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: newUser }, initial: false })
-              //this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: newUser }, initial: false }) //פה זה לא מעביר עמוד רק את המידע
+              //this.props.navigation.navigate('Navigator', { screen: 'MainChatPage', params: { user: newUser }, initial: false }) //פה זה לא מעביר עמוד רק את המידע
               this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser } })//מעביר עמוד ומידע ביחד
             }
           },

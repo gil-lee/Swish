@@ -32,7 +32,6 @@ export default function CardItem(props) {
     var userUploadItem = props.user
     var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
     var UsersList = [];
-
     UsersList.push(sendMessUser, userUploadItem)
 
     var userChat = [{ UsersList, itemRequestId }]

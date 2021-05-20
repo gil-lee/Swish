@@ -58,7 +58,7 @@ export default function FavoriteListCard(props) {
   return (
     <View>
       {/* {fetchFavList} */}
-      {console.log('first time:1: ', favList)}
+      {/* {console.log('first time:1: ', favList)} */}
           <View key={user.id} style={styles.layout}>
             <TouchableOpacity onPress={goToOtherProfile}>
               <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
