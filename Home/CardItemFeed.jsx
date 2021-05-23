@@ -33,15 +33,15 @@ export default function CardItem(props) {
     var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
     var UsersList = [];
     UsersList.push(sendMessUser, userUploadItem)
-
-    var userChat = [{ UsersList, itemRequestId }]
+    var item = props.data
+    var userChat = [{ UsersList, itemRequestId, item }]
     requestItem(userChat)
 
   }
   function goToOtherProfile() {
-    var user= props.user
-    var logInUser= props.logInUser
-    var users= {user, logInUser}
+    var user = props.user
+    var logInUser = props.logInUser
+    var users = { user, logInUser }
     console.log("users from feed: ", users)
     navigation.navigate('OtherUserProfile', { users: users })
     //navigation.navigate('OtherUserProfile', { user: props.user, LGUser: props.logInUser })

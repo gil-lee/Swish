@@ -1,10 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, Image as ImageBall, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { Badge } from 'react-native-elements'
 import { firebase } from '../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
 
 
 export default function MainChatPage(props) {
@@ -41,123 +40,39 @@ export default function MainChatPage(props) {
           tempArr.push(chats[i])
         }
         setAllChats(tempArr)
-        console.log('state chats: ', allChats)
+        //console.log('state chats: ', allChats)
       },
         (error) => {
           console.log('Error', error);
         })
   }
 
-
-  // const convertToArray = (data) => {
-  //   let res = []
-  //   Object.keys(data).map((key) => {
-  //     let val = data[key]
-  //     res.push({ ...val, createdAt: new Date(val.createdAt) })
-  //   })
-  //   return res
-  // }
-  // const calcBadge = async () => {
-  //   //console.log("last count befor async: ", userChat[0].itemRequestId)
-  //   let lastCount = parseInt(await AsyncStorage.getItem(`@messages_${userChat[0].itemRequestId}`));
-  //   console.log(`lastCount=${lastCount}`)
-  //   let totalInDb = await firebase.database().ref(`${userChat[0].itemRequestId}`).get();
-  //   if (totalInDb.exists()) {
-  //     totalInDb = totalInDb.exportVal()
-  //     totalInDb = convertToArray(totalInDb).length
-  //   } else {
-  //     return 0
-  //   }
-  //   if (!lastCount) {
-  //     lastCount = 0;
-  //   }
-  //   return totalInDb - lastCount;
-  // }
-
-  // const calcUsersCards = async () => {
-  //   console.log("userChat:   ", userChat)
-  //   const LGUserCard = userChat;
-  //   console.log(LGUserCard)
-
-  //   const usersCards = await Promise.all(userChat[0].UsersList.map(async (user, key) => { //את זה לעשות אחרי fetch של המשתמשים שיש לי צאט איתם!
-  //     //let manager = players.find(x => x.Email === team.EmailManager);
-  //     // fetchMessages(team)
-  //     const badge = await calcBadge();
-  //     //console.log(badge)
-  //     return <TouchableOpacity style={styles.teamCard} key={key}
-  //       onPress={() => props.navigation.navigate('Chat', { userChat: userChat })}>
-  //       <View style={styles.contextSide}>
-  //         <View style={styles.headerCard_View}>
-  //           <Text style={{ fontSize: 25, color: 'black' }}>{user.firstName}</Text>
-  //         </View>
-  //         <View style={styles.descripitionCard}>
-  //           <View style={{ flexDirection: 'row' }}>
-  //             <Text> {user.firstName + " " + user.lastName} </Text>
-  //             {/* <Text style={{ fontWeight: 'bold' }}> user: </Text> */}
-  //           </View>
-  //         </View>
-  //       </View>
-  //       <View style={styles.side_img}>
-  //         <Image size={64} source={{ uri: user.profilePicture }} />
-  //       </View>
-  //       {badge === 0 ? null :
-  //         <Badge
-  //           containerStyle={{ position: 'absolute', top: 0, left: 0 }}
-  //           value={badge} //Need to count length of messages from DB
-  //           status="error" />
-  //       }
-  //     </TouchableOpacity>
-  //   }))
-  //   setUsersCards(usersCards);
-  // }
-
-
-  // useEffect(() => {
-  //   const unsubscribe = props.navigation.addListener('focus', () => {
-  //     //calcUsersCards();
-  //     console.log('user in main chat: ', userChat)
-  //   });
-  //   // Return the function to unsubscribe from the event so it gets removed on unmount
-  //   return () => unsubscribe();
-  // }, [props.navigation]);
-
-  // //   useEffect(() => {
-  // //   //var admin = require("swish-s");
-
-  // //   // Get a database reference to our posts
-  // //   var db = firebase.database();
-  // //   var ref = db.ref("swish-s");
-
-  // //   // Attach an asynchronous callback to read the data at our posts reference
-  // //   ref.on("value", function (snapshot) {
-  // //     console.log("snapshottttttt",snapshot.val());
-  // //   }, function (errorObject) {
-  // //     console.log("The read failed: " + errorObject.code);
-  // //   });
-  // // },[]);
-  const getMessagesFirebase=(item, uploadUser, otherUser)=>{
+  const getMessagesFirebase=(itemId, uploadUser, otherUser, item)=>{
+    console.log('item: ', item)
     if(uploadUser == user.id){
-      var itemRequestId = item + "-" + uploadUser + "-" + otherUser.id
+      var itemRequestId = itemId + "-" + uploadUser + "-" + otherUser.id
     }
     else{
-      var itemRequestId = item + "-" + uploadUser + "-" + user.id
+      var itemRequestId = itemId + "-" + uploadUser + "-" + user.id
     }
     
-    console.log('item request id: ', itemRequestId)
+    //console.log('item request id: ', itemRequestId)
     var sendMessUser = user
     var userUploadItem = otherUser
     var UsersList = [];
     UsersList.push(sendMessUser, userUploadItem)
 
-    var userChat = [{ UsersList, itemRequestId }]
-    console.log('user chat: ', userChat)
-    navigation.navigate('Chat', {userChat: userChat, item: item})
+    var userChat = [{ UsersList, itemRequestId, item}]
+    
+    //console.log('user chat: ', userChat)
+    navigation.navigate('Chat', {userChat: userChat, item: itemId})
   }
 
   const returnAllChats =
     allChats.map(user => {
-      return <View key={user.id} style={styles.layout}>
-          <TouchableOpacity onPress={()=>getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0])}>
+      return <ScrollView>
+      <View key={user.id} style={styles.layout}>
+          <TouchableOpacity onPress={()=>getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
             <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
               <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
                 <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName}</Text>
@@ -170,41 +85,16 @@ export default function MainChatPage(props) {
           </TouchableOpacity>
           {/* <View style={{ justifyContent: 'flex-end' }}> </View> */}
         </View>
-      
+        </ScrollView> 
     })
 
   return (
-    // <ScrollView>
+    <ScrollView>
     <View>
       <Text style={{ marginTop: 50 }}>הצ'אטים שלי</Text>
-      <View>
         {returnAllChats}
-      </View>
     </View>
-        //  {console.log('alllllll chats: ', allChats)}
-        // {allChats ?
-        //   allChats.map(user => {
-        //     <View><Text style={styles.Text}>{user.userDTO[0].firstName}</Text></View>
-        //     {console.log('user chats: ', user.userDTO[0].firstName)}
-
-  // <View key={user.id} style={styles.layout}>
-  //                  <TouchableOpacity>
-  //                    <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
-  //                     <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
-  //                        <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName}</Text>
-  //                       <Image source={{ uri: user.userDTO[0].profilePicture }} style={styles.userImage} />
-  //                        <View style={{ justifyContent: 'flex-start' }}>
-
-  //                        </View>
-  //                      </View>
-  //                    </View>
-  //                  </TouchableOpacity>
-  //                  <View style={{ justifyContent: 'flex-end' }}> </View>
-  //                </View> 
-  //  }) : null} 
-
-    // {/* </ScrollView> */}
-  
+     </ScrollView>
 )}
 
 const styles = StyleSheet.create({

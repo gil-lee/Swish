@@ -4,6 +4,11 @@ import { Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat'
 import { firebase } from "../firebase"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
 
 const convertToArray = (data) => {
   let res = []
@@ -17,10 +22,12 @@ const convertToArray = (data) => {
 const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat"
 export default function Chat(props) {
 
+  const navigation = useNavigation();
   const { userChat } = props.route.params;
   //const { users }  = userChat[0].UsersList; 
   const [messages, setMessages] = useState([]);
   const [usersChat, setUsersChat] = useState([])
+  const [checkMessages, setCheckMessages] = useState(false)
 
   useEffect(() => {
     postUserToChatDB()
@@ -28,64 +35,86 @@ export default function Chat(props) {
     let tempArr = [];
 
     let user = userChat[0].UsersList[1]
-      tempArr.push(user);
-    
-    console.log("temp arrrrr: ", tempArr)
+    tempArr.push(user);
+
+    //console.log("temp arrrrr: ", tempArr)
     setUsersChat(tempArr)
     fetchMessages().catch(e => console.log(e))
 
-    setMessages([
-      {
-        _id: 1,
-        text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
-        createdAt: new Date(),
-        user: {
-          _id: userChat[0].UsersList[0].id,
-          name: userChat[0].UsersList[0].firstName,
-          avatar: userChat[0].UsersList[0].profilePicture,
+    if (checkMessages == false) {
+      setMessages([
+        {
+          _id: 1,
+          text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
+          createdAt: new Date(),
+          quickReplies: {
+            type: 'radio',
+            keepIt: true,
+            values: [
+              {
+                title: 'כן',
+                value: 'yes',
+              },
+              {
+                title: 'לא',
+                value: 'no',
+              },
+            ],
+          },
+          user: {
+            _id: userChat[0].UsersList[0].id,
+            name: userChat[0].UsersList[0].firstName,
+            avatar: userChat[0].UsersList[0].profilePicture,
+          },
         },
-        //image: userChat[1].image1,
-
-        // quickReplies: {
-        //   type: 'radio',
-        //   keepIt: true,
-        //   values: [
-        //     {
-        //       title: 'כן',
-        //       value: 'yes',
-        //     },
-        //     {
-        //       title: 'לא',
-        //       value: 'no',
-        //     },
-        //   ],
-        // },
-        //sent: true,
-        //received: true,
-      },
-    ])
+      ])
+    }
   }, [])
+  // setMessages([
+  //   {
+  //     _id: 1,
+  //     text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
+  //     createdAt: new Date(),
+  //     user: {
+  //       _id: userChat[0].UsersList[0].id,
+  //       name: userChat[0].UsersList[0].firstName,
+  //       avatar: userChat[0].UsersList[0].profilePicture,
+  //     },
+  //   },
+  // ])
+  //   }, [])
+  //image: userChat[1].image1,
+
+  // quickReplies: {
+  //   type: 'radio',
+  //   keepIt: true,
+  //   values: [
+  //     {
+  //       title: 'כן',
+  //       value: 'yes',
+  //     },
+  //     {
+  //       title: 'לא',
+  //       value: 'no',
+  //     },
+  //   ],
+  // },
+  //sent: true,
+  //received: true,
+
 
   useEffect(() => {
     if (!messages || messages.length === 0) return
     updateMessages()
   }, [messages])
 
-  // useEffect(()=>{
-  //   firebase.refOn(message => 
-  //     setMessages(previousState => ({
-  //       messages: GiftedChat.append(previousState.messages, message),
-  //       })
-  //     )
-  //   );
-  // })
   const postUserToChatDB = () => {
     var date = new Date().getDate();
     var month = new Date().getMonth() + 1;
     var year = new Date().getFullYear();
-    var fullDate = date + "-" + month + "-" + year
-    fullDate = JSON.stringify(fullDate)
-    console.log('item id: ', fullDate)
+    var fullDate = year + "-" + month + "-" + date
+    //fullDate = JSON.stringify(fullDate)
+    console.log('date: ', fullDate)
 
     let chatRow = {
       requestUser: userChat[0].UsersList[0].id,
@@ -93,7 +122,6 @@ export default function Chat(props) {
       itemId: props.route.params.item.itemId,
       lastMessageDate: fullDate
     }
-
     fetch(urlPostChat, {
       method: 'POST',
       body: JSON.stringify(chatRow),
@@ -118,11 +146,13 @@ export default function Chat(props) {
 
     try {
       let data = await firebase.database().ref(`${userChat[0].itemRequestId}`).get()
-      console.log("data: ", data)
+      //console.log("data: ", data)
       if (data.exists()) {
         data = data.exportVal()
         data = convertToArray(data)
         setMessages(data)
+        setCheckMessages(true)
+        return data;
       }
     } catch (e) {
       console.log(e)
@@ -135,10 +165,11 @@ export default function Chat(props) {
         return {
           ...val,
           createdAt: val.createdAt.getTime()
+
         }
       })
       await firebase.database().ref(`${userChat[0].itemRequestId}`).set(messagesToSave)
-      await AsyncStorage.setItem(`@messages_${userChat[0].itemRequestId}`, `${messagesToSave.length}`)
+      //await AsyncStorage.setItem(`@messages_${userChat[0].itemRequestId}`, `${messagesToSave.length}`)
       //console.log("Updating messages")
     } catch (e) {
       console.log(e)
@@ -147,7 +178,8 @@ export default function Chat(props) {
   }
 
   const onSend = useCallback((message = []) => {
-    console.log("On send")
+    //console.log("On send")
+    updateMessages()
     setMessages((prev) => {
       let newMessages = [...prev, ...message]
       GiftedChat.append(prev, message)
@@ -155,46 +187,69 @@ export default function Chat(props) {
     })
   }, [])
 
-
-  // const PrintNameOfUser = () => {
-  //   let names = '';
-  //   usersChat.forEach(u => {
-  //     names += u.firstName + ", "
-  //     console.log(names)
-  //   })
-  //   return names;
-  // }
+  function btnBack() {
+    navigation.goBack();
+  }
 
 
   return (
-    <View style={styles.container_extra}>
-      <View style={styles.TeamInformation}>
-        <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
-        <View style={styles.TeamInformation_Up}>
-          <View style={styles.TeamInformation_Up_Title}>
-            <Text style={styles.txtTeam}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
-            {console.log('usersChat in  chat', usersChat)}
-          </View>
-          <View style={styles.TeamInformation_Up_imgView}>
+    <View style={styles.containerChatMain}>
+      <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
+        <Icon name="chevron-left" size={20} color="#101010" />
+      </TouchableOpacity>
+      <View style={styles.userAndItemInfo}>
+        <View style={styles.userInfo}>
+          <Text style={styles.text}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
 
+          <View style={styles.userImage}>
+            <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row-reverse' }}>
+          <View style={styles.layout}>
+            <Text style={{ fontWeight: "bold" }}>{userChat[0].item.name}</Text>
+            <View style={styles.header}>
+
+              <Text>{userChat[0].item.numberOfPoints}  </Text>
+              <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+            </View>
+          </View>
+          <View>
+            <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
+              {userChat[0].item.image1 &&
+                <Image source={{ uri: userChat[0].item.image1 }} style={{ height: 150, width: 80, borderColor: '#fff', borderWidth: 2 }}></Image>}
+
+              <View>
+                {userChat[0].item.image2 ?
+                  <Image source={{ uri: userChat[0].item.image2 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+                {userChat[0].item.image3 ?
+                  <Image source={{ uri: userChat[0].item.image3 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+                {userChat[0].item.image4 ?
+                  <Image source={{ uri: userChat[0].item.image4 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+              </View>
+            </View>
           </View>
         </View>
       </View>
 
-      <View style={styles.chatContainer}>
+      <View style={styles.chatMessages}>
         <GiftedChat
           messages={messages}
-          //onSend={firebase.send}
           onSend={messages => onSend(messages)}
-          //quickReply={messages.quickReplies}
-          //onQuickReply={quickReply => onQuickReply(quickReply)}
-          //forceGetKeyboardHeight={true}
+
+          quickReply={messages.quickReplies}
+          onQuickReply={quickReply => onQuickReply(quickReply)}
+          
+          forceGetKeyboardHeight={true}
           user={{
             _id: userChat[0].UsersList[0].id,
             avatar: userChat[0].UsersList[0].profilePicture,
             name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
           }}
-        //inverted={false}
+          alignTop={true}
+          inverted={false}
         />
       </View>
     </View>
@@ -202,56 +257,57 @@ export default function Chat(props) {
 }
 
 const styles = StyleSheet.create({
-  chatContainer: {
+  chatMessages: {
     flex: 1,
     paddingBottom: 10,
     paddingTop: 50,
     width: '95%',
     height: '65%',
   },
+  backBtn: {
+    paddingTop: 50,
+    paddingLeft: 25,
+    alignItems: 'flex-start'
+  },
   container: {
     paddingTop: 10,
     alignItems: "center"
   },
-  container_extra: {
-    paddingTop: 70,
+  containerChatMain: {
+    paddingTop: 10,
     alignItems: 'center',
     flex: 1,
   },
-  TeamInformation: {
+  userAndItemInfo: {
     backgroundColor: '#D9D9D9',
     padding: 15,
-    width: '90%',
+    width: '80%',
+    height: '30%',
     borderRadius: 30,
   },
-  TeamInformation_Up: {
+  userInfo: {
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
   },
-  TeamInformation_players: { flexDirection: 'row-reverse' },
-  TeamInformation_Up_imgView: {
+  userImage: {
     width: 10,
-    height: 100
   },
-  teamImg: {
-    borderRadius: 30
-  },
-  TeamInformation_Up_Title: {
-    //justifyContent: 'flex-start',
-    width: '100%'
-  },
-  txtTeam: {
+  text: {
     alignSelf: 'center',
     paddingBottom: 5,
     fontWeight: "bold",
   },
-  teamName_txt: {
-    alignSelf: 'center',
-    fontSize: 32,
-    fontWeight: "bold",
+  header: {
+    flexDirection: 'row-reverse',
+    marginTop: 10,
+    marginBottom: 10,
+    // marginRight: 10,
+    // marginLeft: 10
   },
-  btnTouch_extra: {
-    marginTop: 15,
-    width: '90%'
+  layout: {
+    // marginRight: 20,
+    // marginLeft: 20,
+    // justifyContent: 'flex-end',
+    // alignItems: 'flex-end'
   },
 })

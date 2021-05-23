@@ -2,9 +2,9 @@
   "expoServerPort": 19000,
   "packagerPort": 19000,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://fj-f7k.anonymous.swish.exp.direct",
+  "packagerNgrokUrl": "https://packager.fj-f7k.anonymous.swish.exp.direct",
+  "ngrokPid": 15340,
   "webpackServerPort": null,
   "devToolsPort": 19002
 }
