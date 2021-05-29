@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
-import { ScrollView } from 'react-native';
-import { Text, View, StyleSheet, Image } from 'react-native'
+import { Text, View, StyleSheet, Image, ImageBackground, ScrollView } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CardItem from './CardItem';
 import { Dropdown } from 'react-native-material-dropdown-v2';
 import CardItemFeed from './CardItemFeed';
-import { ImageBackground } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import currentLocation from '../Location/currentLocation';
+import * as Location from 'expo-location';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
+const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
 const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
@@ -51,6 +50,8 @@ export default class FeedPage extends Component {
       filterName: '',
 
       search: '',
+      latitudeSt: 0,
+      longitudeSt: 0,
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -73,14 +74,33 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlItemStyle);
     this.fetchDropDown(urlItemPrice);
     this.fetchDropDown(urlConditionPrice);
-    this.fetchUserItemsByEmail()
-
+    this.getCurrentLocation()
+    //this.fetchUserItemsByEmail()
     this.getAvatarForUser(this.props.route.params.user)
   }
 
-  fetchUserItemsByEmail = () => {
+  getCurrentLocation = async () => {
+    let premission = await Location.getPermissionsAsync();
+    //console.log('prem..: ',premission)
+    if (premission.status !== 'granted') {
+      alert('error premission fail')
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync();
+    //console.log('location..: ', location)
+    this.setState(
+      {
+        latitudeSt: location.coords.latitude,
+        longitudeSt: location.coords.longitude
+      }
+    )
+    this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
+    this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: true })
+  }
 
-    fetch(urlGetItems + "/" + this.state.userTemplate.email + "/", {
+  fetchUserItemsByEmail = async (longi, lati) => {
+    console.log('longi lati: ', longi, lati)
+    await fetch(urlGetItemsDist +"/"+ this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
@@ -93,6 +113,7 @@ export default class FeedPage extends Component {
       })
       .then(items => {
         this.setState({ itemsList: items }
+          //, () => console.log('items: ', items)
         )
       },
         (error) => {
@@ -120,7 +141,7 @@ export default class FeedPage extends Component {
       })
     })
       .then(res => {
-        console.log('res.ok=', res.ok);
+        //console.log('res.ok=', res.ok);
         return res.json()
       })
       .then(dropDownArr => { //הבאת כל סוגי הפריטים
@@ -204,7 +225,7 @@ export default class FeedPage extends Component {
       })
     })
       .then(res => {
-        console.log('res.ok=', res.ok);
+        //console.log('res.ok=', res.ok);
         return res.json()
       })
       .then(filterItems => {
@@ -250,10 +271,7 @@ export default class FeedPage extends Component {
       value={search}
     />
   }
-  goToLocation=()=>{
-    this.props.navigation.navigate('currentLocation')
-  }
-  
+
   render() {
     const { search } = this.state;
     return (
@@ -329,10 +347,6 @@ export default class FeedPage extends Component {
 
           <View style={styles.line} />
           <ScrollView>
-
-          <TouchableOpacity onPress={this.goToLocation}>
-            <Text>location</Text>
-          </TouchableOpacity>
 
             {this.state.itemsList ?
               this.state.itemsList.map((item) =>

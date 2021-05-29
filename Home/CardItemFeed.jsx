@@ -100,7 +100,7 @@ export default function CardItem(props) {
 
           <View style={{ alignItems: 'center' }}>
             <Text>{props.user.firstName} {props.user.lastName}  </Text>
-            <Text style={{ textDecorationLine: 'underline' }}>{props.user.residence} בק"מ </Text>
+            <Text style={{ textDecorationLine: 'underline' }}>{JSON.stringify(props.data.distance).substring(0,4)} בק"מ </Text>
           </View>
         </View>
       </View>

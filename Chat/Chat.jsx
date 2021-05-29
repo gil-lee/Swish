@@ -21,6 +21,7 @@ const convertToArray = (data) => {
 
 const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat"
 export default function Chat(props) {
+  
 
   const navigation = useNavigation();
   const { userChat } = props.route.params;
@@ -28,6 +29,7 @@ export default function Chat(props) {
   const [messages, setMessages] = useState([]);
   const [usersChat, setUsersChat] = useState([])
   const [checkMessages, setCheckMessages] = useState(false)
+  const [blockChat, setBlockChat] = useState(false)
 
   useEffect(() => {
     postUserToChatDB()
@@ -47,20 +49,30 @@ export default function Chat(props) {
           _id: 1,
           text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
           createdAt: new Date(),
-          quickReplies: {
-            type: 'radio',
-            keepIt: true,
-            values: [
-              {
-                title: 'כן',
-                value: 'yes',
-              },
-              {
-                title: 'לא',
-                value: 'no',
-              },
-            ],
-          },
+          // quickReplies: {
+          //   type: 'radio',
+          //   keepIt: true,
+          //   values: [
+          //     {
+          //       title: 'כן',
+          //       value: 'yes',
+          //     },
+          //     {
+          //       title: 'לא',
+          //       value: 'no',
+          //     },
+          //   ],
+          // },
+          // "quickReplies":[
+          //   {
+          //     "contentType":"text",
+          //     "title":"yes"
+          //   },
+          //   {
+          //     "contentType":"text",
+          //     "title":"no"
+          //   }
+          // ],
           user: {
             _id: userChat[0].UsersList[0].id,
             name: userChat[0].UsersList[0].firstName,
@@ -70,37 +82,6 @@ export default function Chat(props) {
       ])
     }
   }, [])
-  // setMessages([
-  //   {
-  //     _id: 1,
-  //     text: `${userChat[0].UsersList[0].firstName} ` + 'רוצה לקבל את פריט זה, מה תגובתך?',
-  //     createdAt: new Date(),
-  //     user: {
-  //       _id: userChat[0].UsersList[0].id,
-  //       name: userChat[0].UsersList[0].firstName,
-  //       avatar: userChat[0].UsersList[0].profilePicture,
-  //     },
-  //   },
-  // ])
-  //   }, [])
-  //image: userChat[1].image1,
-
-  // quickReplies: {
-  //   type: 'radio',
-  //   keepIt: true,
-  //   values: [
-  //     {
-  //       title: 'כן',
-  //       value: 'yes',
-  //     },
-  //     {
-  //       title: 'לא',
-  //       value: 'no',
-  //     },
-  //   ],
-  // },
-  //sent: true,
-  //received: true,
 
 
   useEffect(() => {
@@ -191,69 +172,80 @@ export default function Chat(props) {
     navigation.goBack();
   }
 
+  function onQuickReply(quickReply) {
 
-  return (
-    <View style={styles.containerChatMain}>
-      <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
-        <Icon name="chevron-left" size={20} color="#101010" />
-      </TouchableOpacity>
-      <View style={styles.userAndItemInfo}>
-        <View style={styles.userInfo}>
-          <Text style={styles.text}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
+    console.log(quickReply)
+    if(quickReply.title === "yes") {
+          // send text message
+          console.log('yes : ', quick.title)
+     } else if (quickReply.title === "no") {
+         // send location
+         console.log('no : ', quick.title)
+     }
+ }
 
-          <View style={styles.userImage}>
-            <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row-reverse' }}>
-          <View style={styles.layout}>
-            <Text style={{ fontWeight: "bold" }}>{userChat[0].item.name}</Text>
-            <View style={styles.header}>
+return (
+  <View style={styles.containerChatMain}>
+    <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
+      <Icon name="chevron-left" size={20} color="#101010" />
+    </TouchableOpacity>
+    <View style={styles.userAndItemInfo}>
+      <View style={styles.userInfo}>
+        <Text style={styles.text}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
 
-              <Text>{userChat[0].item.numberOfPoints}  </Text>
-              <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
-            </View>
-          </View>
-          <View>
-            <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
-              {userChat[0].item.image1 &&
-                <Image source={{ uri: userChat[0].item.image1 }} style={{ height: 150, width: 80, borderColor: '#fff', borderWidth: 2 }}></Image>}
-
-              <View>
-                {userChat[0].item.image2 ?
-                  <Image source={{ uri: userChat[0].item.image2 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-
-                {userChat[0].item.image3 ?
-                  <Image source={{ uri: userChat[0].item.image3 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-
-                {userChat[0].item.image4 ?
-                  <Image source={{ uri: userChat[0].item.image4 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-              </View>
-            </View>
-          </View>
+        <View style={styles.userImage}>
+          <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
         </View>
       </View>
+      <View style={{ flexDirection: 'row-reverse' }}>
+        <View style={styles.layout}>
+          <Text style={{ fontWeight: "bold" }}>{userChat[0].item.name}</Text>
+          <View style={styles.header}>
 
-      <View style={styles.chatMessages}>
-        <GiftedChat
-          messages={messages}
-          onSend={messages => onSend(messages)}
+            <Text>{userChat[0].item.numberOfPoints}  </Text>
+            <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+          </View>
+        </View>
+        <View>
+          <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
+            {userChat[0].item.image1 &&
+              <Image source={{ uri: userChat[0].item.image1 }} style={{ height: 150, width: 80, borderColor: '#fff', borderWidth: 2 }}></Image>}
 
-          quickReply={messages.quickReplies}
-          onQuickReply={quickReply => onQuickReply(quickReply)}
-          
-          forceGetKeyboardHeight={true}
-          user={{
-            _id: userChat[0].UsersList[0].id,
-            avatar: userChat[0].UsersList[0].profilePicture,
-            name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
-          }}
-          alignTop={true}
-          inverted={false}
-        />
+            <View>
+              {userChat[0].item.image2 ?
+                <Image source={{ uri: userChat[0].item.image2 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+              {userChat[0].item.image3 ?
+                <Image source={{ uri: userChat[0].item.image3 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+              {userChat[0].item.image4 ?
+                <Image source={{ uri: userChat[0].item.image4 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+            </View>
+          </View>
+        </View>
       </View>
     </View>
-  );
+
+    <View style={styles.chatMessages}>
+      <GiftedChat
+        messages={messages}
+        onSend={messages => onSend(messages)}
+
+        //onQuickReply={quickReply => onQuickReply(quickReply)}
+
+        forceGetKeyboardHeight={true}
+        user={{
+          _id: userChat[0].UsersList[0].id,
+          avatar: userChat[0].UsersList[0].profilePicture,
+          name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
+        }}
+        alignTop={true}
+        inverted={false}
+        showUserAvatar= {true}
+      />
+    </View>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({

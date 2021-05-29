@@ -28,11 +28,11 @@ export default class LogInPage extends Component {
       })
     })
       .then(res => {
-        console.log('res.ok=', res.ok);
+        //console.log('res.ok=', res.ok);
         return res.json()
       })
       .then(tempUser => {
-        console.log('user: ', tempUser)
+        //console.log('user: ', tempUser)
         if (tempUser.length == 0) {
           Alert.alert("אופס...", "קיימת שגיאה בכתובת האימייל או בסיסמה") //כאשר אחד מהפרטים שהוזנו שגוי
        

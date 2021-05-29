@@ -101,9 +101,6 @@ export default class ProfilePage extends Component {
     this.props.navigation.navigate('SettingsPage', { user: this.state.user })
   }
 
-  //  goToDelete=() =>{
-  //     this.props.navigation.push('DeleteItem', { data: props.data , user: props.user})
-  //   }
   render() {
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>

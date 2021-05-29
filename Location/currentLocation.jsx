@@ -23,7 +23,7 @@ export default class currentLocation extends Component {
       alert('error premission fail')
       return;
     }
-    let location = await Location.getCurrentPositionAsync({});
+    let location = await Location.getCurrentPositionAsync();
     console.log('location..: ',location)
     let lati= location.coords.latitude
     let longi= location.coords.longitude

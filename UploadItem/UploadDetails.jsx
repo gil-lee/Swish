@@ -53,6 +53,7 @@ export default class UploadDetails extends Component {
 
   componentDidMount() { //פאטצים להביא את הנתונים של הרשימות הנפתחות: סוג, מידה, סגנון ומצב
     this.callFetchFunc()
+    //this.getCurrentLocation()
 
   }
   callFetchFunc = () => {
@@ -60,6 +61,7 @@ export default class UploadDetails extends Component {
     this.fetchDropDown(urlItemStyle);
     this.fetchDropDown(urlItemPrice);
     this.fetchDropDown(urlConditionPrice);
+    //this.getCurrentLocation()
   }
   onChangeText = (key, val) => { //פונקצייה שמשנה את הסטייטים
     this.setState({ [key]: val })
@@ -219,7 +221,26 @@ export default class UploadDetails extends Component {
       });
   }
 
+  getCurrentLocation = async () => {
+    console.log('in location func')
+    let premission = await Location.getPermissionsAsync();
+    //console.log('prem..: ',premission)
+    if (premission.status !== 'granted') {
+      alert('error premission fail')
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync();
+    console.log('location..: ', location)
+    this.setState(
+      {
+        latitudeSt: location.coords.latitude,
+        longitudeSt: location.coords.longitude
+      }, () => console.log('item loc: ', this.state.longitudeSt, this.state.latitudeSt)
+    )
+  }
+
   confirmUpload = () => { //וידוא העלאת תמונה לשרת על ידי המשתמש
+    // this.getCurrentLocation() 
 
     let finalPrice;
     let price;
@@ -253,9 +274,11 @@ export default class UploadDetails extends Component {
       image2: this.state.image2,
       image3: this.state.image3,
       image4: this.state.image4,
-      numberOfPoints: finalPrice
+      numberOfPoints: finalPrice,
+      longitude: this.props.route.params.longitude,
+      latitude: this.props.route.params.latitude
     }
-
+    console.log('item: ', item)
     if (item.name != '' && item.size != '' && item.style != '' && item.type != '' && item.condition != '' && this.state.image1 != '') {
       this.props.navigation.push('ConfirmUpload', { confirmItem: item, user: this.props.route.params.user }) //מעבר לעמוד הבא להעלאת הפריט
     }

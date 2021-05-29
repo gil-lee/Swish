@@ -25,6 +25,8 @@ export default class ConfirmUpload extends Component {
       conditionId: '',
       user: this.props.route.params.user,
       userAfterPut: '',
+      //longitudeSt: 0,
+      //latitudeSt: 0,
     }
   }
   componentDidMount() { //פאטצים להבאת idלכל קטגוריה 
@@ -36,8 +38,9 @@ export default class ConfirmUpload extends Component {
     this.fetchCheck(urlItemStyle);
     this.fetchCheck(urlItemPrice);
     this.fetchCheck(urlConditionPrice);
+    //this.getCurrentLocation();
   }
-
+  
   fetchCheck = (url) => { //הבאת id לכל קטגוריה 
 
     fetch(url, {
@@ -86,7 +89,6 @@ export default class ConfirmUpload extends Component {
         })
   }
 
-
   fetchItem = () => {
 
     let item = { //יצירת פריט חדש
@@ -99,10 +101,13 @@ export default class ConfirmUpload extends Component {
       sizeId: this.state.sizeId,
       typeId: this.state.typeId,
       styleId: this.state.styleId,
-      conditionId: this.state.conditionId
+      conditionId: this.state.conditionId,
+      longitude: this.state.finalItem.longitude,
+      latitude: this.state.finalItem.latitude
     }
+    console.log('item: ', item)
 
-    fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
+     fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
       method: 'POST',
       body: JSON.stringify(item),
       headers: new Headers({
