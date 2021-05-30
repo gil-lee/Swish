@@ -86,6 +86,18 @@ export default class FeedPage extends Component {
       alert('error premission fail')
       return;
     }
+    // let last = await Location.getLastKnownPositionAsync();
+    // if (last == null) {
+    //   alert('error no last location')
+    // }
+    // else {
+    //   this.setState(
+    //     {
+    //       latitudeSt: last.coords.latitude,
+    //       longitudeSt: last.coords.longitude
+    //     }
+    //   )
+    // }
     let location = await Location.getCurrentPositionAsync();
     //console.log('location..: ', location)
     this.setState(
@@ -95,12 +107,12 @@ export default class FeedPage extends Component {
       }
     )
     this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
-    this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: true })
+    this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
   }
 
   fetchUserItemsByEmail = async (longi, lati) => {
     console.log('longi lati: ', longi, lati)
-    await fetch(urlGetItemsDist +"/"+ this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
+    await fetch(urlGetItemsDist + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
