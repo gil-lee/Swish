@@ -5,6 +5,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Chat from '../Chat/Chat'
 import { useNavigation } from '@react-navigation/native';
+import Gallery from 'react-native-image-gallery';
+
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
@@ -47,6 +49,36 @@ export default function CardItem(props) {
     //navigation.navigate('OtherUserProfile', { user: props.user, LGUser: props.logInUser })
   }
 
+  function openGallery() {
+
+   return <Gallery
+        style={{ flex: 1, backgroundColor: 'black' }}
+        images={[
+          { source: { uri: props.data.image1 } },
+          { source: { uri: props.data.image2 } },
+          { source: { uri: props.data.image3 } },
+          { source: { uri: props.data.image4 } }
+        ]}
+      />
+    // let tempArr = [];
+    // let arr= [];
+    // arr.push(props.data.image1,props.data.image2,props.data.image3,props.data.image4)
+    // // console.log('image: ',(arr))
+    // // for (var i = 0; i <= arr.length; i++) {
+    // //   if (arr[i] != "") {
+    // //     tempArr.push(arr[i])
+    // //   }
+    // //   else{continue;}
+    // // }
+    // // console.log('temp: ', tempArr)
+    // return <Gallery
+    //   style={{ flex: 1, backgroundColor: 'black' }}
+    //   images= { arr.map(i=>{[
+    //     { source: { uri: i } }]
+    //   })}
+   
+  }
+
   return (
     <ScrollView>
 
@@ -72,21 +104,23 @@ export default function CardItem(props) {
         {props.data.description ?
           <Text style={{ marginRight: 10, marginLeft: 10 }}>{props.data.description}</Text> : null}
       </View>
-      <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
-        {props.data.image1 &&
-          <Image source={{ uri: props.data.image1 }} style={{ height: 270, width: 200, borderColor: '#fff', borderWidth: 2 }}></Image>}
+      <TouchableOpacity onPress={openGallery}>
+        <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
+          {props.data.image1 &&
+            <Image source={{ uri: props.data.image1 }} style={{ height: 270, width: 200, borderColor: '#fff', borderWidth: 2 }}></Image>}
 
-        <View>
-          {props.data.image2 ?
-            <Image source={{ uri: props.data.image2 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+          <View>
+            {props.data.image2 ?
+              <Image source={{ uri: props.data.image2 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
 
-          {props.data.image3 ?
-            <Image source={{ uri: props.data.image3 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+            {props.data.image3 ?
+              <Image source={{ uri: props.data.image3 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
 
-          {props.data.image4 ?
-            <Image source={{ uri: props.data.image4 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+            {props.data.image4 ?
+              <Image source={{ uri: props.data.image4 }} style={{ height: 90, width: 100, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
 
       <View style={styles.footer}>
@@ -100,7 +134,7 @@ export default function CardItem(props) {
 
           <View style={{ alignItems: 'center' }}>
             <Text>{props.user.firstName} {props.user.lastName}  </Text>
-            <Text style={{ textDecorationLine: 'underline' }}>{JSON.stringify(props.data.distance).substring(0,4)} בק"מ </Text>
+            <Text style={{ textDecorationLine: 'underline' }}>{JSON.stringify(props.data.distance).substring(0, 4)} בק"מ </Text>
           </View>
         </View>
       </View>

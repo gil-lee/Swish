@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Image, ImageBackground, ScrollView } from 'react-native'
+import { Text, View, StyleSheet, Image, ImageBackground, ScrollView, Alert } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown } from 'react-native-material-dropdown-v2';
@@ -7,6 +7,7 @@ import CardItemFeed from './CardItemFeed';
 import { SearchBar } from 'react-native-elements';
 import currentLocation from '../Location/currentLocation';
 import * as Location from 'expo-location';
+import AutoComplete from './AutoComplete';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -64,10 +65,11 @@ export default class FeedPage extends Component {
     // console.log('user in feed: ', this.state.userTemplate)
   }
   componentWillUnmount() {
-    this.setState({ userTemplate: this.props.route.params.user }
-      // , () => {
-      // console.log('user in feed will: ', this.state.userTemplate)}
-    )
+    this.setState({ userTemplate: this.props.route.params.user })
+    this.getLocation(true)
+    // , () => {
+    // console.log('user in feed will: ', this.state.userTemplate)}
+
   }
   callFetchFunc = () => {
     this.fetchDropDown(urlItemSize);
@@ -75,39 +77,57 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlItemPrice);
     this.fetchDropDown(urlConditionPrice);
     this.getCurrentLocation()
-    //this.fetchUserItemsByEmail()
     this.getAvatarForUser(this.props.route.params.user)
   }
 
   getCurrentLocation = async () => {
-    let premission = await Location.getPermissionsAsync();
-    //console.log('prem..: ',premission)
-    if (premission.status !== 'granted') {
-      alert('error premission fail')
-      return;
+
+    let premission = await Location.hasServicesEnabledAsync();
+    console.log('prem..: ', premission)
+
+    if (premission === false) {
+      Alert.alert('אופס..', 'לתשומת לבך לא ניתן לראות פריטים זמינים ללא הפעלת שירות מיקום נוכחי',
+        [
+          { text: "התעלם", onPress: () => this.setState({ locationPre: false }) },
+          {
+            text: "הפעל שירותי מיקום",
+            onPress: this.getPremission
+          }
+        ])
     }
-    // let last = await Location.getLastKnownPositionAsync();
-    // if (last == null) {
-    //   alert('error no last location')
-    // }
-    // else {
-    //   this.setState(
-    //     {
-    //       latitudeSt: last.coords.latitude,
-    //       longitudeSt: last.coords.longitude
-    //     }
-    //   )
-    // }
-    let location = await Location.getCurrentPositionAsync();
-    //console.log('location..: ', location)
-    this.setState(
-      {
-        latitudeSt: location.coords.latitude,
-        longitudeSt: location.coords.longitude
-      }
-    )
-    this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
-    this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
+    if (premission === true) {
+      let location = await Location.getCurrentPositionAsync();
+      console.log('location..: ', location)
+      this.setState(
+        {
+          latitudeSt: location.coords.latitude,
+          longitudeSt: location.coords.longitude
+        }
+      )
+      this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
+      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
+    }
+  }
+
+  getPremission = async () => {
+    this.setState({ locationPre: true });
+    let prem = await Location.getPermissionsAsync();
+    console.log('prem2: ', prem.granted)
+    this.getLocation(prem)
+  }
+  getLocation = async (prem) => {
+    if (prem.granted == true) {
+      let location = await Location.getCurrentPositionAsync();
+      console.log('location: ', location)
+      this.setState(
+        {
+          latitudeSt: location.coords.latitude,
+          longitudeSt: location.coords.longitude
+        }
+      )
+      this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
+      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
+    }
   }
 
   fetchUserItemsByEmail = async (longi, lati) => {
@@ -277,26 +297,17 @@ export default class FeedPage extends Component {
   }
 
   updateSearch = () => {
-    return <SearchBar
-      placeholder="Type Here..."
-      onChangeText={this.updateSearch}
-      value={search}
-    />
+    this.props.navigation.navigate('AutoComplete')
   }
 
   render() {
-    const { search } = this.state;
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View style={styles.container}>
             <TouchableOpacity onPress={this.updateSearch}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={32} />
-              {/* <SearchBar
-        placeholder="Type Here..."
-        onChangeText={this.updateSearch}
-        value={search}
-      /> */}
+
             </TouchableOpacity>
             <View style={{ flexDirection: 'row' }}>
               <Image source={{ uri: this.state.userTemplate.profilePicture }} style={styles.userImage}></Image>
@@ -359,6 +370,12 @@ export default class FeedPage extends Component {
 
           <View style={styles.line} />
           <ScrollView>
+            {this.state.locationPre == false &&
+              <View style={{ alignItems: 'center', marginTop: 50 }}>
+                <Text>אין פריטים זמינים לצפייה...</Text>
+                <Text>לצפייה בפריטים הפעל/י את שירותי המיקום</Text>
+              </View>}
+
 
             {this.state.itemsList ?
               this.state.itemsList.map((item) =>

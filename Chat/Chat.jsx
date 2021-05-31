@@ -21,7 +21,7 @@ const convertToArray = (data) => {
 
 const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat"
 export default function Chat(props) {
-  
+
 
   const navigation = useNavigation();
   const { userChat } = props.route.params;
@@ -167,85 +167,136 @@ export default function Chat(props) {
       return newMessages
     })
   }, [])
+  // const onSendQuick = useCallback((message = []) => {
+  //   //console.log("On send")
+  //   updateMessages()
+  //   setMessages((prev) => {
+  //     let newMessages = [...prev, ...message]
+  //     GiftedChat.append(prev, message)
+  //     return newMessages
+  //   })
+  // }, [])
+
 
   function btnBack() {
     navigation.goBack();
   }
 
-  function onQuickReply(quickReply) {
+  // const onQuickReply = replies => {
+  //   let answer;
+  //   let message;
+  //   if (replies.length === 1) {
+  //     answer = replies[0].title
+  //     message= [
+  //       {
+  //         _id: 5,
+  //         text: answer,
+  //         createdAt: new Date(),
+  //         user:{
+  //           _id: userChat[0].UsersList[1].id,
+  //           name: userChat[0].UsersList[1].firstName,
+  //           avatar: userChat[0].UsersList[1].profilePicture,
+  //         }
+  //       }
+  //     ]
+  //     onSendQuick(message)
+  //     console.log(answer)
+  //     return answer;
+  //   }
+  //   else {
+  //     return console.log('no reply')
+  //   }
+    //return answer;
+    // const createdAt = new Date()
+    // if (replies.length === 1) {
+    //   onSend([
+    //     {
+    //       createdAt,
+    //       _id: Math.round(Math.random() * 1000000),
+    //       text: replies[0].title,
+    //       user,
+    //     },
+    //   ])
+    // } else if (replies.length > 1) {
+    //   onSend([
+    //     {
+    //       createdAt,
+    //       _id: Math.round(Math.random() * 1000000),
+    //       text: replies.map(reply => reply.title).join(', '),
+    //       user,
+    //     },
+    //   ])
+    // } else {
+    //   console.warn('replies param is not set correctly')
+    // }
+  
 
-    console.log(quickReply)
-    if(quickReply.title === "yes") {
-          // send text message
-          console.log('yes : ', quick.title)
-     } else if (quickReply.title === "no") {
-         // send location
-         console.log('no : ', quick.title)
-     }
- }
 
-return (
-  <View style={styles.containerChatMain}>
-    <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
-      <Icon name="chevron-left" size={20} color="#101010" />
-    </TouchableOpacity>
-    <View style={styles.userAndItemInfo}>
-      <View style={styles.userInfo}>
-        <Text style={styles.text}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
 
-        <View style={styles.userImage}>
-          <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row-reverse' }}>
-        <View style={styles.layout}>
-          <Text style={{ fontWeight: "bold" }}>{userChat[0].item.name}</Text>
-          <View style={styles.header}>
+  return (
+    <View style={styles.containerChatMain}>
+      <TouchableOpacity onPress={btnBack} style={styles.backBtn}>
+        <Icon name="chevron-left" size={20} color="#101010" />
+      </TouchableOpacity>
+      <View style={styles.userAndItemInfo}>
+        <View style={styles.userInfo}>
+          <Text style={styles.text}> {userChat[0].UsersList[1].firstName + ' ' + userChat[0].UsersList[1].lastName}</Text>
 
-            <Text>{userChat[0].item.numberOfPoints}  </Text>
-            <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+          <View style={styles.userImage}>
+            <Image source={{ uri: userChat[0].UsersList[1].profilePicture }} style={{ width: 40, height: 40 }} />
           </View>
         </View>
-        <View>
-          <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
-            {userChat[0].item.image1 &&
-              <Image source={{ uri: userChat[0].item.image1 }} style={{ height: 150, width: 80, borderColor: '#fff', borderWidth: 2 }}></Image>}
+        <View style={{ flexDirection: 'row-reverse' }}>
+          <View style={styles.layout}>
+            <Text style={{ fontWeight: "bold" }}>{userChat[0].item.name}</Text>
+            <View style={styles.header}>
 
-            <View>
-              {userChat[0].item.image2 ?
-                <Image source={{ uri: userChat[0].item.image2 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+              <Text>{userChat[0].item.numberOfPoints}  </Text>
+              <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+            </View>
+          </View>
+          <View>
+            <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
+              {userChat[0].item.image1 &&
+                <Image source={{ uri: userChat[0].item.image1 }} style={{ height: 150, width: 80, borderColor: '#fff', borderWidth: 2 }}></Image>}
 
-              {userChat[0].item.image3 ?
-                <Image source={{ uri: userChat[0].item.image3 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+              <View>
+                {userChat[0].item.image2 ?
+                  <Image source={{ uri: userChat[0].item.image2 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
 
-              {userChat[0].item.image4 ?
-                <Image source={{ uri: userChat[0].item.image4 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+                {userChat[0].item.image3 ?
+                  <Image source={{ uri: userChat[0].item.image3 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+                {userChat[0].item.image4 ?
+                  <Image source={{ uri: userChat[0].item.image4 }} style={{ height: 50, width: 60, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+              </View>
             </View>
           </View>
         </View>
       </View>
+
+      <View style={styles.chatMessages}>
+        <GiftedChat
+          messages={messages}
+          //quickReplies={messages.quickReplies}
+          onSend={messages => onSend(messages)}
+
+          //onQuickReply={onQuickReply}
+          //renderQuickReplySend={(send)=> console.log('send: ', send)}
+          //renderQuickReplies={(quick)=> console.log('answer: ', quick.value)}
+          forceGetKeyboardHeight={true}
+          user={{
+            _id: userChat[0].UsersList[0].id,
+            avatar: userChat[0].UsersList[0].profilePicture,
+            name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
+          }}
+          alignTop={true}
+          inverted={false}
+          showUserAvatar={true}
+        />
+      </View>
     </View>
-
-    <View style={styles.chatMessages}>
-      <GiftedChat
-        messages={messages}
-        onSend={messages => onSend(messages)}
-
-        //onQuickReply={quickReply => onQuickReply(quickReply)}
-
-        forceGetKeyboardHeight={true}
-        user={{
-          _id: userChat[0].UsersList[0].id,
-          avatar: userChat[0].UsersList[0].profilePicture,
-          name: userChat[0].UsersList[0].firstName + " " + userChat[0].UsersList[0].lastName
-        }}
-        alignTop={true}
-        inverted={false}
-        showUserAvatar= {true}
-      />
-    </View>
-  </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
