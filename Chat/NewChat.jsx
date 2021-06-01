@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, ScrollView } from 'react-native'
 import { firebase } from "../firebase"
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 export default class extends React.Component {
@@ -72,11 +73,11 @@ export default class extends React.Component {
 
   convertTime = (time) => {
     let d = new Date(time);
-    let c= new Date();
-    let result= (d.getHours() < 10 ? '0' : '') + d.getHours()+ ':'
-    result += (d.getMinutes()< 10 ? '0': '') + d.getMinutes();
-    if(c.getDay() !== d.getDay()){
-      result= d.getDay() + ' ' + d.getMonth() + ' ' + result;
+    let c = new Date();
+    let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':'
+    result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+    if (c.getDay() !== d.getDay()) {
+      result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
     }
     return result;
   }
@@ -85,22 +86,24 @@ export default class extends React.Component {
     //let { heigth, width } = Dimensions.get('window');
     return (
       <SafeAreaView >
-        <FlatList
-          style={{ padding: 10, marginTop: 50 }}
-          data={this.state.messagesList}
-          renderItem={this.renderRow}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 590 }}>
-
+        <ScrollView>
+          <FlatList
+            style={{ padding: 10, marginTop: 50 }}
+            data={this.state.messagesList}
+            renderItem={this.renderRow}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </ScrollView>
+        <View style={ styles.sendInputView}>
           <TextInput
             style={styles.input}
             value={this.state.textMessage}
-            placeholder="Type..."
+            placeholder="..."
             onChangeText={this.handleChange('textMessage')}
           />
-          <TouchableOpacity onPress={this.sendMessage}>
-            <Text style={styles.btnText}>send</Text>
+
+          <TouchableOpacity style={ styles.sendBtn} onPress={this.sendMessage}>
+            <Icon name="paper-plane" size={20} color="#fff" style={{margin:11}}/>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -116,18 +119,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
+  sendInputView:{
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    position: 'absolute', 
+    top: 590,
+  },
+
   input: {
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '80%',
+    width: '75%',
     marginBottom: 10,
     marginTop: 40,
-
-    //borderRaduis: 5
+    marginLeft: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 14,
+    borderColor: "#7d7d7d",
+    direction: 'rtl',
+    writingDirection: 'rtl',
   },
   btnText: {
     color: 'darkblue',
     fontSize: 20
+  },
+  sendBtn:{
+    marginTop: 35, 
+    marginRight: 20, 
+    marginLeft: 5, 
+    backgroundColor: '#a7a7a7',
+    //borderRadius: 60,
+    borderWidth: 1,
+    borderRadius: 14,
+    borderColor: '#7d7d7d',
+    height: 43,
+    width:50,
   }
 })
