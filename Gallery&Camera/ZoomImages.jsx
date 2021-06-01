@@ -39,7 +39,7 @@ export default class ZoomImages extends Component {
       <View>
         <Modal visible={this.state.visible} transparent={true} animationType="slide">
           <TouchableOpacity onPress={this.closeModal} style={{ backgroundColor: '#000' }}>
-            <Icon name="close" size={20} color="#fff" style={{ margin: 20 }} />
+            <Icon name="close" size={20} color="#fff" style={{ marginTop: 50, marginRight: 20, marginLeft: 20 }} />
           </TouchableOpacity>
           <ImageViewer imageUrls={this.state.images} />
         </Modal>

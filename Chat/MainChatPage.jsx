@@ -65,7 +65,8 @@ export default function MainChatPage(props) {
     var userChat = [{ UsersList, itemRequestId, item}]
     
     //console.log('user chat: ', userChat)
-    navigation.navigate('Chat', {userChat: userChat, item: itemId})
+    //navigation.navigate('Chat', {userChat: userChat, item: itemId})
+    navigation.navigate('NewChat', {userChat: userChat, item: itemId})
   }
 
   const returnAllChats =

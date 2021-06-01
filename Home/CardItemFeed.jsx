@@ -35,7 +35,8 @@ export default function CardItem(props) {
 
   function requestItem(userChat) {
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
-    navigation.navigate('Chat', { userChat: userChat, item: props.data })
+    //navigation.navigate('Chat', { userChat: userChat, item: props.data })
+    navigation.navigate('NewChat', { userChat: userChat, item: props.data })
     //navigation.navigate('Main Chat Page', {userChat: userChat, item:props.data})
   }
 
