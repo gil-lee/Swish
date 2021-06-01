@@ -53,6 +53,7 @@ export default class FeedPage extends Component {
       search: '',
       latitudeSt: 0,
       longitudeSt: 0,
+      locationPre: false,
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -83,8 +84,6 @@ export default class FeedPage extends Component {
   getCurrentLocation = async () => {
 
     let premission = await Location.hasServicesEnabledAsync();
-    console.log('prem..: ', premission)
-
     if (premission === false) {
       Alert.alert('אופס..', 'לתשומת לבך לא ניתן לראות פריטים זמינים ללא הפעלת שירות מיקום נוכחי',
         [
@@ -95,23 +94,15 @@ export default class FeedPage extends Component {
           }
         ])
     }
+    console.log('prem..: ', premission)
     if (premission === true) {
-      let location = await Location.getCurrentPositionAsync();
-      console.log('location..: ', location)
-      this.setState(
-        {
-          latitudeSt: location.coords.latitude,
-          longitudeSt: location.coords.longitude
-        }
-      )
-      this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
-      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
+      this.getPremission()
     }
   }
 
   getPremission = async () => {
     this.setState({ locationPre: true });
-    let prem = await Location.getPermissionsAsync();
+    let prem = await Location.requestPermissionsAsync();
     console.log('prem2: ', prem.granted)
     this.getLocation(prem)
   }
@@ -122,7 +113,8 @@ export default class FeedPage extends Component {
       this.setState(
         {
           latitudeSt: location.coords.latitude,
-          longitudeSt: location.coords.longitude
+          longitudeSt: location.coords.longitude,
+          locationPre: true
         }
       )
       this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)

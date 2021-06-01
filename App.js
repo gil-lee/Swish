@@ -23,6 +23,7 @@ import currentLocation from './Location/currentLocation';
 import CurrentLocFun from './Location/CurrentLocFun';
 import AutoComplete from './Home/AutoComplete';
 import NewChat from './Chat/NewChat';
+import ZoomImages from './Gallery&Camera/ZoomImages';
 
 const Stack = createStackNavigator();
 //const Tab = createBottomTabNavigator();
@@ -46,6 +47,7 @@ export default function App() {
         <Stack.Screen name="AutoComplete" component={AutoComplete}/> 
         <Stack.Screen name="currentLocation" component={currentLocation}/>
         <Stack.Screen name="NewChat" component={NewChat}/>
+        <Stack.Screen name="ZoomImages" component={ZoomImages}/>  
         <Stack.Screen name="Main Chat Page" component={MainChatPage}/>
         <Stack.Screen name="CurrentLocFun" component={CurrentLocFun}/>
         <Stack.Screen name="Chat" component={Chat}/>  

@@ -1,11 +1,14 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from 'react-native'
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Chat from '../Chat/Chat'
 import { useNavigation } from '@react-navigation/native';
-import Gallery from 'react-native-image-gallery';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
+
 
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
@@ -22,6 +25,13 @@ const itemCond = '';
 export default function CardItem(props) {
 
   const navigation = useNavigation();
+  const [index, setIndex] = useState(0)
+  const [images, setImages] = useState([
+    {url: props.data.image1 },
+    {url: props.data.image2 },
+    {url: props.data.image3 },
+    {url: props.data.image4 },
+  ])
 
   function requestItem(userChat) {
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
@@ -50,33 +60,16 @@ export default function CardItem(props) {
   }
 
   function openGallery() {
+    navigation.navigate('ZoomImages', images)
 
-   return <Gallery
-        style={{ flex: 1, backgroundColor: 'black' }}
-        images={[
-          { source: { uri: props.data.image1 } },
-          { source: { uri: props.data.image2 } },
-          { source: { uri: props.data.image3 } },
-          { source: { uri: props.data.image4 } }
-        ]}
-      />
-    // let tempArr = [];
-    // let arr= [];
-    // arr.push(props.data.image1,props.data.image2,props.data.image3,props.data.image4)
-    // // console.log('image: ',(arr))
-    // // for (var i = 0; i <= arr.length; i++) {
-    // //   if (arr[i] != "") {
-    // //     tempArr.push(arr[i])
-    // //   }
-    // //   else{continue;}
-    // // }
-    // // console.log('temp: ', tempArr)
-    // return <Gallery
-    //   style={{ flex: 1, backgroundColor: 'black' }}
-    //   images= { arr.map(i=>{[
-    //     { source: { uri: i } }]
-    //   })}
-   
+  }
+  function renderError() {
+    return (
+      <View style={{ flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ color: 'white', fontSize: 15, fontStyle: 'italic' }}>This image cannot be displayed...</Text>
+        <Text style={{ color: 'white', fontSize: 15, fontStyle: 'italic' }}>... but this is fine :)</Text>
+      </View>
+    );
   }
 
   return (
@@ -91,7 +84,6 @@ export default function CardItem(props) {
               <Text style={styles.btnText}>בקשת פריט</Text>
             </TouchableOpacity>
           </View>
-
         </View>
 
         <View style={styles.header2}>
@@ -104,7 +96,7 @@ export default function CardItem(props) {
         {props.data.description ?
           <Text style={{ marginRight: 10, marginLeft: 10 }}>{props.data.description}</Text> : null}
       </View>
-      <TouchableOpacity onPress={openGallery}>
+      <TouchableOpacity onPress={(openGallery)}>
         <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
           {props.data.image1 &&
             <Image source={{ uri: props.data.image1 }} style={{ height: 270, width: 200, borderColor: '#fff', borderWidth: 2 }}></Image>}
