@@ -10,6 +10,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 
+const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat";
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
@@ -34,6 +35,39 @@ export default function CardItem(props) {
   ])
 
   function requestItem(userChat) {
+      var date = new Date().getDate();
+      var month = new Date().getMonth() + 1;
+      var year = new Date().getFullYear();
+      var fullDate = year + "-" + month + "-" + date
+      console.log('date: ', fullDate)
+  
+      let chatRow = {
+        requestUser: userChat[0].UsersList[0].id,
+        uploadUser: userChat[0].UsersList[1].id,
+        itemId: userChat[0].item.itemId,
+        lastMessageDate: fullDate
+      }
+      console.log('chatRow: ', chatRow)
+      fetch(urlPostChat, {
+        method: 'POST',
+        body: JSON.stringify(chatRow),
+        headers: new Headers({
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
+        })
+      })
+        .then(res => {
+          console.log('res.ok postChat=', res.ok);
+          return res.json()
+        })
+        .then(i => {
+          console.log(i)
+        },
+          (error) => {
+            console.log('Error', error);
+          })
+    
+
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     //navigation.navigate('Chat', { userChat: userChat, item: props.data })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, Image as ImageBall, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { Badge } from 'react-native-elements'
 import { firebase } from '../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 export default function MainChatPage(props) {
@@ -40,40 +41,40 @@ export default function MainChatPage(props) {
           tempArr.push(chats[i])
         }
         setAllChats(tempArr)
-        //console.log('state chats: ', allChats)
+        console.log('state chats: ', chats)
       },
         (error) => {
           console.log('Error', error);
         })
   }
 
-  const getMessagesFirebase=(itemId, uploadUser, otherUser, item)=>{
+  const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     console.log('item: ', item)
-    if(uploadUser == user.id){
+    if (uploadUser == user.id) {
       var itemRequestId = itemId + "-" + uploadUser + "-" + otherUser.id
     }
-    else{
+    else {
       var itemRequestId = itemId + "-" + uploadUser + "-" + user.id
     }
-    
+
     //console.log('item request id: ', itemRequestId)
     var sendMessUser = user
     var userUploadItem = otherUser
     var UsersList = [];
     UsersList.push(sendMessUser, userUploadItem)
 
-    var userChat = [{ UsersList, itemRequestId, item}]
-    
+    var userChat = [{ UsersList, itemRequestId, item }]
+
     //console.log('user chat: ', userChat)
     //navigation.navigate('Chat', {userChat: userChat, item: itemId})
-    navigation.navigate('NewChat', {userChat: userChat, item: itemId})
+    navigation.navigate('NewChat', { userChat: userChat, item: itemId })
   }
 
   const returnAllChats =
     allChats.map(user => {
       return <ScrollView>
-      <View key={user.id} style={styles.layout}>
-          <TouchableOpacity onPress={()=>getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
+        <View key={user.id} style={styles.layout}>
+          <TouchableOpacity onPress={() => getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
             <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
               <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
                 <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName}</Text>
@@ -86,21 +87,49 @@ export default function MainChatPage(props) {
           </TouchableOpacity>
           {/* <View style={{ justifyContent: 'flex-end' }}> </View> */}
         </View>
-        </ScrollView> 
+      </ScrollView>
     })
 
   return (
     <ScrollView>
-    <View>
-      <Text style={{ marginTop: 50 }}>הצ'אטים שלי</Text>
+      <View>
+        <View style={styles.container}>
+          <View style={{ flexDirection: 'row' }}>
+            <Image source={{ uri: user.profilePicture }} style={styles.userImage}></Image>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={styles.userHeader}>{user.firstName} {user.lastName}</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+                <Text style={styles.userHeader}>{user.numOfPoints}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={styles.line} />
         {returnAllChats}
-    </View>
-     </ScrollView>
-)}
+      </View>
+    </ScrollView>
+  )
+}
 
 const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
+  },
+  userHeader: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
+  },
+  line: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 8,
+    borderBottomColor: '#a7a7a7',
+    borderBottomWidth: 1
   },
   Text: {
     fontSize: 17,
@@ -109,7 +138,15 @@ const styles = StyleSheet.create({
     paddingRight: 19,
     paddingLeft: 19
   },
+  container: {
+    alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 20,
+    marginTop: 60,
+    marginBottom: 10,
+  },
   layout: {
+    marginTop:10,
     marginRight: 20,
     marginLeft: 20,
     flexDirection: 'row-reverse',
