@@ -41,7 +41,7 @@ export default function MainChatPage(props) {
           tempArr.push(chats[i])
         }
         setAllChats(tempArr)
-        console.log('state chats: ', chats)
+        //console.log('state chats: ', chats)
       },
         (error) => {
           console.log('Error', error);
@@ -49,7 +49,7 @@ export default function MainChatPage(props) {
   }
 
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
-    console.log('item: ', item)
+    //console.log('item: ', item)
     if (uploadUser == user.id) {
       var itemRequestId = itemId + "-" + uploadUser + "-" + otherUser.id
     }

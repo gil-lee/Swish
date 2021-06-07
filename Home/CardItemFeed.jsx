@@ -1,12 +1,10 @@
 import React from 'react'
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AwesomeAlert from 'react-native-awesome-alerts';
-import Chat from '../Chat/Chat'
 import { useNavigation } from '@react-navigation/native';
-import ImageViewer from 'react-native-image-zoom-viewer';
+import { firebase } from "../firebase"
+
 
 
 
@@ -28,51 +26,11 @@ export default function CardItem(props) {
   const navigation = useNavigation();
   const [index, setIndex] = useState(0)
   const [images, setImages] = useState([
-    {url: props.data.image1 },
-    {url: props.data.image2 },
-    {url: props.data.image3 },
-    {url: props.data.image4 },
+    { url: props.data.image1 },
+    { url: props.data.image2 },
+    { url: props.data.image3 },
+    { url: props.data.image4 },
   ])
-
-  function requestItem(userChat) {
-      var date = new Date().getDate();
-      var month = new Date().getMonth() + 1;
-      var year = new Date().getFullYear();
-      var fullDate = year + "-" + month + "-" + date
-      console.log('date: ', fullDate)
-  
-      let chatRow = {
-        requestUser: userChat[0].UsersList[0].id,
-        uploadUser: userChat[0].UsersList[1].id,
-        itemId: userChat[0].item.itemId,
-        lastMessageDate: fullDate
-      }
-      console.log('chatRow: ', chatRow)
-      fetch(urlPostChat, {
-        method: 'POST',
-        body: JSON.stringify(chatRow),
-        headers: new Headers({
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json; charset=UTF-8',
-        })
-      })
-        .then(res => {
-          console.log('res.ok postChat=', res.ok);
-          return res.json()
-        })
-        .then(i => {
-          console.log(i)
-        },
-          (error) => {
-            console.log('Error', error);
-          })
-    
-
-    props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
-    //navigation.navigate('Chat', { userChat: userChat, item: props.data })
-    navigation.navigate('NewChat', { userChat: userChat, item: props.data })
-    //navigation.navigate('Main Chat Page', {userChat: userChat, item:props.data})
-  }
 
   function createUsersArr() {
     var sendMessUser = props.logInUser
@@ -83,8 +41,69 @@ export default function CardItem(props) {
     var item = props.data
     var userChat = [{ UsersList, itemRequestId, item }]
     requestItem(userChat)
-
   }
+
+  function requestItem(userChat) {
+    var date = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    var fullDate = year + "-" + month + "-" + date
+    console.log('date: ', fullDate)
+
+    let chatRow = {
+      requestUser: userChat[0].UsersList[0].id,
+      uploadUser: userChat[0].UsersList[1].id,
+      itemId: userChat[0].item.itemId,
+      lastMessageDate: fullDate
+    }
+    console.log('chatRow: ', chatRow)
+    fetch(urlPostChat, {
+      method: 'POST',
+      body: JSON.stringify(chatRow),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok postChat=', res.ok);
+        return res.json()
+      })
+      .then(i => {
+        console.log(i)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+    sendDfaultMessage(userChat)
+
+    props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
+    navigation.navigate('NewChat', { userChat: userChat, item: props.data })
+  }
+
+  function sendDfaultMessage(userChat) {
+    let Dmessage = `${userChat[0].UsersList[0].firstName} רוצה לקבל ממך את הפריט: ${'\n' + userChat[0].item.name}`;
+    //setMessages(Dmessage);
+
+    //console.log('message hook:', Dmessage)
+    const messageId = userChat[0].itemRequestId;
+    //console.log('how message looks: ', messages)
+    if (Dmessage.length > 0) {
+      let msgId = firebase.database().ref('messages').child(userChat[0].itemRequestId).push().key;
+
+      let updates = {};
+      let message = {
+        message: Dmessage,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        from: userChat[0].UsersList[0]
+      }
+      //console.log('messages: ', messageId)
+      updates['messages/' + messageId + '/' + msgId] = message;
+      //console.log('update: ', updates)
+      firebase.database().ref().update(updates)
+    }
+  }
+
   function goToOtherProfile() {
     var user = props.user
     var logInUser = props.logInUser

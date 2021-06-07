@@ -11,22 +11,24 @@ const screen = Dimensions.get("screen");
 export default class extends React.Component {
 
   constructor(props) {
-    super(props),
-      this.state = {
-        textMessage: "",
-        userChat: this.props.route.params.userChat,
-        messagesList: [],
-        user1: this.props.route.params.userChat[0].UsersList[0],
-        user2Upload: this.props.route.params.userChat[0].UsersList[1],
-        item: this.props.route.params.userChat[0].item,
+    super(props);
+    this.state = {
+      textMessage: "",
+      userChat: this.props.route.params.userChat,
+      messagesList: [],
+      user1: this.props.route.params.userChat[0].UsersList[0],
+      user2Upload: this.props.route.params.userChat[0].UsersList[1],
+      item: this.props.route.params.userChat[0].item,
+      itemIDFirbase: this.props.route.params.userChat[0].itemRequestId,
 
-        dimensions: {
-          window,
-          screen
-        },
-        disableInput: false,
-        chatStatus: '',
-      }
+      dimensions: {
+        window,
+        screen
+      },
+      disableInput: true,
+      chatStatus: '',
+    }
+
   }
 
   onChange = ({ window, screen }) => {
@@ -78,10 +80,10 @@ export default class extends React.Component {
 
   putChatStatus = () => {
     var chat = {
-      uploadUser:'',
-      requestUser:'',
-      itemId:this.state.item.itemId,
-      chatStatus:''
+      uploadUser: '',
+      requestUser: '',
+      itemId: this.state.item.itemId,
+      chatStatus: ''
     }
 
     fetch(urlPutChatStatus, {
@@ -112,10 +114,12 @@ export default class extends React.Component {
   }
 
   sendMessage = async () => {
+    console.log('in send func')
     const messageId = this.props.route.params.userChat[0].itemRequestId;
+    console.log('how message looks: ', this.state.textMessage)
     if (this.state.textMessage.length > 0) {
       let msgId = firebase.database().ref('messages').child(this.state.userChat[0].itemRequestId).push().key;
-      //console.log('msgId:', msgId)
+
       let updates = {};
       let message = {
         message: this.state.textMessage,
@@ -124,13 +128,14 @@ export default class extends React.Component {
       }
       //console.log('messages: ', messageId)
       updates['messages/' + messageId + '/' + msgId] = message;
-      //console.log('update: ', updates)
+      console.log('update: ', updates)
       firebase.database().ref().update(updates)
       this.setState({ textMessage: '' })
     }
   }
 
   renderMessage = ({ item }) => {
+    console.log('item render:', item)
     return (
       <View style={{
         flexDirection: 'row',
@@ -150,19 +155,23 @@ export default class extends React.Component {
       </View>
     )
   }
-
   printDefaultMessage = () => {
+    let splitId = this.state.itemIDFirbase.split("-")
+
+    let defaultMessage = '';
+      console.log('default: ', defaultMessage)
     return (
-      <View style={styles.printDefaultView}>
-        <View>
-          <View style={{ direction: 'rtl', writingDirection: 'rtl', flexDirection: 'row-reverse', }}>
-            <Text style={{ color: '#000', padding: 7, fontSize: 16 }}>
-              <Text style={{ color: '#000', padding: 7, fontSize: 16, fontWeight: 'bold' }}>{this.state.user1.firstName}
-              </Text> רוצה לקבל ממך את הפריט:
-             <Text style={{ fontWeight: 'bold' }}>{'\n' + this.state.item.name}</Text></Text>
-          </View>
-        </View>
-        <View style={{ alignItems: 'center' }}>
+      <View style={{
+        flexDirection: 'row',
+        width: '65%', //זה הרוחב של ההודעות עצמן
+        alignSelf: splitId[1] == this.state.user2Upload.id ? 'flex-end' : 'flex-start',
+        backgroundColor: splitId[1] == this.state.user2Upload.id ? '#c2d4bf' : '#c3acc8',
+        borderRadius: 8,
+        marginBottom: 10,
+        direction: 'rtl',
+        writingDirection: 'rtl',
+      }}>
+        {/* <View style={{ alignItems: 'center' }}>
           <View style={{ height: 'auto', flexDirection: 'row', justifyContent: 'center', marginTop: 15, marginBottom: 8 }} >
             {this.state.item.image1 &&
               <Image source={{ uri: this.state.item.image1 }} style={{ height: 120, width: 90, borderColor: '#fff', borderWidth: 2 }}></Image>}
@@ -178,18 +187,57 @@ export default class extends React.Component {
                 <Image source={{ uri: this.state.item.image4 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
             </View>
           </View>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 15 }}>
-          <TouchableOpacity style={styles.yesBtn} onPress={this.yesBtn}>
-            <Text>אישור</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.noBtn} onPress={this.noBtn}>
-            <Text>דחייה</Text>
-          </TouchableOpacity>
-        </View>
+        </View> */}
+        {this.state.user1.id == splitId[1] &&
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 15 }}>
+            <TouchableOpacity style={styles.yesBtn} onPress={this.yesBtn}>
+              <Text>אישור</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.noBtn} onPress={this.noBtn}>
+              <Text>דחייה</Text>
+            </TouchableOpacity>
+          </View>}
       </View>
     )
   }
+  // printDefaultMessage = () => {
+  //   let splitId = this.state.itemIDFirbase.split("-")
+  //   console.log('userID: ', splitId[1])
+
+  //   return (
+  //     <View style={styles.printDefaultView}>
+  //       <View style={{ alignItems: 'center' }}>
+  //         <View style={{ height: 'auto', flexDirection: 'row', justifyContent: 'center', marginTop: 15, marginBottom: 8 }} >
+  //           {this.state.item.image1 &&
+  //             <Image source={{ uri: this.state.item.image1 }} style={{ height: 120, width: 90, borderColor: '#fff', borderWidth: 2 }}></Image>}
+
+  //           <View>
+  //             {this.state.item.image2 ?
+  //               <Image source={{ uri: this.state.item.image2 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+  //             {this.state.item.image3 ?
+  //               <Image source={{ uri: this.state.item.image3 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+
+  //             {this.state.item.image4 ?
+  //               <Image source={{ uri: this.state.item.image4 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
+  //           </View>
+  //         </View>
+  //       </View>
+  //       {this.state.user1.id == splitId[1] ?
+  //         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 15 }}>
+  //           <TouchableOpacity style={styles.yesBtn} onPress={this.yesBtn}>
+  //             <Text>אישור</Text>
+  //           </TouchableOpacity>
+  //           <TouchableOpacity style={styles.noBtn} onPress={this.noBtn}>
+  //             <Text>דחייה</Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //         : null}
+  //     </View>
+
+  //   )
+
+  // }
   yesBtn = () => {
     this.setState({ disableInput: true })
   }
@@ -264,39 +312,6 @@ export default class extends React.Component {
 
         <ScrollView style={{ marginBottom: 185 }}>
           {this.printDefaultMessage()}
-          {this.state.chatStatus == "waiting" ?
-            <View style={{
-              flexDirection: 'row',
-              width: '65%', //זה הרוחב של ההודעות עצמן
-              alignSelf: 'flex-start',
-              backgroundColor: '#c3acc8',
-              borderRadius: 8,
-              marginBottom: 10,
-              direction: 'rtl',
-              writingDirection: 'rtl',
-            }}>
-              <Text style={{ color: '#000', padding: 7, fontSize: 16 }}>המתן לתשובת המוסר
-          <Text style={{ color: '#000', padding: 7, fontSize: 16 }}></Text>
-              </Text>
-            </View>
-
-            : this.state.chatStatus == "declined" ?
-              <View style={{
-                flexDirection: 'row',
-                width: '65%', //זה הרוחב של ההודעות עצמן
-                alignSelf: 'flex-start',
-                backgroundColor: '#c3acc8',
-                borderRadius: 8,
-                marginBottom: 10,
-                direction: 'rtl',
-                writingDirection: 'rtl',
-              }}>
-                <Text style={{ color: '#000', padding: 7, fontSize: 16 }}>מצטערים, המוסר דחה את בקשתך
-          <Text style={{ color: '#000', padding: 7, fontSize: 16 }}></Text>
-                </Text>
-              </View>
-              : null}
-
           <FlatList
             style={{ padding: 15 }}
             data={this.state.messagesList}
