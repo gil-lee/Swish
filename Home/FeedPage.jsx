@@ -8,6 +8,7 @@ import { SearchBar } from 'react-native-elements';
 import currentLocation from '../Location/currentLocation';
 import * as Location from 'expo-location';
 import AutoComplete from './AutoComplete';
+import { TextInput } from 'react-native';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -38,6 +39,7 @@ export default class FeedPage extends Component {
       userTemplate: this.props.route.params.user,
       itemTemplate: '',
       itemsList: [],
+      itemListDB:[],
       usersList: [],
       avatarLevelUser: 1,
       itemType: [],
@@ -136,7 +138,7 @@ export default class FeedPage extends Component {
         return res.json()
       })
       .then(items => {
-        this.setState({ itemsList: items }
+        this.setState({ itemsList: items, itemListDB: items }
           //, () => console.log('items: ', items)
         )
       },
@@ -293,14 +295,25 @@ export default class FeedPage extends Component {
   }
 
   render() {
+    console.log(11);
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View style={styles.container}>
-            <TouchableOpacity onPress={this.updateSearch}>
-              <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={32} />
-
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={this.updateSearch}> */}
+              {/* <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={32} /> */}
+              <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
+              <TextInput style={styles.sendBtn} 
+              placeholder='חפש'
+              onChangeText={text => {
+                console.log(text);
+                console.log(this.state.itemListDB[0].itemsListDTO[0].name);
+                let newItemsList =  this.state.itemListDB.filter(item =>
+                   item.itemsListDTO[0].name.includes(text) || 
+                   item.itemsListDTO[0].description.includes(text) );
+                this.setState({itemsList: newItemsList});
+              }} />
+            {/* </TouchableOpacity> */}
             <View style={{ flexDirection: 'row' }}>
               <Image source={{ uri: this.state.userTemplate.profilePicture }} style={styles.userImage}></Image>
               <View style={{ alignItems: 'center' }}>
@@ -311,15 +324,10 @@ export default class FeedPage extends Component {
                 </View>
               </View>
             </View>
-
             <Image source={{ uri: `${this.state.avatarLevelUser}` }} style={styles.avatar} ></Image>
-
           </View>
-
           <View style={styles.line} />
           <Text></Text>
-
-
           <View style={{ flexDirection: 'row-reverse', justifyContent: "center", alignContent: "center" }}>
 
             <Dropdown
@@ -384,6 +392,18 @@ const styles = StyleSheet.create({
   Text: {
     fontSize: 25,
     fontWeight: '500'
+  },
+  sendBtn: {
+    //marginTop: 35,
+    //marginRight: 20,
+    //marginLeft: 10,
+    backgroundColor: 'transparent',
+    //borderRadius: 60,
+    borderWidth: 1,
+    borderRadius: 6,
+    borderColor: '#a7a7a7',
+    height: 43,
+    width: 65,
   },
   container: {
     // justifyContent: 'center',
