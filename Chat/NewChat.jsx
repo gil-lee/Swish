@@ -25,7 +25,7 @@ export default class extends React.Component {
         window,
         screen
       },
-      disableInput: true,
+      disableInput: false,
       chatStatus: '',
     }
 
@@ -124,7 +124,8 @@ export default class extends React.Component {
       let message = {
         message: this.state.textMessage,
         time: firebase.database.ServerValue.TIMESTAMP,
-        from: this.state.userChat[0].UsersList[0]
+        from: this.state.userChat[0].UsersList[0],
+        //chatStatus: this.state.chatStatus
       }
       //console.log('messages: ', messageId)
       updates['messages/' + messageId + '/' + msgId] = message;
@@ -159,7 +160,7 @@ export default class extends React.Component {
     let splitId = this.state.itemIDFirbase.split("-")
 
     let defaultMessage = '';
-      console.log('default: ', defaultMessage)
+    console.log('default: ', defaultMessage)
     return (
       <View style={{
         flexDirection: 'row',
@@ -200,67 +201,29 @@ export default class extends React.Component {
       </View>
     )
   }
-  // printDefaultMessage = () => {
-  //   let splitId = this.state.itemIDFirbase.split("-")
-  //   console.log('userID: ', splitId[1])
-
-  //   return (
-  //     <View style={styles.printDefaultView}>
-  //       <View style={{ alignItems: 'center' }}>
-  //         <View style={{ height: 'auto', flexDirection: 'row', justifyContent: 'center', marginTop: 15, marginBottom: 8 }} >
-  //           {this.state.item.image1 &&
-  //             <Image source={{ uri: this.state.item.image1 }} style={{ height: 120, width: 90, borderColor: '#fff', borderWidth: 2 }}></Image>}
-
-  //           <View>
-  //             {this.state.item.image2 ?
-  //               <Image source={{ uri: this.state.item.image2 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-
-  //             {this.state.item.image3 ?
-  //               <Image source={{ uri: this.state.item.image3 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-
-  //             {this.state.item.image4 ?
-  //               <Image source={{ uri: this.state.item.image4 }} style={{ height: 40, width: 30, borderColor: '#fff', borderWidth: 2 }}></Image> : null}
-  //           </View>
-  //         </View>
-  //       </View>
-  //       {this.state.user1.id == splitId[1] ?
-  //         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 15 }}>
-  //           <TouchableOpacity style={styles.yesBtn} onPress={this.yesBtn}>
-  //             <Text>אישור</Text>
-  //           </TouchableOpacity>
-  //           <TouchableOpacity style={styles.noBtn} onPress={this.noBtn}>
-  //             <Text>דחייה</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //         : null}
-  //     </View>
-
-  //   )
-
-  // }
+  
   yesBtn = () => {
     this.setState({ disableInput: true })
   }
   noBtn = () => {
-    return (
-      <View style={{
-        flexDirection: 'row',
-        width: '65%', //זה הרוחב של ההודעות עצמן
-        alignSelf: 'flex-start',
-        backgroundColor: '#c3acc8',
-        borderRadius: 8,
-        marginBottom: 10,
-        direction: 'rtl',
-        writingDirection: 'rtl',
-      }}>
-        <Text style={{ color: '#000', padding: 7, fontSize: 16 }}> מצטערים, לא ניתן ליצור קשר עם המשתמש
-      <Text style={{ color: '#000', padding: 7, fontSize: 16 }}></Text>
-        </Text>
-      </View>
-    )
-  }
-  buttonShow = () => {
+    //console.log(this.state.userChat[0].UsersList[1])
+    let item = {
+      message: 'מצטערים, המשתמש דחה את בקשתך',
+      time: firebase.database.ServerValue.TIMESTAMP,
+      from: this.state.userChat[0].UsersList[0]
+      //chatStatus: this.state.chatStatus
+    }
+    //let mess= 'מצטערים לא ניתן להמשיך את השיחה'
+    this.setState({ textMessage: item.message }, () =>
+      this.sendMessage)
 
+    console.log(item);
+    let temp = []
+    temp = this.state.messagesList;
+    temp.push(item)
+    this.setState({ messagesList: temp })
+    this.renderMessage
+   
   }
 
   convertTime = (time) => {
@@ -279,8 +242,11 @@ export default class extends React.Component {
       return (
         <View key={this.state.user2Upload.id} style={styles.layout}>
           <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
-            <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
+            <View style={{ justifyContent: 'flex-start', flexDirection: 'row-reverse' }}>
+              <View style={{alignItems:'center', marginBottom:10}}>
               <Text style={styles.Text}>{this.state.user2Upload.firstName} {this.state.user2Upload.lastName}</Text>
+              <Text>{this.state.item.name}</Text>
+              </View>
               <Image source={{ uri: this.state.user2Upload.profilePicture }} style={styles.userImage} />
             </View>
           </View>
@@ -291,7 +257,10 @@ export default class extends React.Component {
         <View key={this.state.user1.id} style={styles.layout}>
           <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
             <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
+            <View style={{alignItems:'center', marginBottom:10}}>
               <Text style={styles.Text}>{this.state.user1.firstName} {this.state.user1.lastName}</Text>
+              <Text>{this.state.item.name}</Text>
+              </View>
               <Image source={{ uri: this.state.user1.profilePicture }} style={styles.userImage} />
             </View>
           </View>
@@ -378,7 +347,8 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 8,
     borderBottomColor: '#a7a7a7',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    marginBottom: 10
   },
   sendInputView: {
     flexDirection: 'row',

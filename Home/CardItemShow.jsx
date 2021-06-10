@@ -55,14 +55,9 @@ export default function CardItem(props) {
         <Text style={{ fontWeight: "bold" }}>{props.data.conditionList[0].condition}  |</Text>
         <Text style={{ fontWeight: "bold" }}>  {props.data.sizeList[0].size}  </Text>
 
-        <TouchableOpacity style={{ flex: 6 }}>
-          <MaterialCommunityIcons name="pencil" color={"#a7a7a7"} size={20} />
-        </TouchableOpacity>
-
         <TouchableOpacity style={{ flex: 1, marginLeft: 20 }} onPress={goToDelete}>
           <MaterialCommunityIcons name="delete" color={"#a7a7a7"} size={20} />
         </TouchableOpacity>
-
 
       </View>
     </ScrollView>

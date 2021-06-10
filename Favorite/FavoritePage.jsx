@@ -80,7 +80,6 @@ export default class FavoritePage extends Component {
           <Text style={styles.Text}> משתמשים שאהבתי </Text>
         </View>
         <ScrollView>
-          {/* {console.log('fav list to card: ', this.state.favUsersList)} */}
           {this.state.favUsersList ?
             this.state.favUsersList.map((user) =>
               <FavoriteListCard user={user} logInUser={this.state.user} navigation={this.props.navigation} />
@@ -95,7 +94,7 @@ export default class FavoritePage extends Component {
 const styles = StyleSheet.create({
   Text: {
     fontSize: 20,
-    fontWeight: '500'
+    fontWeight: 'bold'
   },
   container: {
     width: "100%",

@@ -6,11 +6,6 @@ import CardItemShow from '../Home/CardItemShow';
 const urlSentence = "http://proj.ruppin.ac.il/bgroup17/prod/api/DailySentence";
 const urlPersonalItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUser"
 
-const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
-const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
-const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
-const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
-
 export default class ProfilePage extends Component {
   constructor(props) {
     super(props)

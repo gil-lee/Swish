@@ -266,10 +266,10 @@ export default class FeedPage extends Component {
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View style={styles.container}>
-            <View style={styles.searchSection}>
+              <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
               <TextInput style={styles.sendBtn}
-                placeholder='חפש'
+                placeholder='חיפוש'
                 onChangeText={text => {
                   //console.log(text);
                   //console.log(this.state.itemListDB[0].itemsListDTO[0].name);
@@ -278,7 +278,7 @@ export default class FeedPage extends Component {
                     item.itemsListDTO[0].description.includes(text));
                   this.setState({ itemsList: newItemsList });
                 }} />
-            </View>
+                </TouchableOpacity>
             <View style={{ flexDirection: 'row' }}>
               <Image source={{ uri: this.state.userTemplate.profilePicture }} style={styles.userImage}></Image>
               <View style={{ alignItems: 'center' }}>
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderRadius: 6,
-    borderColor: '#a7a7a7',
+    borderColor: 'transparent',
     height: 43,
     width: 65,
   },

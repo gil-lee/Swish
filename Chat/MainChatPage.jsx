@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
-import { Badge } from 'react-native-elements'
-import { firebase } from '../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -18,7 +15,30 @@ export default function MainChatPage(props) {
   const [usersCards, setUsersCards] = useState(null);
 
   useEffect(() => {
-    GetAllChats()
+    let tempArr = []
+    console.log(user.id)
+    fetch(urlGetAllChat + user.id, {
+      method: 'GET',
+      //body: JSON.stringify(chatRow),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok getChats=', res.ok);
+        return res.json()
+      })
+      .then(chats => {
+        for (var i = 0; i < chats.length; i++) {
+          tempArr.push(chats[i])
+        }
+        setAllChats(tempArr)
+        console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
   }, [])
 
   const GetAllChats = () => {
@@ -70,25 +90,30 @@ export default function MainChatPage(props) {
     navigation.navigate('NewChat', { userChat: userChat, item: itemId })
   }
 
-  const returnAllChats =
-    allChats.map(user => {
+
+   const returnAllChats =
+    allChats.map(user=> {
+      //let itemName= user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name;
       return <ScrollView>
         <View key={user.id} style={styles.layout}>
           <TouchableOpacity onPress={() => getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
             <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
               <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
-                <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName}</Text>
+                <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName} - 
+                {/* <Text style={{fontSize:13}}> {temp[key]}</Text> */}
+                </Text>
                 <Image source={{ uri: user.userDTO[0].profilePicture }} style={styles.userImage} />
-                {/* <View style={{ justifyContent: 'flex-start' }}>
-
-                </View> */}
               </View>
+              {/* <View style={{justifyContent:'center', alignItems: 'flex-end'}}>
+                <Text>{user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name}</Text>
+              </View> */}
             </View>
           </TouchableOpacity>
           {/* <View style={{ justifyContent: 'flex-end' }}> </View> */}
         </View>
       </ScrollView>
     })
+  
 
   return (
     <ScrollView>
@@ -136,7 +161,7 @@ const styles = StyleSheet.create({
     color: "#000",
     paddingTop: 19,
     paddingRight: 19,
-    paddingLeft: 19
+    paddingLeft: 19,
   },
   container: {
     alignItems: 'center',
@@ -146,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   layout: {
-    marginTop:10,
+    marginTop: 10,
     marginRight: 20,
     marginLeft: 20,
     flexDirection: 'row-reverse',
