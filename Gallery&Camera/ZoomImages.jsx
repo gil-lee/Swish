@@ -14,6 +14,7 @@ export default class ZoomImages extends Component {
   }
 
   componentDidMount() {
+    console.log('images in zoom: ', this.state.images);
     this.filterImages()
   }
 

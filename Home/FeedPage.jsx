@@ -4,11 +4,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown } from 'react-native-material-dropdown-v2';
 import CardItemFeed from './CardItemFeed';
-import { SearchBar } from 'react-native-elements';
 import currentLocation from '../Location/currentLocation';
 import * as Location from 'expo-location';
-import AutoComplete from './AutoComplete';
 import { TextInput } from 'react-native';
+import UploadDetails from '../UploadItem/UploadDetails';
+import { UIImagePickerControllerQualityType } from 'expo-image-picker/build/ImagePicker.types';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -39,7 +39,7 @@ export default class FeedPage extends Component {
       userTemplate: this.props.route.params.user,
       itemTemplate: '',
       itemsList: [],
-      itemListDB:[],
+      itemListDB: [],
       usersList: [],
       avatarLevelUser: 1,
       itemType: [],
@@ -96,7 +96,7 @@ export default class FeedPage extends Component {
           }
         ])
     }
-    console.log('prem..: ', premission)
+    //console.log('prem..: ', premission)
     if (premission === true) {
       this.getPremission()
     }
@@ -105,7 +105,7 @@ export default class FeedPage extends Component {
   getPremission = async () => {
     this.setState({ locationPre: true });
     let prem = await Location.requestPermissionsAsync();
-    console.log('prem2: ', prem.granted)
+    //console.log('prem2: ', prem.granted)
     this.getLocation(prem)
   }
   getLocation = async (prem) => {
@@ -120,7 +120,8 @@ export default class FeedPage extends Component {
         }
       )
       this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
-      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt }, initial: false })
+      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails',initial: false, params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt } })
+      this.props.navigation.navigate('Navigator', { screen: 'FeedPage' })
     }
   }
 
@@ -206,64 +207,6 @@ export default class FeedPage extends Component {
         })
   }
 
-  fetchFilter = (selectedName, filType) => {
-    // console.log(this.state.userTemplate.email)
-    // console.log(selectedName)
-    // console.log(filType)
-
-    switch (filType) {
-      case "type":
-        for (let i = 0; i < types.length; i++) {
-          if (types[i].name == selectedName) {
-            var t = types[i].id
-          }
-        }
-        break;
-      case "size":
-        for (let i = 0; i < sizes.length; i++) {
-          if (sizes[i].size == selectedName) {
-            var t = sizes[i].id
-          }
-        }
-        break;
-      case "style":
-        for (let i = 0; i < styless.length; i++) {
-          if (styless[i].style == selectedName) {
-            var t = styless[i].id
-          }
-        }
-        break;
-      case "condition":
-        for (let i = 0; i < conditions.length; i++) {
-          if (conditions[i].condition == selectedName) {
-            var t = conditions[i].id
-          }
-        }
-        break;
-    }
-
-    // console.log(t)
-    fetch(urlFilter + "/" + this.state.userTemplate.email + "/" + t + "/" + filType, {
-      method: 'GET',
-      headers: new Headers({
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json; charset=UTF-8',
-      })
-    })
-      .then(res => {
-        //console.log('res.ok=', res.ok);
-        return res.json()
-      })
-      .then(filterItems => {
-        this.setState({ itemsList: filterItems }
-          //, () => {console.log("user: ", this.state.itemsList)}
-        )
-      },
-        (error) => {
-          console.log('Error', error);
-        })
-  }
-
   clearDropDown = () => {
     this.setState({
       selectedCondition: '',
@@ -290,30 +233,52 @@ export default class FeedPage extends Component {
     }
   }
 
-  updateSearch = () => {
-    this.props.navigation.navigate('AutoComplete')
+  filterItems(text, inputType){
+    console.log('text: ', inputType)
+    //console.log('items:',  item.itemsListDTO[0])
+    let newItemsList;
+    switch (inputType) {
+      case "type":
+         newItemsList = this.state.itemsList.filter(item =>
+          item.itemsListDTO[0].priceList[0].name == text)
+          
+        break;
+      case "size":
+         newItemsList = this.state.itemsList.filter(item =>
+          item.itemsListDTO[0].sizeList[0].size == text)
+        break;
+      case "style":
+         newItemsList = this.state.itemsList.filter(item =>
+          item.itemsListDTO[0].styleList[0].style == text)
+        break;
+      case "condition":
+         newItemsList = this.state.itemsList.filter(item =>
+          item.itemsListDTO[0].conditionList[0].condition == text)
+        break;
+    }
+    // let newItemsList = this.state.itemListDB.filter(item =>
+    //   item.itemsListDTO[0].sizeList[0].size == text)
+    this.setState({ itemsList: newItemsList });
   }
 
   render() {
-    console.log(11);
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View style={styles.container}>
-            {/* <TouchableOpacity onPress={this.updateSearch}> */}
-              {/* <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={32} /> */}
+            <View style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
-              <TextInput style={styles.sendBtn} 
-              placeholder='חפש'
-              onChangeText={text => {
-                console.log(text);
-                console.log(this.state.itemListDB[0].itemsListDTO[0].name);
-                let newItemsList =  this.state.itemListDB.filter(item =>
-                   item.itemsListDTO[0].name.includes(text) || 
-                   item.itemsListDTO[0].description.includes(text) );
-                this.setState({itemsList: newItemsList});
-              }} />
-            {/* </TouchableOpacity> */}
+              <TextInput style={styles.sendBtn}
+                placeholder='חפש'
+                onChangeText={text => {
+                  //console.log(text);
+                  //console.log(this.state.itemListDB[0].itemsListDTO[0].name);
+                  let newItemsList = this.state.itemListDB.filter(item =>
+                    item.itemsListDTO[0].name.includes(text) ||
+                    item.itemsListDTO[0].description.includes(text));
+                  this.setState({ itemsList: newItemsList });
+                }} />
+            </View>
             <View style={{ flexDirection: 'row' }}>
               <Image source={{ uri: this.state.userTemplate.profilePicture }} style={styles.userImage}></Image>
               <View style={{ alignItems: 'center' }}>
@@ -334,7 +299,7 @@ export default class FeedPage extends Component {
               label='מידה'
               data={this.state.size.map((size, s) => ({ key: s, value: size }))}
               style={styles.dropDwSmall}
-              onChangeText={(value) => this.setState({ selectedSize: value }), (value) => this.fetchFilter(value, "size")}
+              onChangeText={(text)=> this.filterItems(text, 'size')}
               underlineColor={'transparent'}
               ref={c => (this.sizeDD = c)}
             />
@@ -342,7 +307,7 @@ export default class FeedPage extends Component {
               label='סוג'
               data={this.state.itemType.map((type, t) => ({ key: t, value: type }))}
               style={styles.dropDw}
-              onChangeText={(value) => this.setState({ selectedType: value }), (value) => this.fetchFilter(value, "type")}
+              onChangeText={(text)=> this.filterItems(text, 'type')}
               underlineColor={'transparent'}
               ref={c => (this.typeDD = c)}
             />
@@ -350,7 +315,7 @@ export default class FeedPage extends Component {
               label='סגנון'
               data={this.state.itemStyle.map((itemStyle, i) => ({ key: i, value: itemStyle }))}
               style={styles.dropDwSmall}
-              onChangeText={(value) => this.setState({ selectedStyle: value }), (value) => this.fetchFilter(value, "style")}
+              onChangeText={(text)=> this.filterItems(text, 'style')}
               underlineColor={'transparent'}
               ref={c => (this.styleDD = c)}
             />
@@ -358,13 +323,12 @@ export default class FeedPage extends Component {
               label='מצב'
               data={this.state.condition.map((condition, c) => ({ key: c, value: condition }))}
               style={styles.dropDwSmall}
-              onChangeText={(value) => this.setState({ selectedCondition: value }), (value) => this.fetchFilter(value, "condition")}
+              onChangeText={(text)=> this.filterItems(text, 'condition')}
               underlineColor={'transparent'}
               ref={c => (this.conDD = c)}
             />
             <TouchableOpacity style={{ margin: 5 }} onPress={this.clearDropDown}>
               <MaterialCommunityIcons name="close" color={"#a7a7a7"} size={20} />
-              {/* <Text style={styles.btnText}>ניקוי</Text> */}
             </TouchableOpacity>
           </View>
 
@@ -393,12 +357,14 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '500'
   },
+  searchSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  },
   sendBtn: {
-    //marginTop: 35,
-    //marginRight: 20,
-    //marginLeft: 10,
     backgroundColor: 'transparent',
-    //borderRadius: 60,
     borderWidth: 1,
     borderRadius: 6,
     borderColor: '#a7a7a7',
@@ -406,7 +372,6 @@ const styles = StyleSheet.create({
     width: 65,
   },
   container: {
-    // justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 50,
     paddingLeft: 10,

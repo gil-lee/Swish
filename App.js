@@ -21,7 +21,6 @@ import MainChatPage from './Chat/MainChatPage'
 import OtherUserProfile from './Profile/OtherUserProfile'
 import currentLocation from './Location/currentLocation';
 import CurrentLocFun from './Location/CurrentLocFun';
-import AutoComplete from './Home/AutoComplete';
 import NewChat from './Chat/NewChat';
 import ZoomImages from './Gallery&Camera/ZoomImages';
 
@@ -44,7 +43,6 @@ export default function App() {
         <Stack.Screen name="DeleteItem" component={DeleteItem}/> 
         <Stack.Screen name="Profile Page" component={ProfilePage}/> 
         <Stack.Screen name="SettingsPage" component={SettingsPage}/>  
-        <Stack.Screen name="AutoComplete" component={AutoComplete}/> 
         <Stack.Screen name="currentLocation" component={currentLocation}/>
         <Stack.Screen name="NewChat" component={NewChat}/>
         <Stack.Screen name="ZoomImages" component={ZoomImages}/>  

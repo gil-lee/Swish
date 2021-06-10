@@ -32,6 +32,7 @@ export default function CardItem(props) {
     { url: props.data.image4 },
   ])
 
+
   function createUsersArr() {
     var sendMessUser = props.logInUser
     var userUploadItem = props.user
@@ -114,8 +115,12 @@ export default function CardItem(props) {
   }
 
   function openGallery() {
-    navigation.navigate('ZoomImages', images)
-
+    let i=[{ url: props.data.image1 },
+      { url: props.data.image2 },
+      { url: props.data.image3 },
+      { url: props.data.image4 }];
+    setImages(i)
+    navigation.navigate('ZoomImages', i)
   }
   function renderError() {
     return (
@@ -128,7 +133,7 @@ export default function CardItem(props) {
 
   return (
     <ScrollView>
-
+{console.log('images in card: ', props.data.image1)}
       <View style={styles.layout}>
         <View style={styles.header}>
           <Text style={{ fontWeight: "bold" }}>{props.data.name}</Text>
@@ -150,7 +155,7 @@ export default function CardItem(props) {
         {props.data.description ?
           <Text style={{ marginRight: 10, marginLeft: 10 }}>{props.data.description}</Text> : null}
       </View>
-      <TouchableOpacity onPress={(openGallery)}>
+      <TouchableOpacity onPress={openGallery}>
         <View style={{ height: 270, flexDirection: 'row', justifyContent: 'center', marginTop: 15 }} >
           {props.data.image1 &&
             <Image source={{ uri: props.data.image1 }} style={{ height: 270, width: 200, borderColor: '#fff', borderWidth: 2 }}></Image>}
