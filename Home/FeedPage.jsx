@@ -4,11 +4,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown } from 'react-native-material-dropdown-v2';
 import CardItemFeed from './CardItemFeed';
-import currentLocation from '../Location/currentLocation';
 import * as Location from 'expo-location';
 import { TextInput } from 'react-native';
-import UploadDetails from '../UploadItem/UploadDetails';
-import { UIImagePickerControllerQualityType } from 'expo-image-picker/build/ImagePicker.types';
+import { Notifications } from 'expo';
+import PushNotification from '../PushNotification';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -16,6 +15,7 @@ const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
 const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
+const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
 
 const urlFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetItemFilter";
 
@@ -56,6 +56,9 @@ export default class FeedPage extends Component {
       latitudeSt: 0,
       longitudeSt: 0,
       locationPre: false,
+
+      notification: {},
+      token: '',
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -65,15 +68,52 @@ export default class FeedPage extends Component {
 
   componentDidMount() {
     this.callFetchFunc()
-    // console.log('user in feed: ', this.state.userTemplate)
+
+    PushNotification()
+      .then((token) => {
+       this.setState({ token: token }
+        , ()=>this.fetchpPutToken(this.state.token)
+        );
+      })
+      
+    this._notificationSubscription = Notifications.addListener(this._handleNotification);
+
   }
+
+  _handleNotification = (notification) => {
+    this.setState({ notification: notification });
+  };
+
+  fetchpPutToken = async (token) => {
+    console.log('tokennnn: ', token)
+    let tempToken= token
+    await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
+      method: 'PUT',
+      //body: JSON.stringify(user),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok putToken= ', res.ok);
+        return res.json()
+      })
+      .then(t => {
+        console.log('result t:   ', t)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
+
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
     // , () => {
     // console.log('user in feed will: ', this.state.userTemplate)}
-
   }
+
   callFetchFunc = () => {
     this.fetchDropDown(urlItemSize);
     this.fetchDropDown(urlItemStyle);
@@ -81,6 +121,7 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlConditionPrice);
     this.getCurrentLocation()
     this.getAvatarForUser(this.props.route.params.user)
+    //this.fetchpPutToken(this.state.token)
   }
 
   getCurrentLocation = async () => {
@@ -120,7 +161,7 @@ export default class FeedPage extends Component {
         }
       )
       this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
-      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails',initial: false, params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt } })
+      this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', initial: false, params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt } })
       this.props.navigation.navigate('Navigator', { screen: 'FeedPage' })
     }
   }
@@ -233,26 +274,26 @@ export default class FeedPage extends Component {
     }
   }
 
-  filterItems(text, inputType){
+  filterItems(text, inputType) {
     console.log('text: ', inputType)
     //console.log('items:',  item.itemsListDTO[0])
     let newItemsList;
     switch (inputType) {
       case "type":
-         newItemsList = this.state.itemsList.filter(item =>
+        newItemsList = this.state.itemsList.filter(item =>
           item.itemsListDTO[0].priceList[0].name == text)
-          
+
         break;
       case "size":
-         newItemsList = this.state.itemsList.filter(item =>
+        newItemsList = this.state.itemsList.filter(item =>
           item.itemsListDTO[0].sizeList[0].size == text)
         break;
       case "style":
-         newItemsList = this.state.itemsList.filter(item =>
+        newItemsList = this.state.itemsList.filter(item =>
           item.itemsListDTO[0].styleList[0].style == text)
         break;
       case "condition":
-         newItemsList = this.state.itemsList.filter(item =>
+        newItemsList = this.state.itemsList.filter(item =>
           item.itemsListDTO[0].conditionList[0].condition == text)
         break;
     }
@@ -266,7 +307,7 @@ export default class FeedPage extends Component {
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View style={styles.container}>
-              <TouchableOpacity style={styles.searchSection}>
+            <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
               <TextInput style={styles.sendBtn}
                 placeholder='חיפוש'
@@ -278,7 +319,7 @@ export default class FeedPage extends Component {
                     item.itemsListDTO[0].description.includes(text));
                   this.setState({ itemsList: newItemsList });
                 }} />
-                </TouchableOpacity>
+            </TouchableOpacity>
             <View style={{ flexDirection: 'row' }}>
               <Image source={{ uri: this.state.userTemplate.profilePicture }} style={styles.userImage}></Image>
               <View style={{ alignItems: 'center' }}>
@@ -299,7 +340,7 @@ export default class FeedPage extends Component {
               label='מידה'
               data={this.state.size.map((size, s) => ({ key: s, value: size }))}
               style={styles.dropDwSmall}
-              onChangeText={(text)=> this.filterItems(text, 'size')}
+              onChangeText={(text) => this.filterItems(text, 'size')}
               underlineColor={'transparent'}
               ref={c => (this.sizeDD = c)}
             />
@@ -307,7 +348,7 @@ export default class FeedPage extends Component {
               label='סוג'
               data={this.state.itemType.map((type, t) => ({ key: t, value: type }))}
               style={styles.dropDw}
-              onChangeText={(text)=> this.filterItems(text, 'type')}
+              onChangeText={(text) => this.filterItems(text, 'type')}
               underlineColor={'transparent'}
               ref={c => (this.typeDD = c)}
             />
@@ -315,7 +356,7 @@ export default class FeedPage extends Component {
               label='סגנון'
               data={this.state.itemStyle.map((itemStyle, i) => ({ key: i, value: itemStyle }))}
               style={styles.dropDwSmall}
-              onChangeText={(text)=> this.filterItems(text, 'style')}
+              onChangeText={(text) => this.filterItems(text, 'style')}
               underlineColor={'transparent'}
               ref={c => (this.styleDD = c)}
             />
@@ -323,7 +364,7 @@ export default class FeedPage extends Component {
               label='מצב'
               data={this.state.condition.map((condition, c) => ({ key: c, value: condition }))}
               style={styles.dropDwSmall}
-              onChangeText={(text)=> this.filterItems(text, 'condition')}
+              onChangeText={(text) => this.filterItems(text, 'condition')}
               underlineColor={'transparent'}
               ref={c => (this.conDD = c)}
             />

@@ -16,8 +16,8 @@ export default class extends React.Component {
       textMessage: "",
       userChat: this.props.route.params.userChat,
       messagesList: [],
-      user1: this.props.route.params.userChat[0].UsersList[0],
-      user2Upload: this.props.route.params.userChat[0].UsersList[1],
+      user1: this.props.route.params.userChat[0].UsersList[0], //loginUser
+      user2Upload: this.props.route.params.userChat[0].UsersList[1], //otherUser
       item: this.props.route.params.userChat[0].item,
       itemIDFirbase: this.props.route.params.userChat[0].itemRequestId,
 
@@ -131,8 +131,39 @@ export default class extends React.Component {
       updates['messages/' + messageId + '/' + msgId] = message;
       console.log('update: ', updates)
       firebase.database().ref().update(updates)
+      this.btnPushFromClient()
       this.setState({ textMessage: '' })
     }
+  }
+  btnPushFromClient = () => {
+    console.log('user token: ', this.state.user2Upload.userToken)
+    let per = {
+      to: this.state.user2Upload.userToken,
+      title: 'title from ' + this.state.user1.firstName,
+      body: "body from client side",
+      //badge: 3,
+      data: { message: this.state.textMessage }
+    };
+    console.log('per: ', per)
+    // POST adds a random id to the object sent
+    fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      body: JSON.stringify(per),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+      .then(response => response.json())
+      .then(json => {
+        if (json != null) {
+          console.log(`
+              returned from server\n
+              json.data= ${JSON.stringify(json.data)}`);
+
+        } else {
+          alert('err json');
+        }
+      });
   }
 
   renderMessage = ({ item }) => {
@@ -201,7 +232,7 @@ export default class extends React.Component {
       </View>
     )
   }
-  
+
   yesBtn = () => {
     this.setState({ disableInput: true })
   }
@@ -223,7 +254,7 @@ export default class extends React.Component {
     temp.push(item)
     this.setState({ messagesList: temp })
     this.renderMessage
-   
+
   }
 
   convertTime = (time) => {
@@ -243,9 +274,9 @@ export default class extends React.Component {
         <View key={this.state.user2Upload.id} style={styles.layout}>
           <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
             <View style={{ justifyContent: 'flex-start', flexDirection: 'row-reverse' }}>
-              <View style={{alignItems:'center', marginBottom:10}}>
-              <Text style={styles.Text}>{this.state.user2Upload.firstName} {this.state.user2Upload.lastName}</Text>
-              <Text>{this.state.item.name}</Text>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                <Text style={styles.Text}>{this.state.user2Upload.firstName} {this.state.user2Upload.lastName}</Text>
+                <Text>{this.state.item.name}</Text>
               </View>
               <Image source={{ uri: this.state.user2Upload.profilePicture }} style={styles.userImage} />
             </View>
@@ -257,9 +288,9 @@ export default class extends React.Component {
         <View key={this.state.user1.id} style={styles.layout}>
           <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
             <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
-            <View style={{alignItems:'center', marginBottom:10}}>
-              <Text style={styles.Text}>{this.state.user1.firstName} {this.state.user1.lastName}</Text>
-              <Text>{this.state.item.name}</Text>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                <Text style={styles.Text}>{this.state.user1.firstName} {this.state.user1.lastName}</Text>
+                <Text>{this.state.item.name}</Text>
               </View>
               <Image source={{ uri: this.state.user1.profilePicture }} style={styles.userImage} />
             </View>
