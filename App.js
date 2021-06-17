@@ -23,6 +23,7 @@ import currentLocation from './Location/currentLocation';
 import CurrentLocFun from './Location/CurrentLocFun';
 import NewChat from './Chat/NewChat';
 import ZoomImages from './Gallery&Camera/ZoomImages';
+import PushNotifications from './PushNotifications/PushNotifications';
 
 const Stack = createStackNavigator();
 //const Tab = createBottomTabNavigator();
@@ -50,6 +51,7 @@ export default function App() {
         <Stack.Screen name="CurrentLocFun" component={CurrentLocFun}/>
         <Stack.Screen name="Chat" component={Chat}/>  
         <Stack.Screen name="OtherUserProfile" component={OtherUserProfile}/>  
+        <Stack.Screen name="PushNotifications" component={PushNotifications}/> 
       </Stack.Navigator>
     </NavigationContainer>
 

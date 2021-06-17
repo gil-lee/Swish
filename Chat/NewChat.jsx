@@ -36,6 +36,7 @@ export default class extends React.Component {
   };
 
   componentDidMount() {
+
     this.getChatStatusDB();
     Dimensions.addEventListener("change", this.onChange);
     firebase.database().ref('messages').child(this.state.userChat[0].itemRequestId).on('child_added', (value) => {
@@ -131,10 +132,32 @@ export default class extends React.Component {
       updates['messages/' + messageId + '/' + msgId] = message;
       console.log('update: ', updates)
       firebase.database().ref().update(updates)
-      this.btnPushFromClient()
+      //this.btnPushFromClient()
+      this.sendPushNotification(this.state.user2Upload.userToken)
       this.setState({ textMessage: '' })
     }
   }
+  sendPushNotification = async (expoPushToken) => {
+    console.log('user token: ', this.state.user2Upload.userToken)
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'Original Title',
+      body: 'And here is the body!',
+      data: { message: this.state.textMessage },
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
   btnPushFromClient = () => {
     console.log('user token: ', this.state.user2Upload.userToken)
     let per = {
@@ -167,7 +190,7 @@ export default class extends React.Component {
   }
 
   renderMessage = ({ item }) => {
-    console.log('item render:', item)
+    //console.log('item render:', item)
     return (
       <View style={{
         flexDirection: 'row',
@@ -190,8 +213,8 @@ export default class extends React.Component {
   printDefaultMessage = () => {
     let splitId = this.state.itemIDFirbase.split("-")
 
-    let defaultMessage = '';
-    console.log('default: ', defaultMessage)
+    //let defaultMessage = '';
+    //console.log('default: ', defaultMessage)
     return (
       <View style={{
         flexDirection: 'row',

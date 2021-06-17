@@ -1,13 +1,20 @@
 import React from 'react'
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { firebase } from "../firebase"
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import PushNotifications from '../PushNotifications/PushNotifications';
 
-
-
-
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat";
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
@@ -31,6 +38,11 @@ export default function CardItem(props) {
     { url: props.data.image3 },
     { url: props.data.image4 },
   ])
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
 
   function createUsersArr() {
@@ -80,6 +92,7 @@ export default function CardItem(props) {
 
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
+    //navigation.navigate('PushNotifications')
   }
 
   function sendDfaultMessage(userChat) {
@@ -103,6 +116,7 @@ export default function CardItem(props) {
       //console.log('update: ', updates)
       firebase.database().ref().update(updates)
     }
+   
   }
 
   function goToOtherProfile() {
@@ -115,25 +129,16 @@ export default function CardItem(props) {
   }
 
   function openGallery() {
-    let i=[{ url: props.data.image1 },
-      { url: props.data.image2 },
-      { url: props.data.image3 },
-      { url: props.data.image4 }];
+    let i = [{ url: props.data.image1 },
+    { url: props.data.image2 },
+    { url: props.data.image3 },
+    { url: props.data.image4 }];
     setImages(i)
     navigation.navigate('ZoomImages', i)
-  }
-  function renderError() {
-    return (
-      <View style={{ flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ color: 'white', fontSize: 15, fontStyle: 'italic' }}>This image cannot be displayed...</Text>
-        <Text style={{ color: 'white', fontSize: 15, fontStyle: 'italic' }}>... but this is fine :)</Text>
-      </View>
-    );
   }
 
   return (
     <ScrollView>
-{console.log('images in card: ', props.data.image1)}
       <View style={styles.layout}>
         <View style={styles.header}>
           <Text style={{ fontWeight: "bold" }}>{props.data.name}</Text>

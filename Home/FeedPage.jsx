@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-import { Text, View, StyleSheet, Image, ImageBackground, ScrollView, Alert } from 'react-native'
+import React, { Component, createRef } from 'react'
+import { Text, View, StyleSheet, Image, ImageBackground, ScrollView, Alert, TextInput } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown } from 'react-native-material-dropdown-v2';
 import CardItemFeed from './CardItemFeed';
 import * as Location from 'expo-location';
-import { TextInput } from 'react-native';
-import { Notifications } from 'expo';
-import PushNotification from '../PushNotification';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import PushNotifications from '../PushNotifications/PushNotifications';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -64,29 +64,32 @@ export default class FeedPage extends Component {
     this.styleDD = null;
     this.typeDD = null;
     this.conDD = null;
+
+    this.notificationListener = createRef();
+    this.responseListener = createRef();
+    
   }
 
   componentDidMount() {
     this.callFetchFunc()
-
-    PushNotification()
-      .then((token) => {
-       this.setState({ token: token }
-        , ()=>this.fetchpPutToken(this.state.token)
-        );
-      })
-      
-    this._notificationSubscription = Notifications.addListener(this._handleNotification);
-
+  }
+  componentWillUnmount() {
+    this.setState({ userTemplate: this.props.route.params.user })
+    this.getLocation(true)
   }
 
-  _handleNotification = (notification) => {
-    this.setState({ notification: notification });
-  };
-
+  callFetchFunc = () => {
+    this.fetchDropDown(urlItemSize);
+    this.fetchDropDown(urlItemStyle);
+    this.fetchDropDown(urlItemPrice);
+    this.fetchDropDown(urlConditionPrice);
+    this.getCurrentLocation()
+    this.getAvatarForUser(this.props.route.params.user)
+    //this.fetchpPutToken(this.state.token)
+  }
   fetchpPutToken = async (token) => {
     console.log('tokennnn: ', token)
-    let tempToken= token
+    let tempToken = token
     await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
       method: 'PUT',
       //body: JSON.stringify(user),
@@ -106,24 +109,6 @@ export default class FeedPage extends Component {
           console.log('Error', error);
         })
   }
-
-  componentWillUnmount() {
-    this.setState({ userTemplate: this.props.route.params.user })
-    this.getLocation(true)
-    // , () => {
-    // console.log('user in feed will: ', this.state.userTemplate)}
-  }
-
-  callFetchFunc = () => {
-    this.fetchDropDown(urlItemSize);
-    this.fetchDropDown(urlItemStyle);
-    this.fetchDropDown(urlItemPrice);
-    this.fetchDropDown(urlConditionPrice);
-    this.getCurrentLocation()
-    this.getAvatarForUser(this.props.route.params.user)
-    //this.fetchpPutToken(this.state.token)
-  }
-
   getCurrentLocation = async () => {
 
     let premission = await Location.hasServicesEnabledAsync();
@@ -306,6 +291,10 @@ export default class FeedPage extends Component {
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
+          {/* <View>
+          <PushNotifications/>
+          </View> */}
+        
           <View style={styles.container}>
             <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
