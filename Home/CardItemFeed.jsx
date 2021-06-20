@@ -4,9 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Mod
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { firebase } from "../firebase"
-import Expo, { Constants } from 'expo';
 import * as Notifications from 'expo-notifications';
-import PushNotifications from '../PushNotifications/PushNotifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,7 +39,8 @@ export default function CardItem(props) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-  let listener= '';
+  const [expoPushToken, setExpoPushToken]=useState('')
+  let listener = '';
 
   useEffect(() => {
     var sendMessUser = props.logInUser
@@ -53,38 +52,34 @@ export default function CardItem(props) {
     var userChat = [{ UsersList, itemRequestId, item }]
 
     //can delete this useEffect if the notification doesnt work..
-    //NOTIFICATION:
 
-   listenerExpo()
+    listenerExpo(userChat)
   }, [])
 
-  function listenerExpo(){ //doesnt work!
-    console.log('in listenerExpo function..')
+  function listenerExpo(userChat) {
+    //console.log('in listenerExpo function..')
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-      console.log('noti:        ', notification.request)
-      //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
+      setNotification(notification), () =>
+        console.log('noti:        ', JSON.stringify(notification.request));
     });
+    //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      const navi = response.notification.request.content.data;
-      console.log('res:           ', navi);
-      response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+    const navi = response.notification.request.content.data;
+    console.log('res:           ', JSON.stringify(response));
+    //response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
 
-      if (navi.type == 'yes') {
-        console.log('yes')
-        navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
-      }
-      if (navi.type == 'no') {
-        console.log('no')
-        navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
-      }
-      //navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
-      //navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
-      //response.actionIdentifier == what it should do when you press on it, go to newChat
+    if (navi.type == 'yes') {
+      console.log('yes')
+      navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
+    }
+    if (navi.type == 'no') {
+      console.log('no')
+      navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
+    }
+    //response.actionIdentifier == what it should do when you press on it, go to newChat
     });
-    
   }
 
   function createUsersArr() {
@@ -160,7 +155,7 @@ export default function CardItem(props) {
     const message = {
       to: expoPushToken,
       sound: 'default',
-      title: 'קיבלת בקשת פריט חדשה',
+      title: 'בקשת פריט חדשה',
       body: Dmessage,
       data: { type: 'yes' },
     };
