@@ -16,7 +16,6 @@ export default function MainChatPage(props) {
 
   useEffect(() => {
     let tempArr = []
-    console.log(user.id)
     fetch(urlGetAllChat + user.id, {
       method: 'GET',
       //body: JSON.stringify(chatRow),
@@ -41,32 +40,32 @@ export default function MainChatPage(props) {
         })
   }, [])
 
-  const GetAllChats = () => {
-    let tempArr = []
-    console.log(user.id)
-    fetch(urlGetAllChat + user.id, {
-      method: 'GET',
-      //body: JSON.stringify(chatRow),
-      headers: new Headers({
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json; charset=UTF-8',
-      })
-    })
-      .then(res => {
-        console.log('res.ok getChats=', res.ok);
-        return res.json()
-      })
-      .then(chats => {
-        for (var i = 0; i < chats.length; i++) {
-          tempArr.push(chats[i])
-        }
-        setAllChats(tempArr)
-        //console.log('state chats: ', chats)
-      },
-        (error) => {
-          console.log('Error', error);
-        })
-  }
+  // const GetAllChats = () => {
+  //   let tempArr = []
+  //   console.log(user.id)
+  //   fetch(urlGetAllChat + user.id, {
+  //     method: 'GET',
+  //     //body: JSON.stringify(chatRow),
+  //     headers: new Headers({
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'Accept': 'application/json; charset=UTF-8',
+  //     })
+  //   })
+  //     .then(res => {
+  //       console.log('res.ok getChats=', res.ok);
+  //       return res.json()
+  //     })
+  //     .then(chats => {
+  //       for (var i = 0; i < chats.length; i++) {
+  //         tempArr.push(chats[i])
+  //       }
+  //       setAllChats(tempArr)
+  //       //console.log('state chats: ', chats)
+  //     },
+  //       (error) => {
+  //         console.log('Error', error);
+  //       })
+  // }
 
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     //console.log('item: ', item)

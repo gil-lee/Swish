@@ -28,7 +28,6 @@ export default class extends React.Component {
       disableInput: false,
       chatStatus: '',
     }
-
   }
 
   onChange = ({ window, screen }) => {
@@ -128,17 +127,14 @@ export default class extends React.Component {
         from: this.state.userChat[0].UsersList[0],
         //chatStatus: this.state.chatStatus
       }
-      //console.log('messages: ', messageId)
       updates['messages/' + messageId + '/' + msgId] = message;
       console.log('update: ', updates)
       firebase.database().ref().update(updates)
-      //this.btnPushFromClient()
-      this.sendPushNotification(this.state.user2Upload.userToken)
+      //this.sendPushNotification(this.state.user2Upload.userToken)
       this.setState({ textMessage: '' })
     }
   }
   sendPushNotification = async (expoPushToken) => {
-    console.log('user token: ', this.state.user2Upload.userToken)
     const message = {
       to: expoPushToken,
       sound: 'default',
@@ -158,36 +154,7 @@ export default class extends React.Component {
     });
   }
 
-  btnPushFromClient = () => {
-    console.log('user token: ', this.state.user2Upload.userToken)
-    let per = {
-      to: this.state.user2Upload.userToken,
-      title: 'title from ' + this.state.user1.firstName,
-      body: "body from client side",
-      //badge: 3,
-      data: { message: this.state.textMessage }
-    };
-    console.log('per: ', per)
-    // POST adds a random id to the object sent
-    fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      body: JSON.stringify(per),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then(response => response.json())
-      .then(json => {
-        if (json != null) {
-          console.log(`
-              returned from server\n
-              json.data= ${JSON.stringify(json.data)}`);
-
-        } else {
-          alert('err json');
-        }
-      });
-  }
+ 
 
   renderMessage = ({ item }) => {
     //console.log('item render:', item)

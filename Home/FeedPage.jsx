@@ -58,7 +58,7 @@ export default class FeedPage extends Component {
       locationPre: false,
 
       notification: {},
-      token: '',
+      userToken:'',
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -67,7 +67,8 @@ export default class FeedPage extends Component {
 
     this.notificationListener = createRef();
     this.responseListener = createRef();
-    
+   
+
   }
 
   componentDidMount() {
@@ -76,6 +77,7 @@ export default class FeedPage extends Component {
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
+    this.getTokenFromExpo()
   }
 
   callFetchFunc = () => {
@@ -85,14 +87,66 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlConditionPrice);
     this.getCurrentLocation()
     this.getAvatarForUser(this.props.route.params.user)
-    //this.fetchpPutToken(this.state.token)
+    this.getTokenFromExpo()
   }
+
+  getTokenFromExpo = () => {
+    this.registerForPushNotificationsAsync().then(token => this.setState({userToken: token},()=> this.fetchpPutToken(token)));
+  }
+  registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log('token in feed page: ', token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+    return token;
+  }
+
   fetchpPutToken = async (token) => {
-    console.log('tokennnn: ', token)
+    console.log('token befor put to DB: ', token)
     let tempToken = token
+    let newUser= {
+      avatarlevel: this.state.userTemplate.avatarlevel,
+      birthDate: this.state.userTemplate.birthDate,
+      email: this.state.userTemplate.email,
+      firstName: this.state.userTemplate.firstName,
+      id: this.state.userTemplate.id,
+      lastName: this.state.userTemplate.lastName,
+      numOfItems: this.state.userTemplate.numOfItems,
+      numOfPoints: this.state.userTemplate.numOfPoints,
+      password: this.state.userTemplate.password,
+      phoneNumber: this.state.userTemplate.phoneNumber,
+      profilePicture: this.state.userTemplate.profilePicture,
+      radius: this.state.userTemplate.radius,
+      residence: this.state.userTemplate.residence,
+      userToken: tempToken
+    }
+
+    this.setState({userTemplate: newUser}, ()=> console.log('new user with token: ', newUser))
+    
     await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
       method: 'PUT',
-      //body: JSON.stringify(user),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
@@ -109,6 +163,7 @@ export default class FeedPage extends Component {
           console.log('Error', error);
         })
   }
+
   getCurrentLocation = async () => {
 
     let premission = await Location.hasServicesEnabledAsync();
@@ -294,7 +349,7 @@ export default class FeedPage extends Component {
           {/* <View>
           <PushNotifications/>
           </View> */}
-        
+
           <View style={styles.container}>
             <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />

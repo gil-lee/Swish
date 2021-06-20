@@ -1,10 +1,10 @@
 {
-  "expoServerPort": null,
-  "packagerPort": null,
+  "expoServerPort": 19000,
+  "packagerPort": 19000,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://fj-f7k.meytal-manyfler.swish.exp.direct",
+  "packagerNgrokUrl": "https://packager.fj-f7k.meytal-manyfler.swish.exp.direct",
+  "ngrokPid": 648,
   "webpackServerPort": null,
   "devToolsPort": 19002
 }

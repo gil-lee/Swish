@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Mod
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { firebase } from "../firebase"
-import Constants from 'expo-constants';
+import Expo, { Constants } from 'expo';
 import * as Notifications from 'expo-notifications';
 import PushNotifications from '../PushNotifications/PushNotifications';
 
@@ -38,12 +38,54 @@ export default function CardItem(props) {
     { url: props.data.image3 },
     { url: props.data.image4 },
   ])
-
-  const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
+  let listener= '';
 
+  useEffect(() => {
+    var sendMessUser = props.logInUser
+    var userUploadItem = props.user
+    var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
+    var UsersList = [];
+    UsersList.push(sendMessUser, userUploadItem)
+    var item = props.data
+    var userChat = [{ UsersList, itemRequestId, item }]
+
+    //can delete this useEffect if the notification doesnt work..
+    //NOTIFICATION:
+
+   listenerExpo()
+  }, [])
+
+  function listenerExpo(){ //doesnt work!
+    console.log('in listenerExpo function..')
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+      console.log('noti:        ', notification.request)
+      //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      const navi = response.notification.request.content.data;
+      console.log('res:           ', navi);
+      response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
+
+      if (navi.type == 'yes') {
+        console.log('yes')
+        navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
+      }
+      if (navi.type == 'no') {
+        console.log('no')
+        navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
+      }
+      //navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
+      //navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
+      //response.actionIdentifier == what it should do when you press on it, go to newChat
+    });
+    
+  }
 
   function createUsersArr() {
     var sendMessUser = props.logInUser
@@ -92,16 +134,12 @@ export default function CardItem(props) {
 
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
-    //navigation.navigate('PushNotifications')
   }
 
   function sendDfaultMessage(userChat) {
     let Dmessage = `${userChat[0].UsersList[0].firstName} רוצה לקבל ממך את הפריט: ${'\n' + userChat[0].item.name}`;
-    //setMessages(Dmessage);
 
-    //console.log('message hook:', Dmessage)
     const messageId = userChat[0].itemRequestId;
-    //console.log('how message looks: ', messages)
     if (Dmessage.length > 0) {
       let msgId = firebase.database().ref('messages').child(userChat[0].itemRequestId).push().key;
 
@@ -111,12 +149,31 @@ export default function CardItem(props) {
         time: firebase.database.ServerValue.TIMESTAMP,
         from: userChat[0].UsersList[0]
       }
-      //console.log('messages: ', messageId)
       updates['messages/' + messageId + '/' + msgId] = message;
-      //console.log('update: ', updates)
+
+      sendPushNotification(props.user.userToken, Dmessage)
       firebase.database().ref().update(updates)
+
     }
-   
+  }
+  async function sendPushNotification(expoPushToken, Dmessage) {
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'קיבלת בקשת פריט חדשה',
+      body: Dmessage,
+      data: { type: 'yes' },
+    };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
   }
 
   function goToOtherProfile() {
