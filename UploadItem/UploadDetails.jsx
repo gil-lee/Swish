@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View, TextInput, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, Image, Alert } from 'react-native'
-import { Picker } from '@react-native-community/picker'
 import Textarea from 'react-native-textarea';
 import { Dropdown } from 'react-native-material-dropdown-v2';
-import Modal from 'react-native-modal';
-import { Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { UIImagePickerControllerQualityType } from 'expo-image-picker/build/ImagePicker.types';
 
 const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";

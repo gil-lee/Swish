@@ -17,8 +17,6 @@ const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
 const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
 
-const urlFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetItemFilter";
-
 const users = [];
 const items = [];
 

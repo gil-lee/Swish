@@ -13,8 +13,8 @@ export default class SettingsPage extends Component {
       user: this.props.route.params.user,
       firstName: '',
       lastName: '',
-      itemViewingMethod: this.props.route.params.user.itemViewingMethod,
-      value_radio: 0,
+      //itemViewingMethod: this.props.route.params.user.itemViewingMethod,
+      //value_radio: 0,
       cities: this.props.route.params.user.residence,
       radius: this.props.route.params.user.radius,
       valueSlider: '',
@@ -34,13 +34,13 @@ export default class SettingsPage extends Component {
       smartFinder: '',
     }
   }
-  radio_props = [ //בחירת תצוגת הפריטים למשתמש (נשתמש בהמשך)
-    { label: "מיקום נוכחי ורדיוס", value: 0 },
-    { label: "עיר ורדיוס", value: 1 }
-  ];
-  componentDidMount() {
-    this.getValueItemViewing()
-  }
+  // radio_props = [ //בחירת תצוגת הפריטים למשתמש (נשתמש בהמשך)
+  //   { label: "מיקום נוכחי ורדיוס", value: 0 },
+  //   { label: "עיר ורדיוס", value: 1 }
+  // ];
+  // componentDidMount() {
+  //   this.getValueItemViewing()
+  // }
 
   onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
     this.setState({ [key]: val })
@@ -66,23 +66,23 @@ export default class SettingsPage extends Component {
     //this.props.navigation.push('Profile Page', {user: this.props.route.params.user})
     this.props.navigation.goBack();
   }
-  radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
-    this.setState({ value_radio: value })
-    if (value == 0) {
-      this.setState({ itemViewingMethod: 'L' })
-    }
-    else {
-      this.setState({ itemViewingMethod: 'R' })
-    }
-  }
-  getValueItemViewing = (method) => {
-    if (this.props.route.params.user.itemViewingMethod == 'R') {
-      this.setState({ value_radio: 1 })
-    }
-    else {
-      this.setState({ value_radio: 0 })
-    }
-  }
+  // radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
+  //   this.setState({ value_radio: value })
+  //   if (value == 0) {
+  //     this.setState({ itemViewingMethod: 'L' })
+  //   }
+  //   else {
+  //     this.setState({ itemViewingMethod: 'R' })
+  //   }
+  // }
+  // getValueItemViewing = (method) => {
+  //   if (this.props.route.params.user.itemViewingMethod == 'R') {
+  //     this.setState({ value_radio: 1 })
+  //   }
+  //   else {
+  //     this.setState({ value_radio: 0 })
+  //   }
+  // }
   goToCities = (city) => { //מעבר לקומפוננטת ערים
     this.setState({ cities: city })
   }
@@ -197,7 +197,7 @@ export default class SettingsPage extends Component {
     let user = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
-      itemViewingMethod: this.state.itemViewingMethod,
+      //itemViewingMethod: this.state.itemViewingMethod,
       radius: this.state.radius,
       residence: this.state.cities,
       password: this.state.password,
@@ -276,11 +276,7 @@ export default class SettingsPage extends Component {
               </View>
             </View>
 
-
-            <View style={styles.radioBtn}>
-              <Text style={styles.text, { marginTop: 5, marginBottom: 14 }}>תצוגת פריטים לפי:</Text>
-
-              <RadioForm formHorizontal={true} animation={true} >
+              {/* <RadioForm formHorizontal={true} animation={true} >
                 {this.radio_props.map((label, value) => (
                   <View key={value} style={{ marginLeft: 30, marginRight: 30 }}>
                     <RadioButton labelHorizontal={false} key={value} >
@@ -301,8 +297,8 @@ export default class SettingsPage extends Component {
                         key={value}
                       />
                     </RadioButton></View>))}
-              </RadioForm>
-            </View>
+              </RadioForm> */}
+            <Text style={styles.text, { marginTop: 10}}>עדכון תצוגת פריטים:</Text>
 
             <View style={{ flexDirection: 'row-reverse' }}>
               <View style={styles.text}>

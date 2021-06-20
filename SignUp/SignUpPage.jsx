@@ -29,7 +29,7 @@ export default class SignUpPage extends Component {
       value_radio: 0,
       radius: 3,
       valueSlider: '',
-      itemViewingMethod: 'R',
+      //itemViewingMethod: 'R',
       cities: '',
       latitude: 0,
       longitude: 0,
@@ -121,17 +121,17 @@ export default class SignUpPage extends Component {
     return expMatch;
   }
 
-  radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
-    this.setState({ value_radio: value })
-    if (value == 0) {
-      this.setState({ itemViewingMethod: 'R' })
+  // radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
+  //   this.setState({ value_radio: value })
+  //   if (value == 0) {
+  //     this.setState({ itemViewingMethod: 'R' })
 
-    }
-    else {
-      this.setState({ itemViewingMethod: 'L' })
-      //return <CurrentLocFun/>
-    }
-  }
+  //   }
+  //   else {
+  //     this.setState({ itemViewingMethod: 'L' })
+  //     //return <CurrentLocFun/>
+  //   }
+  // }
 
   signUpBtn = () => { //פונקציית ההרשמה, הכנסת משתמש חדש לDB   
 
@@ -155,11 +155,8 @@ export default class SignUpPage extends Component {
         residence: this.state.cities,
         radius: this.state.radius,
         birthDate: this.state.bdate,
-        itemViewingMethod: this.state.itemViewingMethod,
+        //itemViewingMethod: this.state.itemViewingMethod,
         avatarlevel: 1,
-        daliySentencld: 1,
-        latitude: this.state.latitude,
-        longitude: this.state.longitude
       }
 
 
@@ -419,10 +416,7 @@ export default class SignUpPage extends Component {
               </View>
             </View>
 
-            <View style={styles.radioBtn}>
-              <Text style={styles.text, { marginTop: 5 }}>תצוגת פריטים לפי:</Text>
-
-              <RadioForm formHorizontal={true} animation={true} >
+              {/* <RadioForm formHorizontal={true} animation={true} >
                 {this.radio_props.map((label, value) => (
                   <View key={value} style={{ marginLeft: 30, marginRight: 30 }}>
                     <RadioButton labelHorizontal={false} key={value} >
@@ -443,9 +437,8 @@ export default class SignUpPage extends Component {
                         key={value}
                       />
                     </RadioButton></View>))}
-              </RadioForm>
-            </View>
-
+              </RadioForm> */}
+            <Text style={styles.text, { marginTop: 5 }}>תצוגת פריטים לפי:</Text>
             <View style={{ flexDirection: 'row-reverse' }}>
               <View style={styles.text}>
                 {/* //מעבר לתצוגת הערים כרשימה נפתחת */}
@@ -460,6 +453,9 @@ export default class SignUpPage extends Component {
 
               <View><Text></Text><Text></Text></View>
               <View style={styles.text}>
+              <Text style={{paddingRight:5}}>
+                  רדיוס: {this.state.radius} ק"מ ממני
+                </Text>
                 <Slider
                   onValueChange={(v) => this.setState({ radius: v })}
                   maximumValue={40}
@@ -470,9 +466,6 @@ export default class SignUpPage extends Component {
                   thumbStyle={{ height: 25, width: 25, backgroundColor: '#696969' }}
                   style={styles.sliderbtn}
                 />
-                <Text>
-                  רדיוס: {this.state.radius} ק"מ ממני
-                </Text>
               </View>
             </View>
 
