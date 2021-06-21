@@ -30,6 +30,15 @@ const conditions = [];
 const sizes = [];
 const styless = [];
 
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 export default class FeedPage extends Component {
   constructor(props) {
     super(props);
@@ -56,7 +65,8 @@ export default class FeedPage extends Component {
       locationPre: false,
 
       notification: {},
-      userToken:'',
+      userToken: '',
+      badge: 0,
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -65,17 +75,41 @@ export default class FeedPage extends Component {
 
     this.notificationListener = createRef();
     this.responseListener = createRef();
-   
 
   }
 
   componentDidMount() {
     this.callFetchFunc()
+    this.registerForPushNotificationsAsync();
+
+    Notifications.addNotificationReceivedListener(this._handleNotification);
+
+    Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
+
   }
+  _handleNotification = notification => {
+    //console.log('noti3: ', notification)
+    this.setState({ notification: notification });
+  };
+
+  _handleNotificationResponse = response => {
+    console.log('respo1: ', response);
+    //console.log('respo2: ', response.notification.request.content.data.type);
+    let usersToChat= response.notification.request.content.data.from;
+    let itemToChat= response.notification.request.content.data.item;
+    if (response.notification.request.content.data.type == "requestMessage") {
+      console.log('respo2: ', response.notification.request.content.data.from);
+      console.log('respo3: ', response.notification.request.content.data.item);
+      this.props.navigation.navigate('NewChat' , { userChat: usersToChat[0], item: itemToChat })
+    }
+    if (response.notification.request.content.data.type == "message") { //לבדוק אם אפשר לאחד את הif
+      this.props.navigation.navigate('NewChat' , { userChat: usersToChat[0], item: itemToChat })
+    }
+  };
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
-    this.getTokenFromExpo()
+    //this.getTokenFromExpo()
   }
 
   callFetchFunc = () => {
@@ -85,11 +119,47 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlConditionPrice);
     this.getCurrentLocation()
     this.getAvatarForUser(this.props.route.params.user)
-    this.getTokenFromExpo()
+    //this.getTokenFromExpo()
   }
 
+
   getTokenFromExpo = () => {
-    this.registerForPushNotificationsAsync().then(token => this.setState({userToken: token},()=> this.fetchpPutToken(token)));
+    this.registerForPushNotificationsAsync().then(token => this.setState({ userToken: token }, () => this.fetchpPutToken(token)));
+
+    console.log('in listenerExpo function..')
+
+    this.notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('noti2:        ', JSON.stringify(notification.request));
+      this.setState({ notification: notification }), () =>
+        console.log('noti:        ', JSON.stringify(notification.request));
+    });
+    //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
+    //console.log('notiListener1', this.notificationListener)
+    //console.log('notiListener2', this.notificationListener.current)
+    this.responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('res2:           ', JSON.stringify(response));
+      const navi = response.notification.request.content.data;
+      console.log('res:           ', JSON.stringify(response));
+      //response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
+
+      if (navi.type == 'yes') {
+        console.log('yes')
+        navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
+      }
+      if (navi.type == 'no') {
+        console.log('no')
+        navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
+      }
+      //response.actionIdentifier == what it should do when you press on it, go to newChat
+    });
+
+    console.log('response1', this.responseListener)
+    console.log('response2', this.responseListener.current)
+
+    return () => {
+      Notifications.removeNotificationSubscription(this.notificationListener.current);
+      Notifications.removeNotificationSubscription(this.responseListener.current);
+    };
   }
   registerForPushNotificationsAsync = async () => {
     let token;
@@ -122,9 +192,9 @@ export default class FeedPage extends Component {
   }
 
   fetchpPutToken = async (token) => {
-    console.log('token befor put to DB: ', token)
+    //console.log('token befor put to DB: ', token)
     let tempToken = token
-    let newUser= {
+    let newUser = {
       avatarlevel: this.state.userTemplate.avatarlevel,
       birthDate: this.state.userTemplate.birthDate,
       email: this.state.userTemplate.email,
@@ -141,8 +211,8 @@ export default class FeedPage extends Component {
       userToken: tempToken
     }
 
-    this.setState({userTemplate: newUser}, ()=> console.log('new user with token: ', newUser))
-    
+    this.setState({ userTemplate: newUser }, () => console.log('new user with token: ', newUser))
+
     await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
       method: 'PUT',
       headers: new Headers({
@@ -190,7 +260,7 @@ export default class FeedPage extends Component {
   getLocation = async (prem) => {
     if (prem.granted == true) {
       let location = await Location.getCurrentPositionAsync();
-      console.log('location: ', location)
+      //console.log('location: ', location)
       this.setState(
         {
           latitudeSt: location.coords.latitude,

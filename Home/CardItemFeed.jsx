@@ -53,19 +53,21 @@ export default function CardItem(props) {
 
     //can delete this useEffect if the notification doesnt work..
 
-    listenerExpo(userChat)
+    //listenerExpo(userChat)
   }, [])
 
   function listenerExpo(userChat) {
-    //console.log('in listenerExpo function..')
+    console.log('in listenerExpo function..')
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('noti2:        ', JSON.stringify(notification.request));
       setNotification(notification), () =>
         console.log('noti:        ', JSON.stringify(notification.request));
     });
     //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('res2:           ', JSON.stringify(response));
     const navi = response.notification.request.content.data;
     console.log('res:           ', JSON.stringify(response));
     //response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
@@ -127,6 +129,7 @@ export default function CardItem(props) {
         })
     sendDfaultMessage(userChat)
 
+    console.log('props user for token: ', userChat[0].UsersList[1])
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
   }
@@ -152,12 +155,20 @@ export default function CardItem(props) {
     }
   }
   async function sendPushNotification(expoPushToken, Dmessage) {
+    var sendMessUser = props.logInUser
+    var userUploadItem = props.user
+    var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
+    var UsersList = [];
+    UsersList.push(userUploadItem, sendMessUser)
+    var item = props.data
+    var userChat = [{ UsersList, itemRequestId, item }]
+
     const message = {
       to: expoPushToken,
       sound: 'default',
       title: 'בקשת פריט חדשה',
       body: Dmessage,
-      data: { type: 'yes' },
+      data: { type: "requestMessage" , from: userChat, item: props.data}
     };
 
     await fetch('https://exp.host/--/api/v2/push/send', {

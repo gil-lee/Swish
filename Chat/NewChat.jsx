@@ -25,7 +25,7 @@ export default class extends React.Component {
         window,
         screen
       },
-      disableInput: false,
+      disableInput: true,
       chatStatus: '',
     }
   }
@@ -35,7 +35,7 @@ export default class extends React.Component {
   };
 
   componentDidMount() {
-
+//console.log('token new chat please!!! ', this.state.user2Upload)
     this.getChatStatusDB();
     Dimensions.addEventListener("change", this.onChange);
     firebase.database().ref('messages').child(this.state.userChat[0].itemRequestId).on('child_added', (value) => {
@@ -114,9 +114,9 @@ export default class extends React.Component {
   }
 
   sendMessage = async () => {
-    console.log('in send func')
+    //console.log('in send func')
     const messageId = this.props.route.params.userChat[0].itemRequestId;
-    console.log('how message looks: ', this.state.textMessage)
+    //console.log('how message looks: ', this.state.textMessage)
     if (this.state.textMessage.length > 0) {
       let msgId = firebase.database().ref('messages').child(this.state.userChat[0].itemRequestId).push().key;
 
@@ -130,17 +130,23 @@ export default class extends React.Component {
       updates['messages/' + messageId + '/' + msgId] = message;
       console.log('update: ', updates)
       firebase.database().ref().update(updates)
-      //this.sendPushNotification(this.state.user2Upload.userToken)
+
+      console.log('user token ???',this.state.userChat[0].UsersList[1])
+      this.sendPushNotification(this.state.user2Upload.userToken)
+
       this.setState({ textMessage: '' })
     }
   }
-  sendPushNotification = async (expoPushToken) => {
+  sendPushNotification = async (expoToken) => {
+    let bodyMessage = `${this.state.user1.firstName} שלח.ה לך הודעה\n ${this.state.textMessage}`
+    console.log('expo token from new chat:  ', expoToken)
+
     const message = {
-      to: expoPushToken,
+      to: expoToken,
       sound: 'default',
-      title: 'Original Title',
-      body: 'And here is the body!',
-      data: { message: this.state.textMessage },
+      title: 'קיבלת הודעה חדשה',
+      body: bodyMessage,
+      data: { type: "message", from: this.state.userChat, item: this.state.item }
     };
 
     await fetch('https://exp.host/--/api/v2/push/send', {
@@ -154,7 +160,7 @@ export default class extends React.Component {
     });
   }
 
- 
+
 
   renderMessage = ({ item }) => {
     //console.log('item render:', item)

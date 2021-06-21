@@ -18,7 +18,6 @@ export default function MainChatPage(props) {
     let tempArr = []
     fetch(urlGetAllChat + user.id, {
       method: 'GET',
-      //body: JSON.stringify(chatRow),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
@@ -33,40 +32,12 @@ export default function MainChatPage(props) {
           tempArr.push(chats[i])
         }
         setAllChats(tempArr)
-        console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
+        //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
       },
         (error) => {
           console.log('Error', error);
         })
   }, [])
-
-  // const GetAllChats = () => {
-  //   let tempArr = []
-  //   console.log(user.id)
-  //   fetch(urlGetAllChat + user.id, {
-  //     method: 'GET',
-  //     //body: JSON.stringify(chatRow),
-  //     headers: new Headers({
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //       'Accept': 'application/json; charset=UTF-8',
-  //     })
-  //   })
-  //     .then(res => {
-  //       console.log('res.ok getChats=', res.ok);
-  //       return res.json()
-  //     })
-  //     .then(chats => {
-  //       for (var i = 0; i < chats.length; i++) {
-  //         tempArr.push(chats[i])
-  //       }
-  //       setAllChats(tempArr)
-  //       //console.log('state chats: ', chats)
-  //     },
-  //       (error) => {
-  //         console.log('Error', error);
-  //       })
-  // }
-
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     //console.log('item: ', item)
     if (uploadUser == user.id) {
@@ -76,23 +47,19 @@ export default function MainChatPage(props) {
       var itemRequestId = itemId + "-" + uploadUser + "-" + user.id
     }
 
-    //console.log('item request id: ', itemRequestId)
     var sendMessUser = user
     var userUploadItem = otherUser
     var UsersList = [];
     UsersList.push(sendMessUser, userUploadItem)
 
     var userChat = [{ UsersList, itemRequestId, item }]
-
-    //console.log('user chat: ', userChat)
-    //navigation.navigate('Chat', {userChat: userChat, item: itemId})
+console.log('jhhhjh: ', userChat)
     navigation.navigate('NewChat', { userChat: userChat, item: itemId })
   }
 
 
    const returnAllChats =
     allChats.map(user=> {
-      //let itemName= user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name;
       return <ScrollView>
         <View key={user.id} style={styles.layout}>
           <TouchableOpacity onPress={() => getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
