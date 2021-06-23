@@ -80,7 +80,8 @@ export default class FeedPage extends Component {
 
   componentDidMount() {
     this.callFetchFunc()
-    this.registerForPushNotificationsAsync();
+    this.registerForPushNotificationsAsync().then(token=> this.fetchpPutToken(token));
+    
 
     Notifications.addNotificationReceivedListener(this._handleNotification);
 
@@ -93,18 +94,21 @@ export default class FeedPage extends Component {
   };
 
   _handleNotificationResponse = response => {
-    console.log('respo1: ', response);
+    //console.log('respo1: ', response);
     //console.log('respo2: ', response.notification.request.content.data.type);
     let usersToChat= response.notification.request.content.data.from;
     let itemToChat= response.notification.request.content.data.item;
-    if (response.notification.request.content.data.type == "requestMessage") {
-      console.log('respo2: ', response.notification.request.content.data.from);
-      console.log('respo3: ', response.notification.request.content.data.item);
-      this.props.navigation.navigate('NewChat' , { userChat: usersToChat[0], item: itemToChat })
+    if (response.notification.request.content.data.type == "requestMessage" ||response.notification.request.content.data.type == "message") {
+      this.props.navigation.navigate('NewChat' , { userChat: usersToChat, item: itemToChat })
     }
-    if (response.notification.request.content.data.type == "message") { //לבדוק אם אפשר לאחד את הif
-      this.props.navigation.navigate('NewChat' , { userChat: usersToChat[0], item: itemToChat })
+    // if (response.notification.request.content.data.type == "message") { //לבדוק אם אפשר לאחד את הif
+    //   this.props.navigation.navigate('NewChat' , { userChat: usersToChat, item: itemToChat })
+    // }
+    if (response.notification.request.content.data.type == "declineRequest") {
+      //console.log('in declined request!!!!') 
+      this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate} })
     }
+    
   };
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
@@ -421,7 +425,7 @@ export default class FeedPage extends Component {
           <View style={styles.container}>
             <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />
-              <TextInput style={styles.sendBtn}
+              <TextInput style={{}}
                 placeholder='חיפוש'
                 onChangeText={text => {
                   //console.log(text);

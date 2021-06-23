@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 export default function MainChatPage(props) {
   const navigation = useNavigation();
-  const urlGetAllChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetAllChats/"
-  //const { userChat } = props;
+  const urlGetAllChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChats/"
   const { user } = props.route.params
-  //const { state: { myTeams } } = useContext(TeamContext);
-  //const { state: { players } } = useContext(PlayerContext);
   const [allChats, setAllChats] = useState([]);
   const [usersCards, setUsersCards] = useState(null);
 
@@ -53,37 +50,38 @@ export default function MainChatPage(props) {
     UsersList.push(sendMessUser, userUploadItem)
 
     var userChat = [{ UsersList, itemRequestId, item }]
-console.log('jhhhjh: ', userChat)
+    //console.log('jhhhjh: ', userChat)
     navigation.navigate('NewChat', { userChat: userChat, item: itemId })
   }
 
 
-   const returnAllChats =
-    allChats.map(user=> {
+  const returnAllChats =
+    allChats.map(user => {
       return <ScrollView>
         <View key={user.id} style={styles.layout}>
           <TouchableOpacity onPress={() => getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
-            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
-              <View style={{ justifyContent: 'flex-start', flexDirection: 'row' }}>
-                <Text style={styles.Text}>{user.userDTO[0].firstName} {user.userDTO[0].lastName} - 
-                {/* <Text style={{fontSize:13}}> {temp[key]}</Text> */}
-                </Text>
+            <View style={{ paddingBottom: 7 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'column', paddingRight: 20 }}>
+                  <Text style={styles.Text}>
+                    {user.userDTO[0].firstName} {user.userDTO[0].lastName}
+                  </Text>
+                  <Text style={{}}>
+                    {user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name}
+                  </Text>
+                </View>
                 <Image source={{ uri: user.userDTO[0].profilePicture }} style={styles.userImage} />
               </View>
-              {/* <View style={{justifyContent:'center', alignItems: 'flex-end'}}>
-                <Text>{user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name}</Text>
-              </View> */}
+
             </View>
           </TouchableOpacity>
-          {/* <View style={{ justifyContent: 'flex-end' }}> </View> */}
         </View>
       </ScrollView>
     })
-  
+
 
   return (
-    <ScrollView>
-      <View>
+    <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View style={styles.container}>
           <View style={{ flexDirection: 'row' }}>
             <Image source={{ uri: user.profilePicture }} style={styles.userImage}></Image>
@@ -97,15 +95,22 @@ console.log('jhhhjh: ', userChat)
           </View>
         </View>
         <View style={styles.line} />
-        {returnAllChats}
-      </View>
-    </ScrollView>
+        <ScrollView>
+          <View>
+            {returnAllChats}
+          </View>
+        </ScrollView>
+    </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   userHeader: {
     marginLeft: 6,
@@ -125,9 +130,6 @@ const styles = StyleSheet.create({
   Text: {
     fontSize: 17,
     color: "#000",
-    paddingTop: 19,
-    paddingRight: 19,
-    paddingLeft: 19,
   },
   container: {
     alignItems: 'center',
