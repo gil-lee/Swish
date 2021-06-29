@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, Image, Alert } from 'react-native'
-import { TabActions } from '@react-navigation/native';
 
 //var tempUser = '';
 export default class LogInPage extends Component {

@@ -80,32 +80,23 @@ export default class FeedPage extends Component {
 
   componentDidMount() {
     this.callFetchFunc()
-    this.registerForPushNotificationsAsync().then(token=> this.fetchpPutToken(token));
     
-
+    this.registerForPushNotificationsAsync().then(token=> this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
-
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
-
   }
+
   _handleNotification = notification => {
-    //console.log('noti3: ', notification)
     this.setState({ notification: notification });
   };
 
   _handleNotificationResponse = response => {
-    //console.log('respo1: ', response);
-    //console.log('respo2: ', response.notification.request.content.data.type);
     let usersToChat= response.notification.request.content.data.from;
     let itemToChat= response.notification.request.content.data.item;
     if (response.notification.request.content.data.type == "requestMessage" ||response.notification.request.content.data.type == "message") {
       this.props.navigation.navigate('NewChat' , { userChat: usersToChat, item: itemToChat })
     }
-    // if (response.notification.request.content.data.type == "message") { //לבדוק אם אפשר לאחד את הif
-    //   this.props.navigation.navigate('NewChat' , { userChat: usersToChat, item: itemToChat })
-    // }
     if (response.notification.request.content.data.type == "declineRequest") {
-      //console.log('in declined request!!!!') 
       this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate} })
     }
     
