@@ -162,7 +162,7 @@ export default function OtherUserProfile(props) {
         <ScrollView>
           {userItemsList ?
             userItemsList.map(x =>
-              <CardItem key={x.itemsListDTO[0].itemId} data={x.itemsListDTO[0]} navigation={props.navigation} user={props.user} />)
+              <CardItem key={x.itemsListDTO[0].itemId} data={x.itemsListDTO[0]} navigation={props.navigation} user={users.user} logInUser={users.logInUser}/>)
             : null}
           <Text style={{ paddingBottom: 160 }}></Text>
         </ScrollView>

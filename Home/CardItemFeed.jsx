@@ -129,7 +129,7 @@ export default function CardItem(props) {
         })
     sendDfaultMessage(userChat)
 
-    console.log('props user for token: ', userChat[0].UsersList[1])
+    //console.log('props user for token: ', userChat[0].UsersList[1])
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
   }

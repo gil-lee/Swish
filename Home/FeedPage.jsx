@@ -206,7 +206,9 @@ export default class FeedPage extends Component {
       userToken: tempToken
     }
 
-    this.setState({ userTemplate: newUser }, () => console.log('new user with token: ', newUser))
+    this.setState({ userTemplate: newUser }
+      //, () => console.log('new user with token: ', newUser)
+      )
 
     await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
       method: 'PUT',

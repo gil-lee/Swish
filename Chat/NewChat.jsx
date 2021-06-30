@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageBackground, Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, ScrollView, Image, KeyboardAvoidingView } from 'react-native'
+import { ImageBackground, Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, TouchableWithoutFeedback, StyleSheet, ScrollView, Image, KeyboardAvoidingView } from 'react-native'
 import { firebase } from "../firebase"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Dimensions } from 'react-native';
@@ -271,7 +271,7 @@ export default class extends React.Component {
     }
     console.log('befor put confirmUpload')
     this.setState({ uploadConfirm: true })
-    
+
     fetch(urlPutUploadConfirm, {
       method: 'PUT',
       body: JSON.stringify(chat),
@@ -291,16 +291,16 @@ export default class extends React.Component {
           console.log('Error', error);
         })
 
-        let bodyMessage = `${this.state.user1.firstName} מסר.ה את הפריט\n ${this.state.textMessage}`
-          const pushMessage = {
-            to: this.state.user2Upload.userToken,
-            sound: 'default',
-            title: 'פריט נמסר בהצלחה',
-            body: bodyMessage,
-            data: { type: "message", from: this.state.userChat, item: this.state.item }
-          };
-  
-          this.sendPushNotification(pushMessage)
+    let bodyMessage = `${this.state.user1.firstName} מסר.ה את הפריט\n ${this.state.textMessage}`
+    const pushMessage = {
+      to: this.state.user2Upload.userToken,
+      sound: 'default',
+      title: 'פריט נמסר בהצלחה',
+      body: bodyMessage,
+      data: { type: "message", from: this.state.userChat, item: this.state.item }
+    };
+
+    this.sendPushNotification(pushMessage)
   }
   cancelRequestBtn = () => {
 
@@ -480,18 +480,19 @@ export default class extends React.Component {
             keyExtractor={(item, index) => index.toString()}
           />
         </ScrollView>
-
-        <View style={styles.sendInputView}>
+<View style={styles.sendInputView}>
+        {/* <KeyboardAvoidingView behavior="padding" style={styles.sendInputView}> */}
           <TextInput
-            style={styles.input}
             value={this.state.textMessage}
             placeholder="..."
             onChangeText={this.handleChange('textMessage')}
             editable={this.state.disableInput}
+            style={styles.input}
           />
           <TouchableOpacity style={styles.sendBtn} onPress={this.sendMessage}>
             <Icon name="paper-plane" size={20} color="#fff" style={{ margin: 13 }} />
           </TouchableOpacity>
+        {/* </KeyboardAvoidingView> */}
         </View>
       </SafeAreaView>
     )
@@ -584,17 +585,26 @@ const styles = StyleSheet.create({
   input: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
     width: '75%',
     marginBottom: 10,
     marginTop: 45,
-    marginLeft: 20,
+    marginLeft: 15,
+    marginRight: 15,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 14,
     borderColor: "#a7a7a7",
     direction: 'rtl',
     writingDirection: 'rtl',
+  },
+  input2: {
+    height: 50,
+    backgroundColor: '#fff',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    width: window.width - 30,
   },
   btnText: {
     color: 'darkblue',

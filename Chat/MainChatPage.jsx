@@ -11,7 +11,9 @@ export default function MainChatPage(props) {
   const [allChats, setAllChats] = useState([]);
   const [usersCards, setUsersCards] = useState(null);
 
+
   useEffect(() => {
+    //console.log('user in main chat page...: ', user)
     let tempArr = []
     fetch(urlGetAllChat + user.id, {
       method: 'GET',
@@ -29,12 +31,40 @@ export default function MainChatPage(props) {
           tempArr.push(chats[i])
         }
         setAllChats(tempArr)
+        //console.log('user in main chat page...: ', user)
+
         //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
       },
         (error) => {
           console.log('Error', error);
         })
-  }, [])
+  })
+
+  const getAllChats = () => {
+    fetch(urlGetAllChat + user.id, {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok getChats=', res.ok);
+        return res.json()
+      })
+      .then(chats => {
+        for (var i = 0; i < chats.length; i++) {
+          tempArr.push(chats[i])
+        }
+        setAllChats(tempArr)
+        //console.log('user in main chat page...: ', user)
+
+        //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     //console.log('item: ', item)
     if (uploadUser == user.id) {
@@ -82,24 +112,24 @@ export default function MainChatPage(props) {
 
   return (
     <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
-        <View style={styles.container}>
-          <View style={{ flexDirection: 'row' }}>
-            <Image source={{ uri: user.profilePicture }} style={styles.userImage}></Image>
-            <View style={{ alignItems: 'center' }}>
-              <Text style={styles.userHeader}>{user.firstName} {user.lastName}</Text>
-              <View style={{ flexDirection: 'row' }}>
-                <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
-                <Text style={styles.userHeader}>{user.numOfPoints}</Text>
-              </View>
+      <View style={styles.container}>
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={{ uri: user.profilePicture }} style={styles.userImage}></Image>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.userHeader}>{user.firstName} {user.lastName}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+              <Text style={styles.userHeader}>{user.numOfPoints}</Text>
             </View>
           </View>
         </View>
-        <View style={styles.line} />
-        <ScrollView>
-          <View>
-            {returnAllChats}
-          </View>
-        </ScrollView>
+      </View>
+      <View style={styles.line} />
+      <ScrollView>
+        <View>
+          {returnAllChats}
+        </View>
+      </ScrollView>
     </ImageBackground>
   )
 }

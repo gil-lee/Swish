@@ -13,7 +13,7 @@ export default function CardItemUpload(props) {
       <View style={styles.layout}>
         <View style={styles.header}>
           <Text style={{ fontWeight: "bold" }}>{props.data.name}  |  </Text>
-          <Text>  {props.data.name}  |</Text>
+          <Text>  {props.data.type}  |</Text>
 
           <Text>{props.data.numberOfPoints}  </Text>
           <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
