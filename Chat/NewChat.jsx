@@ -66,7 +66,9 @@ export default class extends React.Component {
       this.putChatStatus("delivered")
     }
   }
-
+  btnBack = () => {
+    this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: this.state.user1, isFocuse: true} });
+  }
   getChatStatusDB = () => {
 
     fetch(urlGetChatStatus + '/' + this.state.user1.id + '/' + this.state.user2Upload.id + '/' + this.state.item.itemId, {
@@ -466,6 +468,9 @@ export default class extends React.Component {
     return (
       <SafeAreaView >
         <View>
+          <TouchableOpacity onPress={this.btnBack} style={styles.backBtn}>
+            <Icon name="chevron-left" size={20} color="#101010" />
+          </TouchableOpacity>
           {this.printUser()}
         </View>
         <View style={styles.line} />
@@ -480,8 +485,8 @@ export default class extends React.Component {
             keyExtractor={(item, index) => index.toString()}
           />
         </ScrollView>
-<View style={styles.sendInputView}>
-        {/* <KeyboardAvoidingView behavior="padding" style={styles.sendInputView}> */}
+        <View style={styles.sendInputView}>
+          {/* <KeyboardAvoidingView behavior="padding" style={styles.sendInputView}> */}
           <TextInput
             value={this.state.textMessage}
             placeholder="..."
@@ -492,7 +497,7 @@ export default class extends React.Component {
           <TouchableOpacity style={styles.sendBtn} onPress={this.sendMessage}>
             <Icon name="paper-plane" size={20} color="#fff" style={{ margin: 13 }} />
           </TouchableOpacity>
-        {/* </KeyboardAvoidingView> */}
+          {/* </KeyboardAvoidingView> */}
         </View>
       </SafeAreaView>
     )
@@ -530,6 +535,11 @@ const styles = StyleSheet.create({
     width: 50,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  backBtn: {
+    paddingTop: 50,
+    paddingLeft: 25,
+    alignItems: 'flex-start'
   },
   printDefaultView: {
     flexDirection: 'column',

@@ -8,63 +8,39 @@ export default function MainChatPage(props) {
   const navigation = useNavigation();
   const urlGetAllChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChats/"
   const { user } = props.route.params
+  const {isFocuse}= props.route.params
   const [allChats, setAllChats] = useState([]);
-  const [usersCards, setUsersCards] = useState(null);
-
 
   useEffect(() => {
+    console.log('is focuse: ', isFocuse)
     //console.log('user in main chat page...: ', user)
-    let tempArr = []
-    fetch(urlGetAllChat + user.id, {
-      method: 'GET',
-      headers: new Headers({
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json; charset=UTF-8',
-      })
-    })
-      .then(res => {
-        console.log('res.ok getChats=', res.ok);
-        return res.json()
-      })
-      .then(chats => {
-        for (var i = 0; i < chats.length; i++) {
-          tempArr.push(chats[i])
-        }
-        setAllChats(tempArr)
-        //console.log('user in main chat page...: ', user)
-
-        //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
-      },
-        (error) => {
-          console.log('Error', error);
+      let tempArr = []
+       fetch(urlGetAllChat + user.id, {
+        method: 'GET',
+        headers: new Headers({
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
         })
-  })
-
-  const getAllChats = () => {
-    fetch(urlGetAllChat + user.id, {
-      method: 'GET',
-      headers: new Headers({
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json; charset=UTF-8',
       })
-    })
-      .then(res => {
-        console.log('res.ok getChats=', res.ok);
-        return res.json()
-      })
-      .then(chats => {
-        for (var i = 0; i < chats.length; i++) {
-          tempArr.push(chats[i])
-        }
-        setAllChats(tempArr)
-        //console.log('user in main chat page...: ', user)
-
-        //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
-      },
-        (error) => {
-          console.log('Error', error);
+        .then(res => {
+          console.log('res.ok getChats=', res.ok);
+          return res.json()
         })
-  }
+        .then(chats => {
+          for (var i = 0; i < chats.length; i++) {
+            tempArr.push(chats[i])
+          }
+          setAllChats(tempArr)
+          //console.log('user in main chat page...: ', user)
+
+          //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
+        },
+          (error) => {
+            console.log('Error', error);
+          })
+  }, [isFocuse])
+
+
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     //console.log('item: ', item)
     if (uploadUser == user.id) {

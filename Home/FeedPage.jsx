@@ -16,6 +16,7 @@ const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
 const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
 const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
+const urlGetPostPutFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetUserFilter";
 
 const users = [];
 const items = [];
@@ -80,8 +81,8 @@ export default class FeedPage extends Component {
 
   componentDidMount() {
     this.callFetchFunc()
-    
-    this.registerForPushNotificationsAsync().then(token=> this.fetchpPutToken(token));
+
+    this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
   }
@@ -91,15 +92,15 @@ export default class FeedPage extends Component {
   };
 
   _handleNotificationResponse = response => {
-    let usersToChat= response.notification.request.content.data.from;
-    let itemToChat= response.notification.request.content.data.item;
-    if (response.notification.request.content.data.type == "requestMessage" ||response.notification.request.content.data.type == "message") {
-      this.props.navigation.navigate('NewChat' , { userChat: usersToChat, item: itemToChat })
+    let usersToChat = response.notification.request.content.data.from;
+    let itemToChat = response.notification.request.content.data.item;
+    if (response.notification.request.content.data.type == "requestMessage" || response.notification.request.content.data.type == "message") {
+      this.props.navigation.navigate('NewChat', { userChat: usersToChat, item: itemToChat })
     }
     if (response.notification.request.content.data.type == "declineRequest") {
-      this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate} })
+      this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate } })
     }
-    
+
   };
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
@@ -208,7 +209,7 @@ export default class FeedPage extends Component {
 
     this.setState({ userTemplate: newUser }
       //, () => console.log('new user with token: ', newUser)
-      )
+    )
 
     await fetch(urlPutToken + "/" + this.state.userTemplate.email + "/" + tempToken + "/", {
       method: 'PUT',
@@ -402,9 +403,32 @@ export default class FeedPage extends Component {
           item.itemsListDTO[0].conditionList[0].condition == text)
         break;
     }
-    // let newItemsList = this.state.itemListDB.filter(item =>
-    //   item.itemsListDTO[0].sizeList[0].size == text)
+
     this.setState({ itemsList: newItemsList });
+
+    // const userFilter = {
+    //   email: this.state.userTemplate.email,
+    //   keywordType: inputType,
+    //   keyword: text
+    // }
+    fetch(urlGetPostPutFilter + "/" + this.state.userTemplate.email + "/" + inputType + "/" + text, {
+      method: 'GET',
+      //body:JSON.stringify(userFilter),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        //console.log('res.ok=', res.ok);
+        return res.json()
+      })
+      .then(userFilter => {
+        console.log('userFilter: ', userFilter)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
   }
 
   render() {
