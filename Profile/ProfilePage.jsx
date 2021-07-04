@@ -82,9 +82,15 @@ export default class ProfilePage extends Component {
         return res.json()
       })
       .then(userItems => {
-        this.setState({ userItemsList: userItems[0].UserItemsListDTO }, ()=>console.log('location from sql: ',userItems[0].location)
-          // , () =>
-          // console.log('useritems from get: ', this.state.userItemsList)
+        // let itemsArr = [];
+        // let counter=0;
+        // for (let i = userItems[0].UserItemsListDTO.length; i >= userItems[0].UserItemsListDTO.length; i--) {
+        //   itemsArr[counter++]= userItems[0].UserItemsListDTO[i]
+        // }
+        // this.setState({ userItemsList: itemsArr }, () => console.log('items profile: ', this.state.userItemsList))
+        this.setState({ userItemsList: userItems[0].UserItemsListDTO }, () => console.log('location from sql: ', userItems[0].location)
+        // , () =>
+        // console.log('useritems from get: ', this.state.userItemsList)
         )
       },
         (error) => {
@@ -101,47 +107,47 @@ export default class ProfilePage extends Component {
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
           <View>
-              <View style={styles.container}>
-                <View></View>
-                <View style={{ flexDirection: 'row' }}>
-                  <Image source={{ uri: this.state.user.profilePicture }} style={styles.userImage}></Image>
-                  <View style={{ alignItems: 'center' }}>
-                    <Text style={styles.userHeader}>{this.state.user.firstName} {this.state.user.lastName}</Text>
-                    <View style={{ flexDirection: 'row' }}>
-                      <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
-                      <Text style={styles.userHeader}>{this.state.user.numOfPoints}</Text>
-                    </View>
+            <View style={styles.container}>
+              <View></View>
+              <View style={{ flexDirection: 'row' }}>
+                <Image source={{ uri: this.state.user.profilePicture }} style={styles.userImage}></Image>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={styles.userHeader}>{this.state.user.firstName} {this.state.user.lastName}</Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
+                    <Text style={styles.userHeader}>{this.state.user.numOfPoints}</Text>
                   </View>
                 </View>
-                <TouchableOpacity onPress={this.goToSettings} style={{}}>
-                  <MaterialCommunityIcons name="cog" color={"#a7a7a7"} size={27} />
-                </TouchableOpacity>
               </View>
-              
-              <View style={styles.itemCloset}>
-                {this.state.user.numOfItems ?
-                  <Text style={styles.Text, { marginBottom: 2 }}> <Text style={{ fontWeight: "bold", textDecorationLine: 'underline' }}>{this.state.user.numOfItems}</Text> פריטים בארונך האישי</Text> : null}
-              </View>
-              <View style={styles.line} ></View>
+              <TouchableOpacity onPress={this.goToSettings} style={{}}>
+                <MaterialCommunityIcons name="cog" color={"#a7a7a7"} size={27} />
+              </TouchableOpacity>
             </View>
+
+            <View style={styles.itemCloset}>
+              {this.state.user.numOfItems ?
+                <Text style={styles.Text, { marginBottom: 2 }}> <Text style={{ fontWeight: "bold", textDecorationLine: 'underline' }}>{this.state.user.numOfItems}</Text> פריטים בארונך האישי</Text> : null}
+            </View>
+            <View style={styles.line} ></View>
           </View>
+        </View>
 
-          <ScrollView>
-            {this.state.randomSentence ?
-              <View style={styles.sentAvat}>
-                <Image source={{ uri: `${this.state.avatarLevelUser}` }} style={styles.avatar} ></Image>
-                <Text></Text>
-                <Text style={{ fontSize: 10, marginTop: 40 }}>{this.state.user.avatarlevel}/5</Text>
-                <Text style={styles.dailySent}>{this.state.randomSentence}</Text>
-              </View> : null}
+        <ScrollView>
+          {this.state.randomSentence ?
+            <View style={styles.sentAvat}>
+              <Image source={{ uri: `${this.state.avatarLevelUser}` }} style={styles.avatar} ></Image>
+              <Text></Text>
+              <Text style={{ fontSize: 10, marginTop: 40 }}>{this.state.user.avatarlevel}/5</Text>
+              <Text style={styles.dailySent}>{this.state.randomSentence}</Text>
+            </View> : null}
 
-            {this.state.userItemsList ?
-              this.state.userItemsList.map(x =>
-                <CardItemShow key={x.itemsListDTO[0].id} data={x.itemsListDTO[0]} navigation={this.props.navigation} user={this.state.user} showAlert={false} />)
-              : null}
-            <View style={styles.line} ><Text></Text></View>
-            <View style={{ paddingBottom: 30 }}></View>
-          </ScrollView>
+          {this.state.userItemsList ?
+            this.state.userItemsList.map(x =>
+              <CardItemShow key={x.itemsListDTO[0].id} data={x.itemsListDTO[0]} navigation={this.props.navigation} user={this.state.user} showAlert={false} />)
+            : null}
+          <View style={styles.line} ><Text></Text></View>
+          <View style={{ paddingBottom: 30 }}></View>
+        </ScrollView>
       </ImageBackground>
     )
   }

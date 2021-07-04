@@ -13,6 +13,7 @@ const urlUserItem = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserItems";
 const urlAvatarLevel = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/AvatarPut";
 const urlUser = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew";
 const urlItem = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemNew/Post";
+const urlUserFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetFilters";
 
 export default class ConfirmUpload extends Component {
   constructor(props) {
@@ -40,7 +41,7 @@ export default class ConfirmUpload extends Component {
     this.fetchCheck(urlConditionPrice);
     //this.getCurrentLocation();
   }
-  
+
   fetchCheck = (url) => { //הבאת id לכל קטגוריה 
 
     fetch(url, {
@@ -107,7 +108,7 @@ export default class ConfirmUpload extends Component {
     }
     console.log('item: ', item)
 
-     fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
+    fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
       method: 'POST',
       body: JSON.stringify(item),
       headers: new Headers({
@@ -123,10 +124,81 @@ export default class ConfirmUpload extends Component {
       .then(i => {
         console.log('פריט נוסף בהצלחה ל userItem ')
         this.avatarLevelUp()
+        this.getUserTokenFilter()
       },
         (error) => {
           console.log('Error', error);
         })
+  }
+
+  getUserTokenFilter = () => {
+    fetch(urlUserFilter, {
+      method: 'GET',
+      //body: JSON.stringify(item),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok getUserFilter=', res.ok);
+        return res.json()
+      })
+      .then(allFilter => {
+        console.log('allFilters: ', allFilter)
+
+        for (let i = 0; i <= allFilter.length; i++) {
+          switch (allFilter[i].keyWordType) {
+            case "type":
+              if (allFilter[i].keyWord == this.state.finalItem.type) {
+                this.sendPushNotification(allFilter[i].userToken[0].userToken)
+              }
+
+              break;
+            case "size":
+              if (allFilter[i].keyWord == this.state.finalItem.size) {
+                this.sendPushNotification(allFilter[i].userToken[0].userToken)
+              }
+              break;
+            case "style":
+              if (allFilter[i].keyWord == this.state.finalItem.style) {
+                this.sendPushNotification(allFilter[i].userToken[0].userToken)
+              }
+              break;
+            case "condition":
+              if (allFilter[i].keyWord == this.state.finalItem.condition) {
+                this.sendPushNotification(allFilter[i].userToken[0].userToken)
+              }
+              break;
+          }
+        }
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
+
+  sendPushNotification = async (token) => {
+    console.log('in send noti: ', token)
+
+    let bodyMessage = 'הועלה פריט חדש התואם את תוצאות הסינון שלך'
+      const pushMessage = {
+        to: token,
+        sound: 'default',
+        title: 'פריט חדש הועלה',
+        body: bodyMessage,
+        data: { type: "filterMessage"}
+      };
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(pushMessage),
+    });
   }
 
   avatarLevelUp = () => {

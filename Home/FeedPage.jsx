@@ -17,6 +17,7 @@ const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
 const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
 const urlGetPostPutFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetUserFilter";
+const urlSmartFilter= "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetForSmartApp"
 
 const users = [];
 const items = [];
@@ -97,7 +98,7 @@ export default class FeedPage extends Component {
     if (response.notification.request.content.data.type == "requestMessage" || response.notification.request.content.data.type == "message") {
       this.props.navigation.navigate('NewChat', { userChat: usersToChat, item: itemToChat })
     }
-    if (response.notification.request.content.data.type == "declineRequest") {
+    if (response.notification.request.content.data.type == "declineRequest" || response.notification.request.content.data.type == "filterMessage") {
       this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate } })
     }
 
@@ -274,7 +275,7 @@ export default class FeedPage extends Component {
 
   fetchUserItemsByEmail = async (longi, lati) => {
     console.log('longi lati: ', longi, lati)
-    await fetch(urlGetItemsDist + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
+    await fetch(urlSmartFilter + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
