@@ -67,7 +67,7 @@ export default class extends React.Component {
     }
   }
   btnBack = () => {
-    this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: this.state.user1, isFocuse: true} });
+    this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: this.state.user1} });
   }
   getChatStatusDB = () => {
 

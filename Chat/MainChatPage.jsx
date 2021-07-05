@@ -8,13 +8,43 @@ export default function MainChatPage(props) {
   const navigation = useNavigation();
   const urlGetAllChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChats/"
   const { user } = props.route.params
-  const {isFocuse}= props.route.params
+  //const {isFocuse}= props.route.params
   const [allChats, setAllChats] = useState([]);
 
-  useEffect(() => {
-    console.log('is focuse: ', isFocuse)
-    //console.log('user in main chat page...: ', user)
-      let tempArr = []
+  // useEffect(() => {
+
+  //   console.log('is focuse: ', isFocuse)
+  //   //console.log('user in main chat page...: ', user)
+  //     let tempArr = []
+  //      fetch(urlGetAllChat + user.id, {
+  //       method: 'GET',
+  //       headers: new Headers({
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'Accept': 'application/json; charset=UTF-8',
+  //       })
+  //     })
+  //       .then(res => {
+  //         console.log('res.ok getChats=', res.ok);
+  //         return res.json()
+  //       })
+  //       .then(chats => {
+  //         for (var i = 0; i < chats.length; i++) {
+  //           tempArr.push(chats[i])
+  //         }
+  //         setAllChats(tempArr)
+  //         //console.log('user in main chat page...: ', user)
+
+  //         //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
+  //       },
+  //         (error) => {
+  //           console.log('Error', error);
+  //         })
+  // }, [isFocuse])
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+    console.log('in focus useEffect ')
+    let tempArr = []
        fetch(urlGetAllChat + user.id, {
         method: 'GET',
         headers: new Headers({
@@ -31,15 +61,13 @@ export default function MainChatPage(props) {
             tempArr.push(chats[i])
           }
           setAllChats(tempArr)
-          //console.log('user in main chat page...: ', user)
-
-          //console.log('state chats: ', chats[0].userDTO[0].UserItemsListDTO[0].itemsListDTO[0].name)
         },
           (error) => {
             console.log('Error', error);
           })
-  }, [isFocuse])
-
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
     //console.log('item: ', item)

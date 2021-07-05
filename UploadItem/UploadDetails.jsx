@@ -122,7 +122,10 @@ export default class UploadDetails extends Component {
       return;
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.All, allowsEditing: true })
+    let result = await ImagePicker.launchImageLibraryAsync({ 
+      mediaTypes: ImagePicker.MediaTypeOptions.All, 
+      allowsEditing: true,
+      quality:0.2 })
 
     console.log(result);
     console.log('result uri!:', result.uri)
