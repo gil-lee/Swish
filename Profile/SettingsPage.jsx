@@ -6,6 +6,7 @@ import { Slider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 
 const urlSettings = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserSettings"
+
 export default class SettingsPage extends Component {
   constructor(props) {
     super(props)
@@ -13,8 +14,6 @@ export default class SettingsPage extends Component {
       user: this.props.route.params.user,
       firstName: '',
       lastName: '',
-      //itemViewingMethod: this.props.route.params.user.itemViewingMethod,
-      //value_radio: 0,
       cities: this.props.route.params.user.residence,
       radius: this.props.route.params.user.radius,
       valueSlider: '',
@@ -34,14 +33,6 @@ export default class SettingsPage extends Component {
       smartFinder: '',
     }
   }
-  // radio_props = [ //בחירת תצוגת הפריטים למשתמש (נשתמש בהמשך)
-  //   { label: "מיקום נוכחי ורדיוס", value: 0 },
-  //   { label: "עיר ורדיוס", value: 1 }
-  // ];
-  // componentDidMount() {
-  //   this.getValueItemViewing()
-  // }
-
   onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
     this.setState({ [key]: val })
 
@@ -63,9 +54,10 @@ export default class SettingsPage extends Component {
 
   }
   btnBack = () => {
-    //this.props.navigation.push('Profile Page', {user: this.props.route.params.user})
     this.props.navigation.goBack();
   }
+
+
   // radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
   //   this.setState({ value_radio: value })
   //   if (value == 0) {
@@ -144,9 +136,7 @@ export default class SettingsPage extends Component {
         if (responseData != "err") {
           let picNameWOExt = picName.substring(0, picName.indexOf("."));
           let imageNameWithGUID = responseData.substring(responseData.indexOf(picNameWOExt), responseData.indexOf(".jpg") + 4);
-          //console.log('imageNameWithGUID: ', imageNameWithGUID)
           let uriNewImage = uplodedPicPath + imageNameWithGUID;
-          //console.log('uriNewImage', uriNewImage)
           this.setState({ uplodedPicUri: uriNewImage }, () => console.log('img uploaded successfully!', this.state.uplodedPicUri)) //יישום בסטייט בכדי להציג לאחר מכן ללא פאטץ נוסף
 
         }
@@ -278,25 +268,28 @@ export default class SettingsPage extends Component {
 
               {/* <RadioForm formHorizontal={true} animation={true} >
                 {this.radio_props.map((label, value) => (
-                  <View key={value} style={{ marginLeft: 30, marginRight: 30 }}>
-                    <RadioButton labelHorizontal={false} key={value} >
+                  <View  style={{ marginLeft: 30, marginRight: 30 }}>
+                    <RadioButton labelHorizontal={false}  >
+                    key={value}
                       <RadioButtonLabel
-                        obj={label}
-                        index={value}
+                        obj={"s"}
+                       index={"ד"}
                         labelStyle={{ fontSize: 14, color: '#101010' }}
                       />
                       <RadioButtonInput
                         obj={label}
-                        index={value}
+                        index={"ד"}
                         isSelected={this.state.value_radio === value}
-                        onPress={(value) => { this.radioBtnValueRL(value) }}
+                       onPress={(value) => { this.radioBtnValueRL(value) }}
                         borderWidth={1}
                         buttonColor={'#696969'}
                         buttonSize={12}
                         buttonWrapStyle={{ margin: 12 }}
                         key={value}
                       />
-                    </RadioButton></View>))}
+                    </RadioButton>
+                    </View>))
+                    } 
               </RadioForm> */}
             <Text style={styles.text, { marginTop: 10}}>עדכון תצוגת פריטים:</Text>
 

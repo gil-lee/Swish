@@ -346,16 +346,9 @@ export default class SignUpPage extends Component {
                       maximumDate={new Date(2006, 10, 20)}
                       confirmBtnText="Confirm"
                       cancelBtnText="Cancel"
-                      placeholder="בחירת תאריך"
-                      // icons={
-                      //   <MaterialCommunityIcons
-                      //     size={30}
-                      //     color='#696969'
-                      //     name='calendar'
-                      //   />}
-                      onChange={(date) => { this.dateStringify(date) }}
-                      //onChange={(date) => { this.onChangeText('bdate', date.nativeEvent), console.log('native:   ', date.nativeEvent) }}
-                      onChangeText={this.setState({ showDates: false })}
+                      placeholder="בחירת תאריך"                      
+                      onChange={(date) => { this.dateStringify(date) ,this.setState({showDates:false})}}
+                     // onChangeText={this.setState({ showDates: false })}
                     />}
 
                   {this.state.stringDate ?
