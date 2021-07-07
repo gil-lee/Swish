@@ -17,7 +17,8 @@ const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
 const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
 const urlGetPostPutFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetUserFilter";
-const urlSmartFilter= "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetForSmartApp"
+const urlSmartFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetForSmartApp"
+const urlGetAllTokensFoeReminder="http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatListForReminder"
 
 const users = [];
 const items = [];
@@ -69,6 +70,8 @@ export default class FeedPage extends Component {
       notification: {},
       userToken: '',
       badge: 0,
+
+      tokensForRemider:''
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -86,6 +89,8 @@ export default class FeedPage extends Component {
     this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
+  
+    this.getAllTokens()
   }
 
   _handleNotification = notification => {
@@ -95,18 +100,22 @@ export default class FeedPage extends Component {
   _handleNotificationResponse = response => {
     let usersToChat = response.notification.request.content.data.from;
     let itemToChat = response.notification.request.content.data.item;
-    if (response.notification.request.content.data.type == "requestMessage" || response.notification.request.content.data.type == "message") {
+    if (response.notification.request.content.data.type == "requestMessage" ||
+      response.notification.request.content.data.type == "message") {
       this.props.navigation.navigate('NewChat', { userChat: usersToChat, item: itemToChat })
     }
-    if (response.notification.request.content.data.type == "declineRequest" || response.notification.request.content.data.type == "filterMessage") {
+    if (response.notification.request.content.data.type == "declineRequest" ||
+      response.notification.request.content.data.type == "filterMessage") {
       this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.userTemplate } })
+    }
+    if (response.notification.request.content.data.type == "messageReminder") {
+      this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: this.state.userTemplate } })
     }
 
   };
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
-    //this.getTokenFromExpo()
   }
 
   callFetchFunc = () => {
@@ -116,9 +125,38 @@ export default class FeedPage extends Component {
     this.fetchDropDown(urlConditionPrice);
     this.getCurrentLocation()
     this.getAvatarForUser(this.props.route.params.user)
-    //this.getTokenFromExpo()
   }
+  sendNotiForReminder = (token) => {
 
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(20);
+    tomorrow.setMinutes(0);
+
+    Notifications.scheduleNotificationAsync({
+      content: {
+        to: token,
+        sound: 'default',
+        title: `קיים צ'אט פעיל`,
+        body: `ישנו צ'אט שלא אישרת העברת/ קבלת פריט`,
+        data: { type: "messageReminder", from: this.state.userChat, item: this.state.item }
+      },
+      trigger: tomorrow,
+    });
+
+    //this.sendPushNotification(pushMessage)
+  }
+  sendPushNotification = async (pushMessage) => {
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(pushMessage),
+    });
+  }
 
   getTokenFromExpo = () => {
     this.registerForPushNotificationsAsync().then(token => this.setState({ userToken: token }, () => this.fetchpPutToken(token)));
@@ -130,14 +168,10 @@ export default class FeedPage extends Component {
       this.setState({ notification: notification }), () =>
         console.log('noti:        ', JSON.stringify(notification.request));
     });
-    //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
-    //console.log('notiListener1', this.notificationListener)
-    //console.log('notiListener2', this.notificationListener.current)
     this.responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('res2:           ', JSON.stringify(response));
       const navi = response.notification.request.content.data;
       console.log('res:           ', JSON.stringify(response));
-      //response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
 
       if (navi.type == 'yes') {
         console.log('yes')
@@ -406,12 +440,6 @@ export default class FeedPage extends Component {
     }
 
     this.setState({ itemsList: newItemsList });
-
-    // const userFilter = {
-    //   email: this.state.userTemplate.email,
-    //   keywordType: inputType,
-    //   keyword: text
-    // }
     fetch(urlGetPostPutFilter + "/" + this.state.userTemplate.email + "/" + inputType + "/" + text, {
       method: 'GET',
       //body:JSON.stringify(userFilter),
@@ -426,6 +454,29 @@ export default class FeedPage extends Component {
       })
       .then(userFilter => {
         console.log('userFilter: ', userFilter)
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
+
+  getAllTokens=()=>{
+    fetch(urlGetAllTokensFoeReminder, {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        return res.json()
+      })
+      .then(tokens => { 
+        this.setState({tokensForRemider: tokens}
+          ,()=> {for(let i=0; i<= this.state.tokensForRemider.length; i++){
+            this.sendNotiForReminder(this.state.tokensForRemider[i])
+           } })
+        
       },
         (error) => {
           console.log('Error', error);

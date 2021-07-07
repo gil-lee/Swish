@@ -6,12 +6,11 @@ import { Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-
 const urlGetChatStatus = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatDetails";
 const urlPutChatStatus = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutChatStatus";
 const urlPutUploadConfirm = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutUploadBtn";
 const urlPutRequestConfirm = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutRequestBtn";
+const urlPutChatLastMesDate = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutChatDate";
 const window = Dimensions.get("window");
 const screen = Dimensions.get("screen");
 export default class extends React.Component {
@@ -60,6 +59,8 @@ export default class extends React.Component {
 
   componentWillUnmount() {
     Dimensions.removeEventListener("change", this.onChange);
+    this.props.navigation.addListener('focus', () => {
+      console.log('in focus new chat')})
     this.getChatStatusDB();
 
     if (this.state.uploadConfirm == true && this.state.requestConfirm == true) {
@@ -130,6 +131,28 @@ export default class extends React.Component {
           console.log('Error', error);
         })
   }
+
+  putChatDate=()=>{
+    let splitId = this.state.itemIDFirebase.split("-")
+    fetch(urlPutChatLastMesDate +'/'+ splitId[1] +'/'+ splitId[2] +'/'+splitId[0], {
+      method: 'PUT',
+      //body: JSON.stringify(chat),
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
+      })
+    })
+      .then(res => {
+        console.log('res.ok putChat=', res.ok);
+        return res.json()
+      })
+      .then(i => {
+        console.log('put chat date success')
+      },
+        (error) => {
+          console.log('Error', error);
+        })
+  }
   handleChange = (key) => val => {
     this.setState({ [key]: val })
   }
@@ -164,6 +187,7 @@ export default class extends React.Component {
       };
 
       this.sendPushNotification(pushMessage)
+      this.putChatDate();
 
       this.setState({ textMessage: '' })
     }
@@ -231,7 +255,7 @@ export default class extends React.Component {
         <View>
           {this.state.user1.id == splitId[1] &&
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 6, marginRight: 28, marginTop: 8 }}>
-              <TouchableOpacity style={styles.noBtn} onPress={this.cancelUploadBtn}>
+              <TouchableOpacity style={styles.noBtn} onPress={this.noBtn}>
                 <Text>ביטול</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.yesBtn} onPress={this.confirmUploadBtn}>
@@ -248,9 +272,9 @@ export default class extends React.Component {
         <View>
           {this.state.user1.id == splitId[2] &&
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 6, marginRight: 28, marginTop: 8 }}>
-              <TouchableOpacity style={styles.noBtn} onPress={this.cancelRequestBtn}>
+              {/* <TouchableOpacity style={styles.noBtn} onPress={this.cancelRequestBtn}>
                 <Text>ביטול</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity style={styles.yesBtn} onPress={this.confirmRequestBtn}>
                 <Text>אישור</Text>
               </TouchableOpacity>
@@ -258,9 +282,6 @@ export default class extends React.Component {
             </View>}
         </View>)
     }
-  }
-  cancelUploadBtn = () => {
-
   }
   confirmUploadBtn = () => {
     let splitId = this.state.itemIDFirebase.split("-")
@@ -357,20 +378,12 @@ export default class extends React.Component {
       time: firebase.database.ServerValue.TIMESTAMP,
       from: this.state.userChat[0].UsersList[1]
     }
-    //let message = 'יש! הבקשה שלך אושרה'
     this.setState({ textMessage: item.message }, () =>
       this.sendMessage())
 
-    //console.log(item);
-    // let temp = []
-    // temp = this.state.messagesList;
-    // temp.push(item)
-    // this.setState({ messagesList: temp })
-
-    //this.sendPushNotification(pushMessage)
     this.sendPushNotification(pushMessage)
-
     this.renderMessage
+    this.printConfirmSendBtn()
 
     this.setState({ disableInput: true })
   }

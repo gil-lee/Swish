@@ -25,12 +25,19 @@ export default class SettingsPage extends Component {
       image: null,
       uplodedPicUri: '',
 
-      isEnabled1: false,
-      isEnabled2: false,
-      isEnabled3: false,
-      messages: '',
-      favorite: '',
+       isEnabled1: '',
+       
+      favorite: '', 
       smartFinder: '',
+      showItemsFeed:"", 
+    }
+  }
+  componentDidMount(){
+    if(this.state.user.showItemsFeed=="F"){
+      this.setState({ isEnabled1: false})
+    }
+    if(this.state.user.showItemsFeed=="S"){
+      this.setState({ isEnabled1:true})
     }
   }
   onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
@@ -39,17 +46,13 @@ export default class SettingsPage extends Component {
   }
   notificationChange = (num) => {
 
-    if (num == 1) {
+    if (num == "S") {
       let change = this.state.isEnabled1
-      this.setState({ isEnabled1: !change })
+      this.setState({ isEnabled1:!change, showItemsFeed:'S'})
     }
-    if (num == 2) {
+    if (num == "F") {
       let change = this.state.isEnabled2
-      this.setState({ isEnabled2: !change })
-    }
-    if (num == 3) {
-      let change = this.state.isEnabled3
-      this.setState({ isEnabled3: !change })
+      this.setState({  isEnabled1:change, showItemsFeed:'F'})
     }
 
   }
@@ -57,24 +60,6 @@ export default class SettingsPage extends Component {
     this.props.navigation.goBack();
   }
 
-
-  // radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
-  //   this.setState({ value_radio: value })
-  //   if (value == 0) {
-  //     this.setState({ itemViewingMethod: 'L' })
-  //   }
-  //   else {
-  //     this.setState({ itemViewingMethod: 'R' })
-  //   }
-  // }
-  // getValueItemViewing = (method) => {
-  //   if (this.props.route.params.user.itemViewingMethod == 'R') {
-  //     this.setState({ value_radio: 1 })
-  //   }
-  //   else {
-  //     this.setState({ value_radio: 0 })
-  //   }
-  // }
   goToCities = (city) => { //מעבר לקומפוננטת ערים
     this.setState({ cities: city })
   }
@@ -187,7 +172,7 @@ export default class SettingsPage extends Component {
     let user = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
-      //itemViewingMethod: this.state.itemViewingMethod,
+      showItemsFeed: this.state.showItemsFeed,
       radius: this.state.radius,
       residence: this.state.cities,
       password: this.state.password,
@@ -265,33 +250,8 @@ export default class SettingsPage extends Component {
                 />
               </View>
             </View>
-
-              {/* <RadioForm formHorizontal={true} animation={true} >
-                {this.radio_props.map((label, value) => (
-                  <View  style={{ marginLeft: 30, marginRight: 30 }}>
-                    <RadioButton labelHorizontal={false}  >
-                    key={value}
-                      <RadioButtonLabel
-                        obj={"s"}
-                       index={"ד"}
-                        labelStyle={{ fontSize: 14, color: '#101010' }}
-                      />
-                      <RadioButtonInput
-                        obj={label}
-                        index={"ד"}
-                        isSelected={this.state.value_radio === value}
-                       onPress={(value) => { this.radioBtnValueRL(value) }}
-                        borderWidth={1}
-                        buttonColor={'#696969'}
-                        buttonSize={12}
-                        buttonWrapStyle={{ margin: 12 }}
-                        key={value}
-                      />
-                    </RadioButton>
-                    </View>))
-                    } 
-              </RadioForm> */}
-            <Text style={styles.text, { marginTop: 10}}>עדכון תצוגת פריטים:</Text>
+           
+            <Text style={styles.text, { marginTop: 10 }}>עדכון תצוגת פריטים:</Text>
 
             <View style={{ flexDirection: 'row-reverse' }}>
               <View style={styles.text}>
@@ -322,38 +282,31 @@ export default class SettingsPage extends Component {
             </View>
 
             <Text></Text><Text></Text>
-            <Text>קבלת התראות:</Text>
-            <View style={{flexDirection: "row-reverse"}}>
+            <Text>תצוגת פרטים לפי:</Text>
+            <View style={{ flexDirection: "row-reverse" }}>
+              
               <View style={styles.switch}>
-                <Text>הודעות</Text>
+                <Text>סינון חכם</Text>
                 <Switch
                   trackColor={{ false: "#767577", true: "#7DA476" }}
                   thumbColor={this.state.isEnabled1 ? "#f4f3f4" : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
-                  onValueChange={val => this.notificationChange(1)}
+                  onValueChange={val => this.notificationChange("S")}
                   value={this.state.isEnabled1}
                 />
               </View>
+
               <View style={styles.switch}>
                 <Text>משתמשים שאהבתי</Text>
                 <Switch
                   trackColor={{ false: "#767577", true: "#7DA476" }}
                   thumbColor={this.state.isEnabled2 ? "#f4f3f4" : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
-                  onValueChange={val => this.notificationChange(2)}
-                  value={this.state.isEnabled2}
+                  onValueChange={val => this.notificationChange("F")}
+                  value={!this.state.isEnabled1}
                 />
               </View>
-              <View style={styles.switch}>
-                <Text>חיפוש חכם</Text>
-                <Switch
-                  trackColor={{ false: "#767577", true: "#7DA476" }}
-                  thumbColor={this.state.isEnabled3 ? "#f4f3f4" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={val => this.notificationChange(3)}
-                  value={this.state.isEnabled3}
-                />
-              </View>
+
             </View>
             <Text></Text>
 

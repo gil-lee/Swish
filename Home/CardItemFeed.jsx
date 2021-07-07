@@ -106,7 +106,8 @@ export default function CardItem(props) {
       requestUser: userChat[0].UsersList[0].id,
       uploadUser: userChat[0].UsersList[1].id,
       itemId: userChat[0].item.itemId,
-      lastMessageDate: fullDate
+      lastMessageDate: fullDate,
+      openChatDate: fullDate
     }
     console.log('chatRow: ', chatRow)
     fetch(urlPostChat, {
