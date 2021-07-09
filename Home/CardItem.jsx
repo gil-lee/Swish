@@ -2,7 +2,6 @@ import React from 'react'
 import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { firebase } from "../firebase"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -11,7 +10,6 @@ export default function CardItem(props) {
   const navigation = useNavigation();
 
   function createUsersArr() {
-    //console.log('props in card item:   ', props)
     var sendMessUser = props.logInUser
     var userUploadItem = props.user
     var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
@@ -27,7 +25,6 @@ export default function CardItem(props) {
     var month = new Date().getMonth() + 1;
     var year = new Date().getFullYear();
     var fullDate = year + "-" + month + "-" + date
-    //console.log('date: ', fullDate)
 
     let chatRow = {
       requestUser: userChat[0].UsersList[0].id,
@@ -35,7 +32,6 @@ export default function CardItem(props) {
       itemId: userChat[0].item.itemId,
       lastMessageDate: fullDate
     }
-    //console.log('chatRow: ', chatRow)
     fetch(urlPostChat, {
       method: 'POST',
       body: JSON.stringify(chatRow),
@@ -55,9 +51,6 @@ export default function CardItem(props) {
           console.log('Error', error);
         })
     sendDfaultMessage(userChat)
-
-    //console.log('props user for token: ', userChat[0].UsersList[1])
-    //props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
   }
 
@@ -78,7 +71,6 @@ export default function CardItem(props) {
 
       sendPushNotification(props.user.userToken, Dmessage)
       firebase.database().ref().update(updates)
-
     }
   }
   async function sendPushNotification(expoPushToken, Dmessage) {

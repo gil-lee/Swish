@@ -1,18 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AwesomeAlert from 'react-native-awesome-alerts';
-
-const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
-const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
-const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
-const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
-
-const itemType = '';
-const itemSize = '';
-const itemStyle = '';
-const itemCond = '';
 
 export default function CardItem(props) {
 

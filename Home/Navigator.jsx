@@ -1,13 +1,7 @@
 import React, { Component } from 'react'
-import { Text, View, Button } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FeedPage from './FeedPage';
-import SignUpPage from '../SignUp/SignUpPage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Images from '../Gallery&Camera/Images';
-import Gallery from '../Gallery&Camera/Gallery';
-import LogInPage from '../LogIn/LogInPage';
 import UploadDetails from '../UploadItem/UploadDetails';
 import FavoritePage from '../Favorite/FavoritePage';
 import MainChatPage from '../Chat/MainChatPage';
@@ -17,7 +11,6 @@ const Tab = createBottomTabNavigator();
 
 export default class Navigator extends Component {
 
-  //תפריט הניווט בתחתית העמודים
   render() {
     return (
       <Tab.Navigator initialRouteName="FeedPage" tabBarOptions={{

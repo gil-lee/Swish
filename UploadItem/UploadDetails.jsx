@@ -28,7 +28,6 @@ export default class UploadDetails extends Component {
       condition: [],
       itemStyle: [],
       selectedType: 'חצאית',
-      //לאייפון
       selectedSize: '',
       selectedCondition: '',
       selectedStyle: '',
@@ -46,9 +45,8 @@ export default class UploadDetails extends Component {
   }
 
 
-  componentDidMount() { //פאטצים להביא את הנתונים של הרשימות הנפתחות: סוג, מידה, סגנון ומצב
+  componentDidMount() { 
     this.callFetchFunc()
-    //this.getCurrentLocation()
 
   }
   callFetchFunc = () => {
@@ -56,13 +54,12 @@ export default class UploadDetails extends Component {
     this.fetchDropDown(urlItemStyle);
     this.fetchDropDown(urlItemPrice);
     this.fetchDropDown(urlConditionPrice);
-    //this.getCurrentLocation()
   }
-  onChangeText = (key, val) => { //פונקצייה שמשנה את הסטייטים
+  onChangeText = (key, val) => { 
     this.setState({ [key]: val })
   }
 
-  fetchDropDown = (url) => { //פונקציית הפאץ להבאת הרשימות הנפתחות
+  fetchDropDown = (url) => { 
 
     fetch(url, {
       method: 'GET',
@@ -75,7 +72,7 @@ export default class UploadDetails extends Component {
         console.log('res.ok dropDown=', res.ok);
         return res.json()
       })
-      .then(dropDownArr => { //הבאת כל סוגי הפריטים
+      .then(dropDownArr => { 
         if (url == urlItemPrice) {
           for (let i = 0; i < dropDownArr.length; i++) {
             typeTemp[i] = dropDownArr[i].name
@@ -84,14 +81,14 @@ export default class UploadDetails extends Component {
           }
           this.setState({ itemType: typeTemp })
         }
-        if (url == urlItemSize) { // הבאת המידות
+        if (url == urlItemSize) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             sizeTemp[i] = dropDownArr[i].size
 
           }
           this.setState({ size: sizeTemp })
         }
-        if (url == urlConditionPrice) { // הבאת מצבי פריטים
+        if (url == urlConditionPrice) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             conditionTemp[i] = dropDownArr[i].condition
             conditions[i] = dropDownArr[i]
@@ -99,7 +96,7 @@ export default class UploadDetails extends Component {
           }
           this.setState({ condition: conditionTemp })
         }
-        if (url == urlItemStyle) { //הבאת סגנונות
+        if (url == urlItemStyle) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             styleTemp[i] = dropDownArr[i].style
 
@@ -112,7 +109,7 @@ export default class UploadDetails extends Component {
         })
   }
 
-  btnOpenGallery = async (num) => { //פתיחת הגלרייה לבחירת תמונות לפריט
+  btnOpenGallery = async (num) => { 
 
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -150,16 +147,15 @@ export default class UploadDetails extends Component {
     }
   }
 
-  btnUpload = (urim, num) => { //חלק 1 העלאת תמונה לשרת (לא גמור להמשיך)
+  btnUpload = (urim, num) => { 
     let img = urim;
     let numOfItems = this.props.route.params.user.numOfItems + 1
     let imgName = this.props.route.params.user.email + '--IdItem' + numOfItems + '--Image' + num + '--' + '.jpg';
     console.log('imgName in func: ', imgName)
-    //let imgName = 'userImg.jpg';
     this.imageUpload(img, imgName, num);
   };
 
-  imageUpload = (imgUri, picName, num) => { //חלק 2 העלאת תמונה לשרת (לא גמור להמשיך)
+  imageUpload = (imgUri, picName, num) => { 
 
     let uplodedPicPath = 'http://proj.ruppin.ac.il/bgroup17/prod/uploadItemUser/';
     let urlAPI = "http://proj.ruppin.ac.il/bgroup17/prod/uploadItems/";
@@ -206,7 +202,6 @@ export default class UploadDetails extends Component {
           if (num == 4) {
             this.setState({ image4: uriNewImage })
           }
-          //console.log('img uploaded successfully!', this.state.uplodedPicUri)
 
         }
         else {
@@ -237,8 +232,7 @@ export default class UploadDetails extends Component {
     )
   }
 
-  confirmUpload = () => { //וידוא העלאת תמונה לשרת על ידי המשתמש
-    // this.getCurrentLocation() 
+  confirmUpload = () => {
 
     let finalPrice;
     let price;
@@ -259,9 +253,9 @@ export default class UploadDetails extends Component {
         reduction = conditions[i].reduction
       }
     }
-    finalPrice = price - reduction //חישוב תמחור הפריט בנקודות לפי מצב וסוג פריט
+    finalPrice = price - reduction 
 
-    let item = { //יצירת פריט חדש
+    let item = { 
       name: this.state.itemName,
       size: this.state.selectedSize,
       style: this.state.selectedStyle,
@@ -290,8 +284,6 @@ export default class UploadDetails extends Component {
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <ScrollView>
-
-          {/* {console.log('user from Lg in: ', this.props.route.params.user)} */}
           <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 60 }}>
             <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10 }}>העלאת פריט</Text>
           </View>
@@ -415,7 +407,7 @@ const styles = StyleSheet.create({
     borderColor: "#A7A7A7",
   },
   textarea: {
-    textAlignVertical: 'top',  // hack android
+    textAlignVertical: 'top',  
     height: 170,
     fontSize: 14,
     textAlign: 'right'
@@ -425,7 +417,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10
-    //flexDirection: 'column'
   },
   Text: {
     fontSize: 14,

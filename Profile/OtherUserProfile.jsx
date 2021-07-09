@@ -16,7 +16,6 @@ export default function OtherUserProfile(props) {
   const navigation = useNavigation();
 
   const { users } = props.route.params;
-  //const { lgUser } = props.route.params.LGUser;
   const [userItemsList, setUserItemsList] = useState([])
   const [favoriteUser, setFavoriteUser] = useState(false)
 
@@ -38,7 +37,6 @@ export default function OtherUserProfile(props) {
         return res.json()
       })
       .then(favRows => {
-        //console.log("favrows: ", favRows)
         favRows.map(row => {
           if (users.user.email == row.emailFavUser) {
             setFavoriteUser(!favoriteUser)
@@ -49,7 +47,7 @@ export default function OtherUserProfile(props) {
           console.log('Error', error);
         })
   }
-  function fetchPersonalItems() {//הבאת הפריטים שהעלה המשתמש הספציםי שמחובר לארונו האישי
+  function fetchPersonalItems() {
 
     fetch(urlPersonalItems + "/" + users.user.email + "/", {
       method: 'GET',
@@ -185,11 +183,9 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     paddingLeft: 25,
-    //alignItems: 'flex-start'
   },
   heartBtn: {
     paddingLeft: 25,
-    //alignItems: 'flex-start',
     marginRight: 20
   },
   image: {

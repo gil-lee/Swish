@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, ImageBackground, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Text, View, ImageBackground, ScrollView, StyleSheet } from 'react-native'
 import FavoriteListCard from './FavoriteListCard';
 
 
@@ -19,6 +18,7 @@ export default class FavoritePage extends Component {
   }
   componentDidMount() {
     this.fetchFavList()
+    //console.log('user in fav: ', this.state.user.email)
   }
 
   fetchFavList = () => {
@@ -37,7 +37,6 @@ export default class FavoritePage extends Component {
       .then(favRows => {
         favRows.map(user =>
           tempArr.push(user.emailFavUser))
-        //console.log(tempArr)
         this.setState({ favList: tempArr })
         this.fetchUsersFromList(tempArr)
       },
@@ -48,7 +47,6 @@ export default class FavoritePage extends Component {
 
   fetchUsersFromList = (tempArr) => {
     let temp = []
-    //console.log(tempArr)
     tempArr.map((user) =>
       fetch(urlGetUser + '/' + user + '/', {
         method: 'GET',
@@ -64,7 +62,6 @@ export default class FavoritePage extends Component {
         .then(user => {
           temp.push(user[0])
           this.setState({ favUsersList: temp }
-            // , () => console.log("favUsers details    ", this.state.favUsersList)
           )
         },
           (error) => {
@@ -102,7 +99,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 60,
     paddingBottom: 20
-    //flexDirection: 'column'
   },
   image: {
     flex: 1,

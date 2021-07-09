@@ -39,7 +39,7 @@ export default class ProfilePage extends Component {
     this.fetchPersonalItems()
   }
 
-  fetchSentences = () => { //הבאת משפט אחד רנדומלי מהDB
+  fetchSentences = () => { 
 
     fetch(urlSentence, {
       method: 'GET',
@@ -60,7 +60,7 @@ export default class ProfilePage extends Component {
         })
   }
 
-  getAvatarForUser = (user) => {//הבאת אווטאר למשתמש מסוים
+  getAvatarForUser = (user) => {
     let level = user.avatarlevel
     console.log('level: ', level)
     let imageUri = "http://proj.ruppin.ac.il/bgroup17/prod/AvatarImages/avatarLevel" + level + ".png"
@@ -68,7 +68,7 @@ export default class ProfilePage extends Component {
     this.setState({ avatarLevelUser: imageUri }, () => console.log('avatar in feed uri: ', this.state.avatarLevelUser))
   }
 
-  fetchPersonalItems = () => {//הבאת הפריטים שהעלה המשתמש הספציםי שמחובר לארונו האישי
+  fetchPersonalItems = () => {
 
     fetch(urlPersonalItems + "/" + this.state.user.email + "/", {
       method: 'GET',
@@ -82,15 +82,7 @@ export default class ProfilePage extends Component {
         return res.json()
       })
       .then(userItems => {
-        // let itemsArr = [];
-        // let counter=0;
-        // for (let i = userItems[0].UserItemsListDTO.length; i >= userItems[0].UserItemsListDTO.length; i--) {
-        //   itemsArr[counter++]= userItems[0].UserItemsListDTO[i]
-        // }
-        // this.setState({ userItemsList: itemsArr }, () => console.log('items profile: ', this.state.userItemsList))
         this.setState({ userItemsList: userItems[0].UserItemsListDTO }, () => console.log('location from sql: ', userItems[0].location)
-        // , () =>
-        // console.log('useritems from get: ', this.state.userItemsList)
         )
       },
         (error) => {

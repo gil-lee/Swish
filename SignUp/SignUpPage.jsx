@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, ImageBackground, Alert, SafeAreaView } from "react-native";
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Slider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CitiesList from './CitiesList';
-import CurrentLocFun from '../Location/CurrentLocFun';
 
 
 const urlSignUp = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew";
@@ -29,41 +25,38 @@ export default class SignUpPage extends Component {
       value_radio: 0,
       radius: 3,
       valueSlider: '',
-      //itemViewingMethod: 'R',
       cities: '',
       latitude: 0,
       longitude: 0,
-      //כל הסטייטים למעלה קשורים להכנסת משתמש חדש לDB
 
       uri: '',
       image: null,
       uplodedPicUri: '',
-      //סטייטים של הכנסת תמונה לשרת
 
       checkEmail: true
     }
   }
 
-  radio_props = [ //בחירת תצוגת הפריטים למשתמש (נשתמש בהמשך)
+  radio_props = [ 
     { label: "מיקום נוכחי ורדיוס", value: 0 },
     { label: "עיר ורדיוס", value: 1 }
   ];
 
 
-  onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
+  onChangeText = (key, val) => { 
     this.setState({ [key]: val })
 
   }
 
-  confirmEmail = () => { //אימות כתובות אימייל שהוזנו
+  confirmEmail = () => { 
 
     if (this.state.email != '' && this.state.email_confirm != '') {
       let emailAddress = this.state.email;
       let emailAddConfirm = this.state.email_confirm;
       let sign = '@';
       let dot = '.';
-      let Tsign = emailAddress.includes(sign); //בדיקה שקיים הסימן @
-      let Tdot = emailAddress.includes(dot); //בדיקה שקיים הסימן .
+      let Tsign = emailAddress.includes(sign); 
+      let Tdot = emailAddress.includes(dot); 
 
       if (Tsign && Tdot) {
         if (emailAddress != emailAddConfirm) {
@@ -82,12 +75,12 @@ export default class SignUpPage extends Component {
     }
   }
 
-  confirmPassword = () => { //אימות הסיסמאות שהוזנו
+  confirmPassword = () => { 
 
     if (this.state.password != '' && this.state.password_confirm != '') {
       let password = this.state.password;
       let passwordConfirm = this.state.password_confirm
-      let check = this.checkAlphaNum(password); //בדיקה האם הוזנו מספרים בסיסמה (חובה להזין מספרים)
+      let check = this.checkAlphaNum(password); 
       console.log('check: ', check)
       if (check.containsNumber) {
         if (password != passwordConfirm) {
@@ -111,7 +104,7 @@ export default class SignUpPage extends Component {
     }
   }
 
-  checkAlphaNum = (password) => { //פונקציה שבודקת האם הוזנו מספרים לסיסמה
+  checkAlphaNum = (password) => { 
     let exp = {
       containsNumber: /\d+/
     };
@@ -121,19 +114,7 @@ export default class SignUpPage extends Component {
     return expMatch;
   }
 
-  // radioBtnValueRL = (value) => { //קביעת ערכים לצורת התצוגה של הפריטים עבור המשתמש (נשתמש בהמשך)
-  //   this.setState({ value_radio: value })
-  //   if (value == 0) {
-  //     this.setState({ itemViewingMethod: 'R' })
-
-  //   }
-  //   else {
-  //     this.setState({ itemViewingMethod: 'L' })
-  //     //return <CurrentLocFun/>
-  //   }
-  // }
-
-  signUpBtn = () => { //פונקציית ההרשמה, הכנסת משתמש חדש לDB   
+  signUpBtn = () => {   
 
     if (this.state.phone_number.length < 10) {
       Alert.alert("אופס..", "חסרים מפרים במספר טלפון");
@@ -145,7 +126,7 @@ export default class SignUpPage extends Component {
     }
 
     else {
-      let newUser = { //יצירת משתמש חדש
+      let newUser = { 
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         phoneNumber: this.state.phone_number,
@@ -155,13 +136,11 @@ export default class SignUpPage extends Component {
         residence: this.state.cities,
         radius: this.state.radius,
         birthDate: this.state.bdate,
-        //itemViewingMethod: this.state.itemViewingMethod,
         avatarlevel: 1,
       }
 
 
       if (newUser.firstName != '' && newUser.lastName != '' && newUser.phoneNumber != '' && newUser.email != '' && newUser.password != '' && newUser.residence != '') {
-        //בדיקה שכל השדות מולאו
         let checkE = '';
     console.log('user: ',newUser )
         fetch(urlSignUp, {
@@ -186,11 +165,9 @@ export default class SignUpPage extends Component {
               console.log("משתמש: ", newUser)
               Alert.alert("יש!", "מזל טוב על הצטרפותך ל- swish. קיבלת מאיתנו 50 נקודות מתנה למימוש :)")
 
-              //כאן אנחנו מעבירות את המשתמש לעמודים אחרים
               this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
               this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: newUser }, initial: false })
               this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: newUser }, initial: false })
-              //this.props.navigation.navigate('Navigator', { screen: 'MainChatPage', params: { user: newUser }, initial: false }) //פה זה לא מעביר עמוד רק את המידע
               this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser } })//מעביר עמוד ומידע ביחד
             }
           },
@@ -204,11 +181,11 @@ export default class SignUpPage extends Component {
     }
   }
 
-  btnBack = () => { //חזרה לעמוד התחברות
+  btnBack = () => { 
     this.props.navigation.navigate('LogIn')
   }
 
-  btnOpenGallery = async () => { //פתיחת גלריית התמונות
+  btnOpenGallery = async () => { 
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     console.log("RESULT: ", permission);
@@ -225,16 +202,16 @@ export default class SignUpPage extends Component {
       return;
     }
     this.setState({ image: result.uri });
-    this.btnUpload(result.uri) //העברת כתובת התמונה להעלאה לשרת
+    this.btnUpload(result.uri) 
   }
 
-  btnUpload = (urim) => { //חלק 1 העלאת תמונה לשרת
+  btnUpload = (urim) => { 
     let img = urim;
-    let imgName = this.state.email + '.jpg'; //כתובת האימייל של המשתמש תהיה בכתובת התמונה
+    let imgName = this.state.email + '.jpg'; 
     this.imageUpload(img, imgName);
   };
 
-  imageUpload = (imgUri, picName) => { //חלק 2 העלאת תמונה לשרת
+  imageUpload = (imgUri, picName) => {
 
     let uplodedPicPath = 'http://proj.ruppin.ac.il/bgroup17/prod/uploadImages/';
     let urlAPI = "http://proj.ruppin.ac.il/bgroup17/prod/uploadpicture/";
@@ -266,9 +243,7 @@ export default class SignUpPage extends Component {
         if (responseData != "err") {
           let picNameWOExt = picName.substring(0, picName.indexOf("."));
           let imageNameWithGUID = responseData.substring(responseData.indexOf(picNameWOExt), responseData.indexOf(".jpg") + 4);
-          //console.log('imageNameWithGUID: ', imageNameWithGUID)
           let uriNewImage = uplodedPicPath + imageNameWithGUID;
-          //console.log('uriNewImage', uriNewImage)
           this.setState({ uplodedPicUri: uriNewImage }, () => console.log('img uploaded successfully!', this.state.uplodedPicUri)) //יישום בסטייט בכדי להציג לאחר מכן ללא פאטץ נוסף
 
         }
@@ -281,7 +256,7 @@ export default class SignUpPage extends Component {
         alert('err upload= ' + err);
       });
   }
-  goToCities = (city) => { //מעבר לקומפוננטת ערים
+  goToCities = (city) => { 
     this.setState({ cities: city })
   }
   dateStringify = (d) => {
@@ -348,7 +323,6 @@ export default class SignUpPage extends Component {
                       cancelBtnText="Cancel"
                       placeholder="בחירת תאריך"                      
                       onChange={(date) => { this.dateStringify(date) ,this.setState({showDates:false})}}
-                     // onChangeText={this.setState({ showDates: false })}
                     />}
 
                   {this.state.stringDate ?
@@ -409,32 +383,9 @@ export default class SignUpPage extends Component {
               </View>
             </View>
 
-              {/* <RadioForm formHorizontal={true} animation={true} >
-                {this.radio_props.map((label, value) => (
-                  <View key={value} style={{ marginLeft: 30, marginRight: 30 }}>
-                    <RadioButton labelHorizontal={false} key={value} >
-                      <RadioButtonLabel
-                        obj={label}
-                        index={value}
-                        labelStyle={{ fontSize: 14, color: '#101010' }}
-                      />
-                      <RadioButtonInput
-                        obj={label}
-                        index={value}
-                        isSelected={this.state.value_radio === value}
-                        onPress={(value) => { this.radioBtnValueRL(value) }}
-                        borderWidth={1}
-                        buttonColor={'#696969'}
-                        buttonSize={12}
-                        buttonWrapStyle={{ margin: 5 }}
-                        key={value}
-                      />
-                    </RadioButton></View>))}
-              </RadioForm> */}
             <Text style={styles.text, { marginTop: 5 }}>תצוגת פריטים לפי:</Text>
             <View style={{ flexDirection: 'row-reverse' }}>
               <View style={styles.text}>
-                {/* //מעבר לתצוגת הערים כרשימה נפתחת */}
                 <TouchableOpacity style={styles.cityUpBtn} onPress={() => this.props.navigation.push('CitiesList', { goToCities: this.goToCities })}>
                   <Text style={styles.btnText}>מקום מגורים</Text>
                 </TouchableOpacity>

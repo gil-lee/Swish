@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View, Alert } from 'react-native'
-import { CommonActions } from '@react-navigation/native';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import CardItemShow from './CardItemShow';
 
 const urlDeleteItem = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserItems/PutUserItemStatus";
-const urlPersonalItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUser"
 const urlUser = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew";
 
 export default class DeleteItem extends Component {

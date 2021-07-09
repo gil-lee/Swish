@@ -1,21 +1,72 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, Image, Alert } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground,Switch, Image, Alert } from 'react-native'
 
-//var tempUser = '';
 export default class LogInPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      rememberMe: false,
+      username: '',
+      userLogIn: '',
     }
   }
 
-  btnSignUp = () => { //מעבר לעמוד הרשמה
+  // async componentDidMount() {
+  //   const userLogIn = await this.getRememberedUser();
+  //   this.setState({
+  //     userLogIn: userLogIn || "",
+  //     rememberMe: userLogIn ? true : false
+  //   });
+  // }
+
+  btnSignUp = () => {
     this.props.navigation.navigate('Sign Up')
   }
 
-  btnLogIn = () => { //פונקציית כפתור ההתחברות, בדיקה האם המשתמש קיים וכניסה למערכת
+  // rememberUser = async () => {
+  //   try {
+  //     const value = JSON.stringify(this.state.userLogIn)
+  //     await AsyncStorage.setItem('user', value);
+  //   } catch (e) {
+  //     console.log('error saving to async storge.. ', e.error)
+  //   }
+  // }
+  // getRememberedUser = async () => {
+  //   try {
+  //     const userLogIn = await AsyncStorage.getItem('user');
+  //     var user= JSON.parse(userLogIn);
+  //     if (user !== null) {
+  //       //return userLogIn;
+  //       this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: user[0] }, initial: false })
+  //       this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: user[0] }, initial: false })
+  //       this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: user[0] }, initial: false })
+  //       this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: user[0] }, initial: false })
+  //       this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: user[0] } })
+  //     }
+  //   } catch (e) {
+  //     console.log('error get from async storage', e.error)
+  //   }
+  // };
+  // forgetUser = async () => {
+  //   try {
+  //     await AsyncStorage.removeItem('user');
+  //   } catch (error) {
+  //     console.log('error remone from async storage', e.error)
+
+  //   }
+  // };
+  // toggleRememberMe = value => {
+  //   this.setState({ rememberMe: value })
+  //   if (value === true) {
+  //     this.rememberUser();
+  //   } else {
+  //     this.forgetUser();
+  //   }
+  // }
+  btnLogIn = () => {
 
     const url = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/logIn";
 
@@ -27,24 +78,21 @@ export default class LogInPage extends Component {
       })
     })
       .then(res => {
-        //console.log('res.ok=', res.ok);
         return res.json()
       })
       .then(tempUser => {
-        //console.log('user: ', tempUser)
+        this.setState({ userLogIn: tempUser }
+          //, () => console.log('user from login: ', tempUser)
+          )
         if (tempUser.length == 0) {
-          Alert.alert("אופס...", "קיימת שגיאה בכתובת האימייל או בסיסמה") //כאשר אחד מהפרטים שהוזנו שגוי
-       
+          Alert.alert("אופס...", "קיימת שגיאה בכתובת האימייל או בסיסמה")
         }
         else {
-             //במידה והפרטים נכונים עוברים לעמוד הבית
-          //כאן אנחנו מעבירות את המשתמש לעמודים אחרים
           this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: tempUser[0] }, initial: false })
           this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: tempUser[0] }, initial: false })
-          this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: tempUser[0] } }) //מעביר עמוד ומידע ביחד
-
+          this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: tempUser[0] } })
         }
       },
         (error) => {
@@ -66,7 +114,7 @@ export default class LogInPage extends Component {
               placeholder="אימייל"
               placeholderTextColor="#A7A7A7"
               textAlign={'center'}
-              autoCapitalize= "none"
+              autoCapitalize="none"
               onChangeText={text => this.setState({ email: text })} />
           </View>
           <View style={styles.inputView} >
@@ -79,9 +127,19 @@ export default class LogInPage extends Component {
               onChangeText={text => this.setState({ password: text })} />
           </View>
 
-          <TouchableOpacity>
-            <Text style={styles.forgot}>שכחת סיסמה?</Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity onPress={this.saveToAsyncStorgae}>
+            <Text style={styles.forgot}>זכור אותי</Text>
+          </TouchableOpacity> */}
+          {/* <View style={styles.switchRemember}>
+          <Text style={styles.remember}>זכור אותי</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#7DA476" }}
+            thumbColor={this.state.rememberMe ? "#f4f3f4" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            value={this.state.rememberMe}
+            onValueChange={(value) => this.setState({ rememberMe: value })}
+          /> */}
+          {/* </View> */}
           <TouchableOpacity style={styles.loginBtn} onPress={this.btnLogIn}>
             <Text style={styles.loginText}>התחברות</Text>
           </TouchableOpacity>
@@ -101,6 +159,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%"
+  },
+  switchRemember:{
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   image: {
     flex: 1,
@@ -131,9 +193,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14
   },
-  forgot: {
+  remember: {
     color: "#101010",
-    fontSize: 14
+    fontSize: 14,
+    marginRight: 5
   },
   loginBtn: {
     width: "80%",

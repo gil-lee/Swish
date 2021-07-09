@@ -7,7 +7,6 @@ import CardItemFeed from './CardItemFeed';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import PushNotifications from '../PushNotifications/PushNotifications';
 
 const urlGetItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/UsersListGet"
 const urlGetItemsDist = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUserItemsListDistance"
@@ -47,6 +46,7 @@ export default class FeedPage extends Component {
     super(props);
     this.state = {
       userTemplate: this.props.route.params.user,
+      userShowItems: this.props.route.params.user.showItemsFeed,
       itemTemplate: '',
       itemsList: [],
       itemListDB: [],
@@ -85,7 +85,7 @@ export default class FeedPage extends Component {
 
   componentDidMount() {
     this.callFetchFunc()
-
+//console.log('user in feed: ', this.state.userShowItems)
     this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
@@ -127,7 +127,6 @@ export default class FeedPage extends Component {
     this.getAvatarForUser(this.props.route.params.user)
   }
   sendNotiForReminder = (token) => {
-
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(20);
@@ -144,7 +143,6 @@ export default class FeedPage extends Component {
       trigger: tomorrow,
     });
 
-    //this.sendPushNotification(pushMessage)
   }
   sendPushNotification = async (pushMessage) => {
     await fetch('https://exp.host/--/api/v2/push/send', {
@@ -287,13 +285,11 @@ export default class FeedPage extends Component {
   getPremission = async () => {
     this.setState({ locationPre: true });
     let prem = await Location.requestPermissionsAsync();
-    //console.log('prem2: ', prem.granted)
     this.getLocation(prem)
   }
   getLocation = async (prem) => {
     if (prem.granted == true) {
       let location = await Location.getCurrentPositionAsync();
-      //console.log('location: ', location)
       this.setState(
         {
           latitudeSt: location.coords.latitude,
@@ -308,8 +304,9 @@ export default class FeedPage extends Component {
   }
 
   fetchUserItemsByEmail = async (longi, lati) => {
-    console.log('longi lati: ', longi, lati)
-    await fetch(urlSmartFilter + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/", {
+    //console.log('longi lati: ', longi, lati)
+    //console.log('user tamplate show items: ', this.state.userTemplate.showItemsFeed)
+    await fetch(urlSmartFilter + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/" + this.state.userShowItems, {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
@@ -322,7 +319,6 @@ export default class FeedPage extends Component {
       })
       .then(items => {
         this.setState({ itemsList: items, itemListDB: items }
-          //, () => console.log('items: ', items)
         )
       },
         (error) => {
@@ -473,9 +469,12 @@ export default class FeedPage extends Component {
       })
       .then(tokens => { 
         this.setState({tokensForRemider: tokens}
-          ,()=> {for(let i=0; i<= this.state.tokensForRemider.length; i++){
+          ,()=> {
+            console.log('tokens for remider: ', this.state.tokensForRemider)
+            for(let i=0; i<= this.state.tokensForRemider.length; i++){
             this.sendNotiForReminder(this.state.tokensForRemider[i])
-           } })
+           }
+           })
         
       },
         (error) => {

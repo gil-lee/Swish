@@ -39,7 +39,6 @@ export default function MainChatPage(props) {
   }, [navigation]);
 
   const getMessagesFirebase = (itemId, uploadUser, otherUser, item) => {
-    //console.log('item: ', item)
     if (uploadUser == user.id) {
       var itemRequestId = itemId + "-" + uploadUser + "-" + otherUser.id
     }
@@ -53,13 +52,12 @@ export default function MainChatPage(props) {
     UsersList.push(sendMessUser, userUploadItem)
 
     var userChat = [{ UsersList, itemRequestId, item }]
-    //console.log('jhhhjh: ', userChat)
     navigation.navigate('NewChat', { userChat: userChat, item: itemId })
   }
 
 
   const returnAllChats =
-    allChats.map(user => {
+    allChats.map(user =>{
       return <ScrollView>
         <View key={user.id} style={styles.layout}>
           <TouchableOpacity onPress={() => getMessagesFirebase(user.itemId, user.uploadUser, user.userDTO[0], user.userDTO[0].UserItemsListDTO[0].itemsListDTO[0])}>
@@ -147,8 +145,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
-    // justifyContent: 'flex-end',
-    // alignItems: 'flex-end'
   },
   userImage: {
     height: 60,
@@ -195,6 +191,5 @@ const styles = StyleSheet.create({
   descripitionCard: {
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
-  },
-  side_img: {},
+  }
 });

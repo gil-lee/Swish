@@ -1,10 +1,10 @@
 import React from 'react'
-import { ImageBackground, Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, TouchableWithoutFeedback, StyleSheet, ScrollView, Image, KeyboardAvoidingView } from 'react-native'
+import { Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, TouchableWithoutFeedback, StyleSheet, ScrollView, Image, KeyboardAvoidingView } from 'react-native'
 import { firebase } from "../firebase"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LogBox } from 'react-native';
 
 const urlGetChatStatus = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatDetails";
 const urlPutChatStatus = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutChatStatus";
@@ -13,8 +13,11 @@ const urlPutRequestConfirm = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/Pu
 const urlPutChatLastMesDate = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PutChatDate";
 const window = Dimensions.get("window");
 const screen = Dimensions.get("screen");
-export default class extends React.Component {
+LogBox.ignoreLogs(['VirtualizedLists','Warning:...']);
+LogBox.ignoreAllLogs();
 
+
+export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -158,9 +161,7 @@ export default class extends React.Component {
   }
 
   sendMessage = async () => {
-    //console.log('in send func')
     const messageId = this.props.route.params.userChat[0].itemRequestId;
-    //console.log('how message looks: ', this.state.textMessage)
     if (this.state.textMessage.length > 0) {
       let msgId = firebase.database().ref('messages').child(this.state.userChat[0].itemRequestId).push().key;
 
@@ -169,13 +170,10 @@ export default class extends React.Component {
         message: this.state.textMessage,
         time: firebase.database.ServerValue.TIMESTAMP,
         from: this.state.userChat[0].UsersList[0],
-        //chatStatus: this.state.chatStatus
       }
       updates['messages/' + messageId + '/' + msgId] = message;
       console.log('update: ', updates)
       firebase.database().ref().update(updates)
-
-      //console.log('user token ???', this.state.userChat[0].UsersList[1])
 
       let bodyMessage = `${this.state.user1.firstName} שלח.ה לך הודעה\n ${this.state.textMessage}`
       const pushMessage = {
@@ -289,7 +287,6 @@ export default class extends React.Component {
       uploadUser: splitId[1],
       requestUser: splitId[2],
       itemId: this.state.item.itemId,
-      //chatStatus: this.state.chatStatus,
       uploadConfirm: true
     }
     console.log('befor put confirmUpload')
@@ -325,16 +322,12 @@ export default class extends React.Component {
 
     this.sendPushNotification(pushMessage)
   }
-  cancelRequestBtn = () => {
-
-  }
   confirmRequestBtn = () => {
     let splitId = this.state.itemIDFirebase.split("-")
     var chat = {
       uploadUser: splitId[1],
       requestUser: splitId[2],
       itemId: this.state.item.itemId,
-      //chatStatus: this.state.chatStatus,
       requestConfirm: true
     }
 
@@ -405,15 +398,8 @@ export default class extends React.Component {
       time: firebase.database.ServerValue.TIMESTAMP,
       from: this.state.userChat[0].UsersList[1]
     }
-    //let message = 'מצטערים, המשתמש דחה את בקשתך'
     this.setState({ textMessage: item.message }, () =>
       this.sendMessage())
-
-    //console.log(item);
-    // let temp = []
-    // temp = this.state.messagesList;
-    // temp.push(item)
-    // this.setState({ messagesList: temp })
 
     this.sendPushNotification(pushMessage)
     this.renderMessage
@@ -477,7 +463,6 @@ export default class extends React.Component {
   }
 
   render() {
-    const { dimensions } = this.state;
     return (
       <SafeAreaView >
         <View>
@@ -490,7 +475,6 @@ export default class extends React.Component {
 
         <ScrollView style={{ marginBottom: 240 }}>
           {this.state.disableInput ? this.printConfirmSendBtn() : this.printDefaultMessage()}
-          {/* {this.printDefaultMessage()} */}
           <FlatList
             style={{ padding: 15 }}
             data={this.state.messagesList}
@@ -499,7 +483,6 @@ export default class extends React.Component {
           />
         </ScrollView>
         <View style={styles.sendInputView}>
-          {/* <KeyboardAvoidingView behavior="padding" style={styles.sendInputView}> */}
           <TextInput
             value={this.state.textMessage}
             placeholder="..."
@@ -510,7 +493,6 @@ export default class extends React.Component {
           <TouchableOpacity style={styles.sendBtn} onPress={this.sendMessage}>
             <Icon name="paper-plane" size={20} color="#fff" style={{ margin: 13 }} />
           </TouchableOpacity>
-          {/* </KeyboardAvoidingView> */}
         </View>
       </SafeAreaView>
     )
@@ -556,7 +538,7 @@ const styles = StyleSheet.create({
   },
   printDefaultView: {
     flexDirection: 'column',
-    width: '70%', //זה הרוחב של ההודעות עצמן
+    width: '70%', 
     alignSelf: 'flex-end',
     height: 'auto',
     backgroundColor: '#c2d4bf',
@@ -591,7 +573,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginLeft: 20,
     marginTop: 35,
-    //flexDirection: 'row-reverse',
     justifyContent: 'space-between'
   },
   userImage: {
@@ -638,7 +619,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginLeft: 5,
     backgroundColor: '#a7a7a7',
-    //borderRadius: 60,
     borderWidth: 1,
     borderRadius: 14,
     borderColor: '#a7a7a7',

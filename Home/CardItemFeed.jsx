@@ -1,6 +1,6 @@
 import React from 'react'
-import { useState, useEffect, useCallback, useContext, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native'
+import { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { firebase } from "../firebase"
@@ -15,32 +15,12 @@ Notifications.setNotificationHandler({
 });
 const urlPostChat = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/PostChat";
 
-const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
-const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
-const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
-const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
-
-const itemType = '';
-const itemSize = '';
-const itemStyle = '';
-const itemCond = '';
-
-
 export default function CardItem(props) {
 
   const navigation = useNavigation();
-  const [index, setIndex] = useState(0)
-  const [images, setImages] = useState([
-    { url: props.data.image1 },
-    { url: props.data.image2 },
-    { url: props.data.image3 },
-    { url: props.data.image4 },
-  ])
-  const [notification, setNotification] = useState(false);
+  const [images,setImages] = useState();
   const notificationListener = useRef();
   const responseListener = useRef();
-  const [expoPushToken, setExpoPushToken]=useState('')
-  let listener = '';
 
   useEffect(() => {
     var sendMessUser = props.logInUser
@@ -50,39 +30,7 @@ export default function CardItem(props) {
     UsersList.push(sendMessUser, userUploadItem)
     var item = props.data
     var userChat = [{ UsersList, itemRequestId, item }]
-
-    //can delete this useEffect if the notification doesnt work..
-
-    //listenerExpo(userChat)
   }, [])
-
-  function listenerExpo(userChat) {
-    console.log('in listenerExpo function..')
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('noti2:        ', JSON.stringify(notification.request));
-      setNotification(notification), () =>
-        console.log('noti:        ', JSON.stringify(notification.request));
-    });
-    //notification.request.content.data.{what we send in data} == the props to pass, the item to pass
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log('res2:           ', JSON.stringify(response));
-    const navi = response.notification.request.content.data;
-    console.log('res:           ', JSON.stringify(response));
-    //response.actionIdentifier == `${navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })}`
-
-    if (navi.type == 'yes') {
-      console.log('yes')
-      navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
-    }
-    if (navi.type == 'no') {
-      console.log('no')
-      navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
-    }
-    //response.actionIdentifier == what it should do when you press on it, go to newChat
-    });
-  }
 
   function createUsersArr() {
     var sendMessUser = props.logInUser
@@ -130,7 +78,6 @@ export default function CardItem(props) {
         })
     sendDfaultMessage(userChat)
 
-    //console.log('props user for token: ', userChat[0].UsersList[1])
     props.navigation.navigate('Main Chat Page', { userChat: userChat, initial: false })
     navigation.navigate('NewChat', { userChat: userChat, item: props.data })
   }
@@ -189,7 +136,6 @@ export default function CardItem(props) {
     var users = { user, logInUser }
     console.log("users from feed: ", users)
     navigation.navigate('OtherUserProfile', { users: users })
-    //navigation.navigate('OtherUserProfile', { user: props.user, LGUser: props.logInUser })
   }
 
   function openGallery() {

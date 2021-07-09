@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Switch, ImageBackground, Image, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import { Slider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -40,7 +39,7 @@ export default class SettingsPage extends Component {
       this.setState({ isEnabled1:true})
     }
   }
-  onChangeText = (key, val) => { //פונקציה דרכה משנות את הסטייטים של הוספת משתמש חדש
+  onChangeText = (key, val) => { 
     this.setState({ [key]: val })
 
   }
@@ -60,10 +59,10 @@ export default class SettingsPage extends Component {
     this.props.navigation.goBack();
   }
 
-  goToCities = (city) => { //מעבר לקומפוננטת ערים
+  goToCities = (city) => { 
     this.setState({ cities: city })
   }
-  btnOpenGallery = async () => { //לעדכן
+  btnOpenGallery = async () => { 
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     console.log("RESULT: ", permission);
@@ -80,16 +79,16 @@ export default class SettingsPage extends Component {
       return;
     }
     this.setState({ image: result.uri });
-    this.btnUpload(result.uri) //העברת כתובת התמונה להעלאה לשרת
+    this.btnUpload(result.uri) 
   }
 
-  btnUpload = (urim) => { //חלק 1 העלאת תמונה לשרת
+  btnUpload = (urim) => { 
     let img = urim;
-    let imgName = this.state.user.email + '.jpg'; //כתובת האימייל של המשתמש תהיה בכתובת התמונה
+    let imgName = this.state.user.email + '.jpg'; 
     this.imageUpload(img, imgName);
   };
 
-  imageUpload = (imgUri, picName) => { //לעדכן
+  imageUpload = (imgUri, picName) => { 
 
     let uplodedPicPath = 'http://proj.ruppin.ac.il/bgroup17/prod/uploadImages/';
     let urlAPI = "http://proj.ruppin.ac.il/bgroup17/prod/uploadpicture/";
@@ -134,12 +133,12 @@ export default class SettingsPage extends Component {
         alert('err upload= ' + err);
       });
   }
-  confirmPassword = () => { //אימות הסיסמאות שהוזנו
+  confirmPassword = () => { 
 
     if (this.state.password_confirm != '') {
       let password = this.state.password;
       let passwordConfirm = this.state.password_confirm
-      let check = this.checkAlphaNum(password); //בדיקה האם הוזנו מספרים בסיסמה (חובה להזין מספרים)
+      let check = this.checkAlphaNum(password); 
       console.log('check: ', check)
       if (check.containsNumber) {
         if (password != passwordConfirm) {
@@ -157,7 +156,7 @@ export default class SettingsPage extends Component {
       this.updateUser()
     }
   }
-  checkAlphaNum = (password) => { //פונקציה שבודקת האם הוזנו מספרים לסיסמה
+  checkAlphaNum = (password) => { 
     let exp = {
       containsNumber: /\d+/
     };
@@ -196,6 +195,9 @@ export default class SettingsPage extends Component {
         newUser = this.state.userAfterPut
         Alert.alert("יש..", "משתמש עודכן בהצלחה!")
         this.props.navigation.push('Navigator', { screen: 'Profile Page', params: { user: newUser } })
+        this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: newUser }, initial: false })
+        this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: newUser }, initial: false })
+        this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
         this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser } })
       },
         (error) => {

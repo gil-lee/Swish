@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -14,12 +13,8 @@ export default function FavoriteListCard(props) {
 
   const navigation = useNavigation();
   const [favoriteUser, setFavoriteUser] = useState(true)
-  const [favList, setFavList] = useState()
-  const [favUsersList, setFavUsersList] = useState(null)
   const { user } = props
   const {logInUser} = props
-
-  //var users= {user,logInUser}
 
   function goToOtherProfile() {
     var users= {user,logInUser}
@@ -57,8 +52,6 @@ export default function FavoriteListCard(props) {
 
   return (
     <View>
-      {/* {fetchFavList} */}
-      {/* {console.log('first time:1: ', favList)} */}
           <View key={user.id} style={styles.layout}>
             <TouchableOpacity onPress={goToOtherProfile}>
               <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', }}>
@@ -99,8 +92,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
-    // justifyContent: 'flex-end',
-    // alignItems: 'flex-end'
   },
   userImage: {
     height: 60,
@@ -118,7 +109,6 @@ const styles = StyleSheet.create({
   heartBtn: {
     paddingBottom: 20,
     paddingLeft: 25,
-    //alignItems: 'flex-start',
     marginRight: 20
   },
 })

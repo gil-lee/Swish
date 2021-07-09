@@ -1,7 +1,5 @@
 import React from 'react'
-import { ScrollView } from 'react-native';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, StyleSheet, Image } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function CardItemUpload(props) {

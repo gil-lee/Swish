@@ -9,8 +9,6 @@ const urlItemSize = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemSize";
 const urlItemStyle = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemStyle";
 const urlItemPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemPrice ";
 const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionPrices";
-const urlUserItem = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserItems";
-const urlAvatarLevel = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/AvatarPut";
 const urlUser = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew";
 const urlItem = "http://proj.ruppin.ac.il/bgroup17/prod/api/ItemNew/Post";
 const urlUserFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetFilters";
@@ -26,11 +24,9 @@ export default class ConfirmUpload extends Component {
       conditionId: '',
       user: this.props.route.params.user,
       userAfterPut: '',
-      //longitudeSt: 0,
-      //latitudeSt: 0,
     }
   }
-  componentDidMount() { //פאטצים להבאת idלכל קטגוריה 
+  componentDidMount() { 
     this.callFetchFunc()
   }
 
@@ -39,10 +35,9 @@ export default class ConfirmUpload extends Component {
     this.fetchCheck(urlItemStyle);
     this.fetchCheck(urlItemPrice);
     this.fetchCheck(urlConditionPrice);
-    //this.getCurrentLocation();
   }
 
-  fetchCheck = (url) => { //הבאת id לכל קטגוריה 
+  fetchCheck = (url) => { 
 
     fetch(url, {
       method: 'GET',
@@ -56,28 +51,28 @@ export default class ConfirmUpload extends Component {
         return res.json()
       })
       .then(dropDownArr => {
-        if (url == urlItemPrice) { //הבאת סוגID
+        if (url == urlItemPrice) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             if (dropDownArr[i].name == this.state.finalItem.type) {
               this.setState({ typeId: dropDownArr[i].id }, console.log("type id: ", this.state.typeId))
             }
           }
         }
-        if (url == urlItemSize) {//הבאת מחירID
+        if (url == urlItemSize) {
           for (let i = 0; i < dropDownArr.length; i++) {
             if (dropDownArr[i].size == this.state.finalItem.size) {
               this.setState({ sizeId: dropDownArr[i].id }, console.log("size id: ", this.state.sizeId))
             }
           }
         }
-        if (url == urlConditionPrice) { //הבאת מצבID
+        if (url == urlConditionPrice) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             if (dropDownArr[i].condition == this.state.finalItem.condition) {
               this.setState({ conditionId: dropDownArr[i].id })
             }
           }
         }
-        if (url == urlItemStyle) { //הבאת סגנוןID
+        if (url == urlItemStyle) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             if (dropDownArr[i].style == this.state.finalItem.style) {
               this.setState({ styleId: dropDownArr[i].id })
@@ -92,7 +87,7 @@ export default class ConfirmUpload extends Component {
 
   fetchItem = () => {
 
-    let item = { //יצירת פריט חדש
+    let item = { 
       name: this.state.finalItem.name,
       description: this.state.finalItem.description,
       image1: this.state.finalItem.image1,
@@ -108,7 +103,7 @@ export default class ConfirmUpload extends Component {
     }
     console.log('item: ', item)
 
-    fetch(urlItem + "/" + this.state.user.email + "/", { //העלאת פריט לטבלת itemNew
+    fetch(urlItem + "/" + this.state.user.email + "/", { 
       method: 'POST',
       body: JSON.stringify(item),
       headers: new Headers({
@@ -134,7 +129,6 @@ export default class ConfirmUpload extends Component {
   getUserTokenFilter = () => {
     fetch(urlUserFilter, {
       method: 'GET',
-      //body: JSON.stringify(item),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
