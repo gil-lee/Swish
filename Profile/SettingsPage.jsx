@@ -24,34 +24,35 @@ export default class SettingsPage extends Component {
       image: null,
       uplodedPicUri: '',
 
-       isEnabled1: '',
-       
-      favorite: '', 
+      isEnabledS: '',
+      isEnabledF: '',
+
+      favorite: '',
       smartFinder: '',
-      showItemsFeed:"", 
+      showItemsFeed: this.props.route.params.user.showItemsFeed,
     }
   }
-  componentDidMount(){
-    if(this.state.user.showItemsFeed=="F"){
-      this.setState({ isEnabled1: false})
+  componentDidMount() {
+    if (this.state.user.showItemsFeed == "F") {
+      this.setState({ isEnabledS: false, isEnabledF: true }, ()=>console.log('Fav from db: ', this.state.showItemsFeed))
     }
-    if(this.state.user.showItemsFeed=="S"){
-      this.setState({ isEnabled1:true})
+    if (this.state.user.showItemsFeed == "S") {
+      this.setState({ isEnabledS: true, isEnabledF: false })
     }
   }
-  onChangeText = (key, val) => { 
+  onChangeText = (key, val) => {
     this.setState({ [key]: val })
 
   }
-  notificationChange = (num) => {
+  notificationChange = (smart) => {
 
-    if (num == "S") {
-      let change = this.state.isEnabled1
-      this.setState({ isEnabled1:!change, showItemsFeed:'S'})
+    if (smart == 'S') {
+      let change = this.state.isEnabledS
+      this.setState({ isEnabledF: change, showItemsFeed: 'S', isEnabledS: !change })
     }
-    if (num == "F") {
-      let change = this.state.isEnabled2
-      this.setState({  isEnabled1:change, showItemsFeed:'F'})
+    if (smart == 'F') {
+      let change = this.state.isEnabledF
+      this.setState({ isEnabledS: change, showItemsFeed: 'F', isEnabledF: !change })
     }
 
   }
@@ -59,10 +60,10 @@ export default class SettingsPage extends Component {
     this.props.navigation.goBack();
   }
 
-  goToCities = (city) => { 
+  goToCities = (city) => {
     this.setState({ cities: city })
   }
-  btnOpenGallery = async () => { 
+  btnOpenGallery = async () => {
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     console.log("RESULT: ", permission);
@@ -79,16 +80,16 @@ export default class SettingsPage extends Component {
       return;
     }
     this.setState({ image: result.uri });
-    this.btnUpload(result.uri) 
+    this.btnUpload(result.uri)
   }
 
-  btnUpload = (urim) => { 
+  btnUpload = (urim) => {
     let img = urim;
-    let imgName = this.state.user.email + '.jpg'; 
+    let imgName = this.state.user.email + '.jpg';
     this.imageUpload(img, imgName);
   };
 
-  imageUpload = (imgUri, picName) => { 
+  imageUpload = (imgUri, picName) => {
 
     let uplodedPicPath = 'http://proj.ruppin.ac.il/bgroup17/prod/uploadImages/';
     let urlAPI = "http://proj.ruppin.ac.il/bgroup17/prod/uploadpicture/";
@@ -133,12 +134,12 @@ export default class SettingsPage extends Component {
         alert('err upload= ' + err);
       });
   }
-  confirmPassword = () => { 
+  confirmPassword = () => {
 
     if (this.state.password_confirm != '') {
       let password = this.state.password;
       let passwordConfirm = this.state.password_confirm
-      let check = this.checkAlphaNum(password); 
+      let check = this.checkAlphaNum(password);
       console.log('check: ', check)
       if (check.containsNumber) {
         if (password != passwordConfirm) {
@@ -156,7 +157,7 @@ export default class SettingsPage extends Component {
       this.updateUser()
     }
   }
-  checkAlphaNum = (password) => { 
+  checkAlphaNum = (password) => {
     let exp = {
       containsNumber: /\d+/
     };
@@ -199,6 +200,7 @@ export default class SettingsPage extends Component {
         this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: newUser }, initial: false })
         this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
         this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser } })
+       
       },
         (error) => {
           console.log('Error', error);
@@ -209,6 +211,13 @@ export default class SettingsPage extends Component {
     this.props.navigation.navigate('LogIn')
   }
 
+  navigationAfterPut = (newUser) => {
+    this.props.navigation.navigate('Navigator', { screen: 'Favorite', params: { user: newUser }, initial: false })
+    this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: newUser }, initial: false })
+    this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })
+    this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: newUser }, initial: false })
+    this.props.navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: newUser } })
+  }
   render() {
     return (
       <ImageBackground source={require('../assets/bgImage.png')} style={styles.image}>
@@ -252,7 +261,7 @@ export default class SettingsPage extends Component {
                 />
               </View>
             </View>
-           
+
             <Text style={styles.text, { marginTop: 10 }}>עדכון תצוגת פריטים:</Text>
 
             <View style={{ flexDirection: 'row-reverse' }}>
@@ -286,15 +295,15 @@ export default class SettingsPage extends Component {
             <Text></Text><Text></Text>
             <Text>תצוגת פרטים לפי:</Text>
             <View style={{ flexDirection: "row-reverse" }}>
-              
+
               <View style={styles.switch}>
                 <Text>סינון חכם</Text>
                 <Switch
                   trackColor={{ false: "#767577", true: "#7DA476" }}
-                  thumbColor={this.state.isEnabled1 ? "#f4f3f4" : "#f4f3f4"}
+                  thumbColor={this.state.isEnabledS ? "#f4f3f4" : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
-                  onValueChange={val => this.notificationChange("S")}
-                  value={this.state.isEnabled1}
+                  onValueChange={val => this.notificationChange('S')}
+                  value={this.state.isEnabledS}
                 />
               </View>
 
@@ -302,10 +311,10 @@ export default class SettingsPage extends Component {
                 <Text>משתמשים שאהבתי</Text>
                 <Switch
                   trackColor={{ false: "#767577", true: "#7DA476" }}
-                  thumbColor={this.state.isEnabled2 ? "#f4f3f4" : "#f4f3f4"}
+                  thumbColor={this.state.isEnabledF ? "#f4f3f4" : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
-                  onValueChange={val => this.notificationChange("F")}
-                  value={!this.state.isEnabled1}
+                  onValueChange={val => this.notificationChange('F')}
+                  value={this.state.isEnabledF}
                 />
               </View>
 

@@ -84,7 +84,7 @@ export default class LogInPage extends Component {
         this.setState({ userLogIn: tempUser }
           //, () => console.log('user from login: ', tempUser)
           )
-        if (tempUser.length == 0) {
+        if (tempUser.length > 1) {
           Alert.alert("אופס...", "קיימת שגיאה בכתובת האימייל או בסיסמה")
         }
         else {

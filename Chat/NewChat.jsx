@@ -348,6 +348,7 @@ export default class extends React.Component {
       })
       .then(i => {
         console.log('i:', i)
+        this.putChatStatus("delivered")
       },
         (error) => {
           console.log('Error', error);

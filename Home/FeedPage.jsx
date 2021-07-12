@@ -17,7 +17,7 @@ const urlConditionPrice = "http://proj.ruppin.ac.il/bgroup17/prod/api/ConditionP
 const urlPutToken = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/PutUserToken";
 const urlGetPostPutFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilter/GetUserFilter";
 const urlSmartFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetForSmartApp"
-const urlGetAllTokensFoeReminder="http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatListForReminder"
+const urlGetAllTokensFoeReminder = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatListForReminder"
 
 const users = [];
 const items = [];
@@ -71,7 +71,7 @@ export default class FeedPage extends Component {
       userToken: '',
       badge: 0,
 
-      tokensForRemider:''
+      tokensForRemider: ''
     }
     this.sizeDD = null;
     this.styleDD = null;
@@ -80,16 +80,19 @@ export default class FeedPage extends Component {
 
     this.notificationListener = createRef();
     this.responseListener = createRef();
-
+    //this.getCurrentLocation()
   }
 
   componentDidMount() {
-    this.callFetchFunc()
-//console.log('user in feed: ', this.state.userShowItems)
+    console.log('user from feed in didMount,', this.state.userTemplate)
+      this.getCurrentLocation()
+      this.callFetchFunc()
+    
+    console.log('user in feed: ', this.state.userTemplate)
     this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
-  
+
     this.getAllTokens()
   }
 
@@ -113,18 +116,17 @@ export default class FeedPage extends Component {
     }
 
   };
-  componentWillUnmount() {
-    this.setState({ userTemplate: this.props.route.params.user })
-    this.getLocation(true)
-  }
 
   callFetchFunc = () => {
     this.fetchDropDown(urlItemSize);
     this.fetchDropDown(urlItemStyle);
     this.fetchDropDown(urlItemPrice);
     this.fetchDropDown(urlConditionPrice);
-    this.getCurrentLocation()
     this.getAvatarForUser(this.props.route.params.user)
+  }
+  componentWillUnmount() {
+    this.setState({ userTemplate: this.props.route.params.user })
+    this.getLocation(true)
   }
   sendNotiForReminder = (token) => {
     let tomorrow = new Date();
@@ -296,6 +298,7 @@ export default class FeedPage extends Component {
           longitudeSt: location.coords.longitude,
           locationPre: true
         }
+        , () => console.log('longi & lati after premission: ', this.state.longitudeSt + this.state.latitudeSt)
       )
       this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
       this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', initial: false, params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt } })
@@ -305,7 +308,7 @@ export default class FeedPage extends Component {
 
   fetchUserItemsByEmail = async (longi, lati) => {
     //console.log('longi lati: ', longi, lati)
-    //console.log('user tamplate show items: ', this.state.userTemplate.showItemsFeed)
+    //console.log('user tamplate show items: ',  this.state.userShowItems)
     await fetch(urlSmartFilter + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/" + this.state.userShowItems, {
       method: 'GET',
       headers: new Headers({
@@ -319,6 +322,7 @@ export default class FeedPage extends Component {
       })
       .then(items => {
         this.setState({ itemsList: items, itemListDB: items }
+          //,()=> console.log('items: ', this.state.itemsList)
         )
       },
         (error) => {
@@ -456,7 +460,7 @@ export default class FeedPage extends Component {
         })
   }
 
-  getAllTokens=()=>{
+  getAllTokens = () => {
     fetch(urlGetAllTokensFoeReminder, {
       method: 'GET',
       headers: new Headers({
@@ -467,15 +471,14 @@ export default class FeedPage extends Component {
       .then(res => {
         return res.json()
       })
-      .then(tokens => { 
-        this.setState({tokensForRemider: tokens}
-          ,()=> {
+      .then(tokens => {
+        this.setState({ tokensForRemider: tokens }
+          , () => {
             console.log('tokens for remider: ', this.state.tokensForRemider)
-            for(let i=0; i<= this.state.tokensForRemider.length; i++){
-            this.sendNotiForReminder(this.state.tokensForRemider[i])
-           }
-           })
-        
+          })
+          for (let i = 0; i <= tokens.length; i++) {
+            this.sendNotiForReminder(tokens[i])
+          }
       },
         (error) => {
           console.log('Error', error);
@@ -486,9 +489,6 @@ export default class FeedPage extends Component {
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
-          {/* <View>
-          <PushNotifications/>
-          </View> */}
 
           <View style={styles.container}>
             <TouchableOpacity style={styles.searchSection}>
@@ -496,8 +496,6 @@ export default class FeedPage extends Component {
               <TextInput style={{}}
                 placeholder='חיפוש'
                 onChangeText={text => {
-                  //console.log(text);
-                  //console.log(this.state.itemListDB[0].itemsListDTO[0].name);
                   let newItemsList = this.state.itemListDB.filter(item =>
                     item.itemsListDTO[0].name.includes(text) ||
                     item.itemsListDTO[0].description.includes(text));

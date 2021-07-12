@@ -2,9 +2,9 @@
   "expoServerPort": 19000,
   "packagerPort": 19000,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://7b-p74.meytal-manyfler.swish.exp.direct",
+  "packagerNgrokUrl": "https://packager.7b-p74.meytal-manyfler.swish.exp.direct",
+  "ngrokPid": 5116,
   "webpackServerPort": null,
   "devToolsPort": 19002
 }

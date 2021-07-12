@@ -12,7 +12,7 @@ export default function MainChatPage(props) {
   
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-    console.log('in focus useEffect ')
+    //console.log('user in main chat: ', user)
     let tempArr = []
        fetch(urlGetAllChat + user.id, {
         method: 'GET',
@@ -26,10 +26,13 @@ export default function MainChatPage(props) {
           return res.json()
         })
         .then(chats => {
+          //console.log('chats in main chat: ', chats)
+
           for (var i = 0; i < chats.length; i++) {
             tempArr.push(chats[i])
           }
           setAllChats(tempArr)
+          //console.log('temp user in main chat: ', tempArr)
         },
           (error) => {
             console.log('Error', error);
