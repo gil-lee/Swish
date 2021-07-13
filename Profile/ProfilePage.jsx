@@ -32,6 +32,16 @@ export default class ProfilePage extends Component {
   componentWillUnmount() {
     this.setState({ user: this.props.route.params.user })
   }
+  componentWillReceiveProps() {
+    this.callFetchFunc()
+    //console.log('in will recive props! ')
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.isFocus !== this.props.isFocus) {
+      this.forceUpdate();
+      console.log('in did update, after force update..')
+    }
+  }
 
   callFetchFunc = () => {
     this.fetchSentences()
@@ -39,7 +49,7 @@ export default class ProfilePage extends Component {
     this.fetchPersonalItems()
   }
 
-  fetchSentences = () => { 
+  fetchSentences = () => {
 
     fetch(urlSentence, {
       method: 'GET',

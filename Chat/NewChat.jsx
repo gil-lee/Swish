@@ -270,9 +270,7 @@ export default class extends React.Component {
         <View>
           {this.state.user1.id == splitId[2] &&
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 6, marginRight: 28, marginTop: 8 }}>
-              {/* <TouchableOpacity style={styles.noBtn} onPress={this.cancelRequestBtn}>
-                <Text>ביטול</Text>
-              </TouchableOpacity> */}
+            
               <TouchableOpacity style={styles.yesBtn} onPress={this.confirmRequestBtn}>
                 <Text>אישור</Text>
               </TouchableOpacity>
@@ -348,7 +346,8 @@ export default class extends React.Component {
       })
       .then(i => {
         console.log('i:', i)
-        this.putChatStatus("delivered")
+        //this.putChatStatus("delivered")
+        this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.user1 } })
       },
         (error) => {
           console.log('Error', error);

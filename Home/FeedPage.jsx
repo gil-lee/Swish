@@ -81,19 +81,28 @@ export default class FeedPage extends Component {
     this.notificationListener = createRef();
     this.responseListener = createRef();
     //this.getCurrentLocation()
+    this.forceUpdate();
   }
 
   componentDidMount() {
-    console.log('user from feed in didMount,', this.state.userTemplate)
-      this.getCurrentLocation()
-      this.callFetchFunc()
-    
-    console.log('user in feed: ', this.state.userTemplate)
+    //console.log('user from feed in didMount,', this.state.userTemplate)
+    this.getCurrentLocation()
+    this.callFetchFunc()
+
+    //console.log('user in feed: ', this.state.userTemplate)
     this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
 
     this.getAllTokens()
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.isFocus !== this.props.isFocus) {
+      this.forceUpdate();
+      console.log('in did update, after force update..')
+      //this.setState({ userTemplate: this.props.route.params.user })
+      this.getLocation(true)
+    }
   }
 
   _handleNotification = notification => {
@@ -127,6 +136,11 @@ export default class FeedPage extends Component {
   componentWillUnmount() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
+  }
+  componentWillReceiveProps() {
+    this.setState({ userTemplate: this.props.route.params.user })
+    this.getLocation(true)
+    console.log('in will recive props! feed!!! ')
   }
   sendNotiForReminder = (token) => {
     let tomorrow = new Date();
@@ -397,6 +411,7 @@ export default class FeedPage extends Component {
       selectedType: ''
     })
     this.resetMyDropdown()
+    this.getCurrentLocation()
     this.callFetchFunc()
   }
 
@@ -476,9 +491,9 @@ export default class FeedPage extends Component {
           , () => {
             console.log('tokens for remider: ', this.state.tokensForRemider)
           })
-          for (let i = 0; i <= tokens.length; i++) {
-            this.sendNotiForReminder(tokens[i])
-          }
+        for (let i = 0; i <= tokens.length; i++) {
+          this.sendNotiForReminder(tokens[i])
+        }
       },
         (error) => {
           console.log('Error', error);

@@ -91,13 +91,16 @@ export default function OtherUserProfile(props) {
       .then(res => {
         console.log('res.ok postFavUsers= ', res.ok);
         if (res.ok) {
-          navigation.push('Navigator', { screen: 'FeedPage', params: { user: users.logInUser } })
-          navigation.navigate('Navigator', { screen: 'Favorite', params: { user: users.logInUser } })
+          navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: users.logInUser }, initial: false })
+          navigation.navigate('Navigator', { screen: 'Profile Page', params: { user: users.logInUser }, initial: false  })
+          navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: users.logInUser }, initial: false  })
+          navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: users.logInUser }, initial: false  })
+          navigation.navigate('Navigator', { screen: 'Favorite', params: { user: users.logInUser }, initial: false  })
         }
         return res.json()
       })
       .then(favUsers => {
-        console.log("favorite users: ", favUsers)
+        //console.log("favorite users: ", favUsers)
       },
         (error) => {
           console.log('Error', error);
@@ -124,7 +127,7 @@ export default function OtherUserProfile(props) {
         return res.json()
       })
       .then(favUsers => {
-        console.log("favorite users: ", favUsers)
+        //console.log("favorite users: ", favUsers)
       },
         (error) => {
           console.log('Error', error);
