@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, ImageBackground, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import CardItem from '../Home/CardItem';
+import CardItem from './CardItem';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -100,7 +100,7 @@ export default function OtherUserProfile(props) {
         return res.json()
       })
       .then(favUsers => {
-        //console.log("favorite users: ", favUsers)
+        console.log("favorite users: ", favUsers)
       },
         (error) => {
           console.log('Error', error);
@@ -127,7 +127,7 @@ export default function OtherUserProfile(props) {
         return res.json()
       })
       .then(favUsers => {
-        //console.log("favorite users: ", favUsers)
+        console.log("favorite users: ", favUsers)
       },
         (error) => {
           console.log('Error', error);

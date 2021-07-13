@@ -19,18 +19,7 @@ export default function CardItem(props) {
 
   const navigation = useNavigation();
   const [images,setImages] = useState();
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
-  useEffect(() => {
-    var sendMessUser = props.logInUser
-    var userUploadItem = props.user
-    var itemRequestId = props.data.itemId + "-" + props.user.id + "-" + props.logInUser.id
-    var UsersList = [];
-    UsersList.push(sendMessUser, userUploadItem)
-    var item = props.data
-    var userChat = [{ UsersList, itemRequestId, item }]
-  }, [])
 
   function createUsersArr() {
     var sendMessUser = props.logInUser
@@ -57,7 +46,7 @@ export default function CardItem(props) {
       lastMessageDate: fullDate,
       openChatDate: fullDate
     }
-    console.log('chatRow: ', chatRow)
+    //console.log('chatRow: ', chatRow)
     fetch(urlPostChat, {
       method: 'POST',
       body: JSON.stringify(chatRow),
@@ -134,7 +123,7 @@ export default function CardItem(props) {
     var user = props.user
     var logInUser = props.logInUser
     var users = { user, logInUser }
-    console.log("users from feed: ", users)
+    //console.log("users from feed: ", users)
     navigation.navigate('OtherUserProfile', { users: users })
   }
 

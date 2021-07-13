@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, Image, ScrollView, ImageBackground } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CardItemShow from '../Home/CardItemShow';
+import CardItemShow from './CardItemShow';
 
 const urlSentence = "http://proj.ruppin.ac.il/bgroup17/prod/api/DailySentence";
 const urlPersonalItems = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetUser"
@@ -34,12 +34,10 @@ export default class ProfilePage extends Component {
   }
   componentWillReceiveProps() {
     this.callFetchFunc()
-    //console.log('in will recive props! ')
   }
   componentDidUpdate(prevProps) {
     if (prevProps.isFocus !== this.props.isFocus) {
       this.forceUpdate();
-      console.log('in did update, after force update..')
     }
   }
 

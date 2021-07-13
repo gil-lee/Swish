@@ -9,13 +9,13 @@ import FeedPage from './Home/FeedPage';
 import Navigator from './Home/Navigator';
 import ConfirmUpload from './UploadItem/ConfirmUpload';
 import CitiesList from './SignUp/CitiesList';
-import DeleteItem from './Home/DeleteItem';
+import DeleteItem from './Profile/DeleteItem';
 import ProfilePage from './Profile/ProfilePage';
 import SettingsPage from './Profile/SettingsPage';
 import MainChatPage from './Chat/MainChatPage'
 import OtherUserProfile from './Profile/OtherUserProfile'
 import NewChat from './Chat/NewChat';
-import ZoomImages from './Gallery&Camera/ZoomImages';
+import ZoomImages from './Gallery/ZoomImages';
 import { LogBox } from 'react-native';
 
 

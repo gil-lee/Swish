@@ -106,7 +106,7 @@ export default class SettingsPage extends Component {
 
     fetch(urlAPI, config)
       .then((res) => {
-        console.log('res.status=', res.status);
+        //console.log('res.status=', res.status);
         if (res.status == 201) {
           return res.json();
         }
@@ -117,7 +117,7 @@ export default class SettingsPage extends Component {
         }
       })
       .then((responseData) => {
-        console.log(responseData);
+        //console.log(responseData);
         if (responseData != "err") {
           let picNameWOExt = picName.substring(0, picName.indexOf("."));
           let imageNameWithGUID = responseData.substring(responseData.indexOf(picNameWOExt), responseData.indexOf(".jpg") + 4);
@@ -140,7 +140,7 @@ export default class SettingsPage extends Component {
       let password = this.state.password;
       let passwordConfirm = this.state.password_confirm
       let check = this.checkAlphaNum(password);
-      console.log('check: ', check)
+      //console.log('check: ', check)
       if (check.containsNumber) {
         if (password != passwordConfirm) {
           Alert.alert('אופס...', 'אימות הסיסמה לא צלח, נסה שנית')
@@ -238,9 +238,7 @@ export default class SettingsPage extends Component {
             <Text style={{ fontSize: 22, fontWeight: 'bold' }}>הגדרות</Text>
           </View>
 
-
           <View style={styles.container}>
-
             <View style={{ flexDirection: 'row-reverse' }}>
               <View style={styles.text}>
                 <Text >שם פרטי</Text>
@@ -474,7 +472,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   radioBtn: {
-    //flex: 1,
     alignItems: 'center'
   },
   backBtn: {

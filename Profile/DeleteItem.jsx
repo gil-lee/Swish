@@ -48,7 +48,7 @@ export default class DeleteItem extends Component {
               if (users[i].email == this.state.user.email) {
                 this.setState({ userAfterPut: users[i] })
                 newUser = this.state.userAfterPut
-                console.log('user after put:   ', this.state.userAfterPut)
+                //console.log('user after put:   ', this.state.userAfterPut)
                 this.setState({ showAlert: false })
               }
             }

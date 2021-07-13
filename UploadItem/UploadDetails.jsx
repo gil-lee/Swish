@@ -228,7 +228,8 @@ export default class UploadDetails extends Component {
       {
         latitudeSt: location.coords.latitude,
         longitudeSt: location.coords.longitude
-      }, () => console.log('item loc: ', this.state.longitudeSt, this.state.latitudeSt)
+      }
+      //, () => console.log('item loc: ', this.state.longitudeSt, this.state.latitudeSt)
     )
   }
 
@@ -270,14 +271,13 @@ export default class UploadDetails extends Component {
       longitude: this.props.route.params.longitude,
       latitude: this.props.route.params.latitude
     }
-    console.log('item: ', item)
+    //console.log('item: ', item)
     if (item.name != '' && item.size != '' && item.style != '' && item.type != '' && item.condition != '' && this.state.image1 != '') {
       this.props.navigation.push('ConfirmUpload', { confirmItem: item, user: this.props.route.params.user }) //מעבר לעמוד הבא להעלאת הפריט
     }
     else {
       Alert.alert("אופס...", 'חסרים פרטים על הפריט, ייתכן שהשארת שדות חובה ריקים')
     }
-
   }
   render() {
 
@@ -312,7 +312,6 @@ export default class UploadDetails extends Component {
                   <Image source={require('../assets/defaultImage_.png')} style={{ height: 110, width: 100, borderColor: '#A7A7A7', borderWidth: 0.5 }}></Image>}
               </TouchableOpacity>
             </View>
-
           </View>
 
           <View style={styles.container}>
@@ -324,7 +323,6 @@ export default class UploadDetails extends Component {
               onChangeText={val => this.onChangeText('itemName', val)}
               placeholderTextColor="#414042"
             />
-
             <View style={{ flexDirection: 'row-reverse' }}>
 
               <Dropdown

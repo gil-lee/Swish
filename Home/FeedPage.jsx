@@ -19,9 +19,6 @@ const urlGetPostPutFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserFilt
 const urlSmartFilter = "http://proj.ruppin.ac.il/bgroup17/prod/api/UserNew/GetForSmartApp"
 const urlGetAllTokensFoeReminder = "http://proj.ruppin.ac.il/bgroup17/prod/api/Chat/GetChatListForReminder"
 
-const users = [];
-const items = [];
-
 const typeTemp = [];
 const sizeTemp = [];
 const conditionTemp = [];
@@ -80,16 +77,13 @@ export default class FeedPage extends Component {
 
     this.notificationListener = createRef();
     this.responseListener = createRef();
-    //this.getCurrentLocation()
     this.forceUpdate();
   }
 
   componentDidMount() {
-    //console.log('user from feed in didMount,', this.state.userTemplate)
     this.getCurrentLocation()
     this.callFetchFunc()
 
-    //console.log('user in feed: ', this.state.userTemplate)
     this.registerForPushNotificationsAsync().then(token => this.fetchpPutToken(token));
     Notifications.addNotificationReceivedListener(this._handleNotification);
     Notifications.addNotificationResponseReceivedListener(this._handleNotificationResponse);
@@ -99,8 +93,6 @@ export default class FeedPage extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.isFocus !== this.props.isFocus) {
       this.forceUpdate();
-      console.log('in did update, after force update..')
-      //this.setState({ userTemplate: this.props.route.params.user })
       this.getLocation(true)
     }
   }
@@ -123,7 +115,6 @@ export default class FeedPage extends Component {
     if (response.notification.request.content.data.type == "messageReminder") {
       this.props.navigation.navigate('Navigator', { screen: 'Main Chat Page', params: { user: this.state.userTemplate } })
     }
-
   };
 
   callFetchFunc = () => {
@@ -140,7 +131,6 @@ export default class FeedPage extends Component {
   componentWillReceiveProps() {
     this.setState({ userTemplate: this.props.route.params.user })
     this.getLocation(true)
-    console.log('in will recive props! feed!!! ')
   }
   sendNotiForReminder = (token) => {
     let tomorrow = new Date();
@@ -158,7 +148,6 @@ export default class FeedPage extends Component {
       },
       trigger: tomorrow,
     });
-
   }
   sendPushNotification = async (pushMessage) => {
     await fetch('https://exp.host/--/api/v2/push/send', {
@@ -175,27 +164,22 @@ export default class FeedPage extends Component {
   getTokenFromExpo = () => {
     this.registerForPushNotificationsAsync().then(token => this.setState({ userToken: token }, () => this.fetchpPutToken(token)));
 
-    console.log('in listenerExpo function..')
-
     this.notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('noti2:        ', JSON.stringify(notification.request));
-      this.setState({ notification: notification }), () =>
-        console.log('noti:        ', JSON.stringify(notification.request));
+      //console.log('noti2:        ', JSON.stringify(notification.request));
+      this.setState({ notification: notification })
+      //, () =>console.log('noti:        ', JSON.stringify(notification.request));
     });
     this.responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log('res2:           ', JSON.stringify(response));
+      //console.log('res2:           ', JSON.stringify(response));
       const navi = response.notification.request.content.data;
-      console.log('res:           ', JSON.stringify(response));
+      //console.log('res:           ', JSON.stringify(response));
 
       if (navi.type == 'yes') {
-        console.log('yes')
         navigation.navigate('NewChat', { userChat: userChat, item: props.data.itemId })
       }
       if (navi.type == 'no') {
-        console.log('no')
         navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: props.logInUser } })
       }
-      //response.actionIdentifier == what it should do when you press on it, go to newChat
     });
 
     console.log('response1', this.responseListener)
@@ -220,7 +204,7 @@ export default class FeedPage extends Component {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log('token in feed page: ', token);
+      //console.log('token in feed page: ', token);
     } else {
       alert('Must use physical device for Push Notifications');
     }
@@ -237,7 +221,6 @@ export default class FeedPage extends Component {
   }
 
   fetchpPutToken = async (token) => {
-    //console.log('token befor put to DB: ', token)
     let tempToken = token
     let newUser = {
       avatarlevel: this.state.userTemplate.avatarlevel,
@@ -292,7 +275,6 @@ export default class FeedPage extends Component {
           }
         ])
     }
-    //console.log('prem..: ', premission)
     if (premission === true) {
       this.getPremission()
     }
@@ -312,7 +294,7 @@ export default class FeedPage extends Component {
           longitudeSt: location.coords.longitude,
           locationPre: true
         }
-        , () => console.log('longi & lati after premission: ', this.state.longitudeSt + this.state.latitudeSt)
+        //, () => console.log('longi & lati after premission: ', this.state.longitudeSt + this.state.latitudeSt)
       )
       this.fetchUserItemsByEmail(this.state.longitudeSt, this.state.latitudeSt)
       this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', initial: false, params: { longitude: this.state.longitudeSt, latitude: this.state.latitudeSt } })
@@ -321,8 +303,6 @@ export default class FeedPage extends Component {
   }
 
   fetchUserItemsByEmail = async (longi, lati) => {
-    //console.log('longi lati: ', longi, lati)
-    //console.log('user tamplate show items: ',  this.state.userShowItems)
     await fetch(urlSmartFilter + "/" + this.state.userTemplate.email + "/" + longi + "/" + lati + "/" + this.state.userShowItems, {
       method: 'GET',
       headers: new Headers({
@@ -344,17 +324,14 @@ export default class FeedPage extends Component {
         })
   }
 
-  getAvatarForUser = (user) => { //הבאת האווטאר למשתמש מסוים
+  getAvatarForUser = (user) => { 
     let level = user.avatarlevel
-    // console.log('level: ', level)
     let imageUri = "http://proj.ruppin.ac.il/bgroup17/prod/AvatarImages/avatarLevel" + level + ".png"
 
-    this.setState({ avatarLevelUser: imageUri }
-      // , () => console.log('avatar in feed uri: ', this.state.avatarLevelUser)
-    )
+    this.setState({ avatarLevelUser: imageUri })
   }
 
-  fetchDropDown = (url) => { //פונקציית הפאץ להבאת הרשימות הנפתחות
+  fetchDropDown = (url) => { 
 
     fetch(url, {
       method: 'GET',
@@ -364,10 +341,10 @@ export default class FeedPage extends Component {
       })
     })
       .then(res => {
-        //console.log('res.ok=', res.ok);
+        console.log('res.ok=', res.ok);
         return res.json()
       })
-      .then(dropDownArr => { //הבאת כל סוגי הפריטים
+      .then(dropDownArr => { 
         if (url == urlItemPrice) {
           for (let i = 0; i < dropDownArr.length; i++) {
             typeTemp[i] = dropDownArr[i].name
@@ -375,14 +352,14 @@ export default class FeedPage extends Component {
           }
           this.setState({ itemType: typeTemp })
         }
-        if (url == urlItemSize) { // הבאת המידות
+        if (url == urlItemSize) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             sizeTemp[i] = dropDownArr[i].size
             sizes[i] = dropDownArr[i]
           }
           this.setState({ size: sizeTemp })
         }
-        if (url == urlConditionPrice) { // הבאת מצבי פריטים
+        if (url == urlConditionPrice) {
           for (let i = 0; i < dropDownArr.length; i++) {
             conditionTemp[i] = dropDownArr[i].condition
             conditions[i] = dropDownArr[i]
@@ -390,7 +367,7 @@ export default class FeedPage extends Component {
           }
           this.setState({ condition: conditionTemp })
         }
-        if (url == urlItemStyle) { //הבאת סגנונות
+        if (url == urlItemStyle) { 
           for (let i = 0; i < dropDownArr.length; i++) {
             styleTemp[i] = dropDownArr[i].style
             styless[i] = dropDownArr[i]
@@ -432,7 +409,6 @@ export default class FeedPage extends Component {
 
   filterItems(text, inputType) {
     console.log('text: ', inputType)
-    //console.log('items:',  item.itemsListDTO[0])
     let newItemsList;
     switch (inputType) {
       case "type":
@@ -457,14 +433,13 @@ export default class FeedPage extends Component {
     this.setState({ itemsList: newItemsList });
     fetch(urlGetPostPutFilter + "/" + this.state.userTemplate.email + "/" + inputType + "/" + text, {
       method: 'GET',
-      //body:JSON.stringify(userFilter),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
       })
     })
       .then(res => {
-        //console.log('res.ok=', res.ok);
+        console.log('res.ok=', res.ok);
         return res.json()
       })
       .then(userFilter => {
@@ -488,9 +463,8 @@ export default class FeedPage extends Component {
       })
       .then(tokens => {
         this.setState({ tokensForRemider: tokens }
-          , () => {
-            console.log('tokens for remider: ', this.state.tokensForRemider)
-          })
+          //, () => {console.log('tokens for remider: ', this.state.tokensForRemider)}
+          )
         for (let i = 0; i <= tokens.length; i++) {
           this.sendNotiForReminder(tokens[i])
         }
@@ -504,7 +478,6 @@ export default class FeedPage extends Component {
     return (
       <ImageBackground source={require('../assets/bgImage1.png')} style={styles.image}>
         <View>
-
           <View style={styles.container}>
             <TouchableOpacity style={styles.searchSection}>
               <MaterialCommunityIcons name="magnify" color={"#a7a7a7"} size={20} />

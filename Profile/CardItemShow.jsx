@@ -17,8 +17,6 @@ export default function CardItem(props) {
           <Text>  |  {props.data.priceList[0].name}  |</Text>
           <Text>{props.data.numberOfPoints}  </Text>
           <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
-
-
         </View>
         {props.data.description ?
           <Text style={{ marginRight: 10, marginBottom: 15, marginLeft: 10 }}>{props.data.description}</Text> : null}
@@ -46,7 +44,6 @@ export default function CardItem(props) {
         <TouchableOpacity style={{ flex: 1, marginLeft: 20 }} onPress={goToDelete}>
           <MaterialCommunityIcons name="delete" color={"#a7a7a7"} size={20} />
         </TouchableOpacity>
-
       </View>
     </ScrollView>
   )

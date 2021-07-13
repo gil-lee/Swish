@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CardItemUpload from '../Home/CardItemUpload';
+import CardItemUpload from './CardItemUpload';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ImageBackground } from 'react-native';
 
@@ -101,7 +101,7 @@ export default class ConfirmUpload extends Component {
       longitude: this.state.finalItem.longitude,
       latitude: this.state.finalItem.latitude
     }
-    console.log('item: ', item)
+    //console.log('item: ', item)
 
     fetch(urlItem + "/" + this.state.user.email + "/", { 
       method: 'POST',
@@ -112,12 +112,10 @@ export default class ConfirmUpload extends Component {
       })
     })
       .then(res => {
-        console.log('res: ', res)
         console.log('res.ok postItem=', res.ok);
         return res.json()
       })
       .then(i => {
-        console.log('פריט נוסף בהצלחה ל userItem ')
         this.avatarLevelUp()
         this.getUserTokenFilter()
       },
@@ -173,7 +171,7 @@ export default class ConfirmUpload extends Component {
   }
 
   sendPushNotification = async (token) => {
-    console.log('in send noti: ', token)
+    //console.log('in send noti: ', token)
 
     let bodyMessage = 'הועלה פריט חדש התואם את תוצאות הסינון שלך'
       const pushMessage = {
@@ -216,7 +214,7 @@ export default class ConfirmUpload extends Component {
             }
             this.setState({ userAfterPut: users[i] })
             newUser = this.state.userAfterPut
-            console.log('user after put:   ', newUser)
+            //console.log('user after put:   ', newUser)
           }
         }
         this.props.navigation.push('Navigator', { screen: 'Profile Page', params: { user: newUser } })

@@ -45,7 +45,6 @@ export default class SignUpPage extends Component {
 
   onChangeText = (key, val) => { 
     this.setState({ [key]: val })
-
   }
 
   confirmEmail = () => { 
@@ -142,7 +141,7 @@ export default class SignUpPage extends Component {
 
       if (newUser.firstName != '' && newUser.lastName != '' && newUser.phoneNumber != '' && newUser.email != '' && newUser.password != '' && newUser.residence != '') {
         let checkE = '';
-    console.log('user: ',newUser )
+    //console.log('user: ',newUser )
         fetch(urlSignUp, {
           method: 'POST',
           body: JSON.stringify(newUser),
@@ -152,7 +151,6 @@ export default class SignUpPage extends Component {
           })
         })
           .then(res => {
-            console.log('res: ', res)
             console.log('res.ok postUsers=', res.ok);
             checkE = res.ok;
             return res.json()
@@ -162,7 +160,6 @@ export default class SignUpPage extends Component {
               Alert.alert("אופס...", "כתובת האימייל קיימת במערכת ")
             }
             else {
-              console.log("משתמש: ", newUser)
               Alert.alert("יש!", "מזל טוב על הצטרפותך ל- swish. קיבלת מאיתנו 50 נקודות מתנה למימוש :)")
 
               this.props.navigation.navigate('Navigator', { screen: 'UploadDetails', params: { user: newUser }, initial: false })

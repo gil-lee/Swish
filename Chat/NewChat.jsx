@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, TouchableWithoutFeedback, StyleSheet, ScrollView, Image, KeyboardAvoidingView } from 'react-native'
+import { Text, FlatList, View, SafeAreaView, TouchableOpacity, TextInput, StyleSheet, ScrollView, Image } from 'react-native'
 import { firebase } from "../firebase"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Dimensions } from 'react-native';
@@ -54,7 +54,6 @@ export default class extends React.Component {
         }
       })
     })
-
     if (this.state.uploadConfirm == true && this.state.requestConfirm == true) {
       this.putChatStatus("delivered")
     }
@@ -77,7 +76,6 @@ export default class extends React.Component {
 
     fetch(urlGetChatStatus + '/' + this.state.user1.id + '/' + this.state.user2Upload.id + '/' + this.state.item.itemId, {
       method: 'GET',
-      //body: JSON.stringify(chatRow),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
@@ -110,7 +108,6 @@ export default class extends React.Component {
       itemId: this.state.item.itemId,
       chatStatus: status
     }
-    console.log('befor put chat status')
     fetch(urlPutChatStatus, {
       method: 'PUT',
       body: JSON.stringify(chat),
@@ -124,7 +121,6 @@ export default class extends React.Component {
         return res.json()
       })
       .then(i => {
-        //console.log('i:', i)
         this.setState({ chatStatus: i[0].chatStatus })
         if (i[0].chatStatus == "available") {
           this.setState({ disableInput: true })
@@ -139,7 +135,6 @@ export default class extends React.Component {
     let splitId = this.state.itemIDFirebase.split("-")
     fetch(urlPutChatLastMesDate +'/'+ splitId[1] +'/'+ splitId[2] +'/'+splitId[0], {
       method: 'PUT',
-      //body: JSON.stringify(chat),
       headers: new Headers({
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json; charset=UTF-8',
@@ -172,7 +167,7 @@ export default class extends React.Component {
         from: this.state.userChat[0].UsersList[0],
       }
       updates['messages/' + messageId + '/' + msgId] = message;
-      console.log('update: ', updates)
+      //console.log('update: ', updates)
       firebase.database().ref().update(updates)
 
       let bodyMessage = `${this.state.user1.firstName} שלח.ה לך הודעה\n ${this.state.textMessage}`
@@ -204,11 +199,10 @@ export default class extends React.Component {
   }
 
   renderMessage = ({ item }) => {
-    //console.log('item render:', item)
     return (
       <View style={{
         flexDirection: 'row',
-        width: '65%', //זה הרוחב של ההודעות עצמן
+        width: '65%', 
         alignSelf: item.from.id === this.state.userChat[0].UsersList[0].id ? 'flex-end' : 'flex-start',
         backgroundColor: item.from.id === this.state.userChat[0].UsersList[0].id ? '#c2d4bf' : '#c3acc8',
         borderRadius: 8,
@@ -246,9 +240,7 @@ export default class extends React.Component {
   }
   printConfirmSendBtn = () => {
     let splitId = this.state.itemIDFirebase.split("-")
-    console.log('confirmessss: ', this.state.uploadConfirm + '   ' + this.state.requestConfirm)
     if (this.state.chatStatus == "available" && this.state.uploadConfirm == false) {
-      console.log('upload confirm: ', this.state.uploadConfirm)
       return (
         <View>
           {this.state.user1.id == splitId[1] &&
@@ -265,7 +257,6 @@ export default class extends React.Component {
       )
     }
     if (this.state.chatStatus == "available" && this.state.requestConfirm == false) {
-      console.log('request confirm: ', this.state.requestConfirm)
       return (
         <View>
           {this.state.user1.id == splitId[2] &&
@@ -287,7 +278,6 @@ export default class extends React.Component {
       itemId: this.state.item.itemId,
       uploadConfirm: true
     }
-    console.log('befor put confirmUpload')
     this.setState({ uploadConfirm: true })
 
     fetch(urlPutUploadConfirm, {
@@ -331,7 +321,6 @@ export default class extends React.Component {
 
     this.setState({ requestConfirm: true })
 
-    console.log('befor put confirmRequest')
     fetch(urlPutRequestConfirm, {
       method: 'PUT',
       body: JSON.stringify(chat),
@@ -345,8 +334,6 @@ export default class extends React.Component {
         return res.json()
       })
       .then(i => {
-        console.log('i:', i)
-        //this.putChatStatus("delivered")
         this.props.navigation.navigate('Navigator', { screen: 'FeedPage', params: { user: this.state.user1 } })
       },
         (error) => {
@@ -354,7 +341,6 @@ export default class extends React.Component {
         })
   }
   yesBtn = () => {
-    console.log('yes btn press func')
     this.putChatStatus("available")
 
     let bodyMessage = `${this.state.user1.firstName} שלח.ה לך הודעה\n ${this.state.textMessage}`
@@ -434,10 +420,8 @@ export default class extends React.Component {
                 <MaterialCommunityIcons name="cash" color={"#7DA476"} size={20} />
               </View>
             </View>
-
           </View>
         </View>
-
       )
     } else {
       return (
@@ -472,7 +456,6 @@ export default class extends React.Component {
           {this.printUser()}
         </View>
         <View style={styles.line} />
-
         <ScrollView style={{ marginBottom: 240 }}>
           {this.state.disableInput ? this.printConfirmSendBtn() : this.printDefaultMessage()}
           <FlatList

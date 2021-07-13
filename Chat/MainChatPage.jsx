@@ -76,7 +76,6 @@ export default function MainChatPage(props) {
                 </View>
                 <Image source={{ uri: user.userDTO[0].profilePicture }} style={styles.userImage} />
               </View>
-
             </View>
           </TouchableOpacity>
         </View>

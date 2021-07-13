@@ -103,12 +103,10 @@ export default class LogInPage extends Component {
   render() {
     return (
       <ImageBackground source={require('../assets/bgImage.png')} style={styles.image}>
-
         <View style={styles.container}>
           <Image source={require('../assets/logo.png')} style={styles.logo} />
           <Text></Text>
           <View style={styles.inputView} >
-
             <TextInput
               style={styles.inputText}
               placeholder="אימייל"

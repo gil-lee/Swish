@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Modal, TouchableOpacity } from 'react-native'
+import {  View, Modal, TouchableOpacity } from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -14,7 +14,7 @@ export default class ZoomImages extends Component {
   }
 
   componentDidMount() {
-    console.log('images in zoom: ', this.state.images);
+    //console.log('images in zoom: ', this.state.images);
     this.filterImages()
   }
 

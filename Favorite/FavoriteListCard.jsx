@@ -7,9 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 export default function FavoriteListCard(props) {
 
   const urlDeleteFavorite = "http://proj.ruppin.ac.il/bgroup17/prod/api/FavoriteUsers/DeleteFav"
-  const urlGetFavorite = "http://proj.ruppin.ac.il/bgroup17/prod/api/FavoriteUsers/GetFavoriteList"
-  const urlGetUser = "http://proj.ruppin.ac.il/bgroup17/prod/api/FavoriteUsers/FavoriteUsersGet";
-
 
   const navigation = useNavigation();
   const [favoriteUser, setFavoriteUser] = useState(true)
@@ -19,7 +16,6 @@ export default function FavoriteListCard(props) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       navigation.navigate('Navigator', { screen: 'Favorite', params: { user: logInUser }, initial: false })
-      //setFavoriteUser(favoriteUser)
     })
   return unsubscribe;
   },[navigation])
@@ -72,7 +68,6 @@ export default function FavoriteListCard(props) {
               <Text style={styles.Text}>{user.firstName} {user.lastName}</Text>
               <Image source={{ uri: user.profilePicture }} style={styles.userImage} />
               <View style={{ justifyContent: 'flex-start' }}>
-
               </View>
             </View>
           </View>
@@ -83,10 +78,8 @@ export default function FavoriteListCard(props) {
               <MaterialCommunityIcons name="heart" color={"#9d76a5"} size={25} />
             </TouchableOpacity> :
             null}
-
         </View>
       </View>
-
       <View style={styles.line} />
     </View>
   )
